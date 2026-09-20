@@ -806,6 +806,22 @@ export const DQSupabase = {
               if (rMatch && rMatch[1]) ratioVal = rMatch[1].trim();
             }
 
+            // Extract client name and phone from sj.client if missing from direct columns
+            let clientName = sj.clientName || sj.clientname || localJob?.clientName || localJob?.clientname || '';
+            let clientPhone = sj.clientPhone || sj.clientphone || sj.phone || sj.whatsapp || localJob?.clientPhone || localJob?.phone || localJob?.whatsapp || '';
+            if (!clientName && sj.client) {
+              const parts = sj.client.split('(');
+              clientName = parts[0].trim();
+              if (parts[1]) {
+                clientPhone = parts[1].replace(/[^0-9+]/g, '');
+              }
+            }
+            if (!clientName) clientName = 'Client';
+
+            const category = sj.category || sj.service || sj.title || localJob?.category || localJob?.service || localJob?.title || 'Graphic Design';
+            const jobTitle = sj.title || sj.service || sj.project || localJob?.title || localJob?.service || localJob?.project || category;
+            const budgetVal = Number(sj.budget || sj.price || sj.amount || localJob?.budget || localJob?.price || localJob?.amount || 399);
+
             // Determine exact status and completion status consistency
             const localHasStatus = localJob && localJob.status && localJob.status !== 'Pending';
             const cloudHasStatus = sj.status && sj.status !== 'Pending';
@@ -822,6 +838,17 @@ export const DQSupabase = {
               ...sj,
               ...localJob,
               id,
+              title: jobTitle,
+              service: category,
+              project: jobTitle,
+              clientName: clientName,
+              clientPhone: clientPhone,
+              clientname: clientName,
+              clientphone: clientPhone,
+              phone: clientPhone,
+              whatsapp: clientPhone,
+              budget: budgetVal,
+              price: budgetVal,
               brief: cleanBrief || sj.brief || localJob?.brief || '',
               details: cleanBrief || sj.details || localJob?.details || '',
               ratio: ratioVal || 'Square (1:1)',
