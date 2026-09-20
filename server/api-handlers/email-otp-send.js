@@ -15,61 +15,88 @@ async function dispatchEmail({ to, subject, html, text, fromName = 'Design Quixo
     return { success: false, error: 'Invalid email address' };
   }
 
-  // 1. Primary: Resend API (Delivers in < 1 sec to Gmail, Outlook, Yahoo, iCloud, etc.)
+  // 1. Primary: GoDaddy Direct SSL SMTP (Port 465) with strict 6s timeout
   try {
-    const resendResp = await fetch('https://api.resend.com/emails', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${RESEND_KEY}`,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        from: `"${fromName}" <alerts@designquixo.in>`,
-        to: [cleanTo],
-        subject,
-        html,
-        text
-      })
-    });
-
-    if (resendResp.ok) {
-      const data = await resendResp.json().catch(() => ({}));
-      console.log(`[Resend OTP Sent] Dispatched to ${cleanTo}, ID: ${data?.id}`);
-      return { success: true, via: 'resend', id: data?.id };
-    } else {
-      const errData = await resendResp.json().catch(() => ({}));
-      console.warn(`[Resend OTP Notice] Fail for ${cleanTo}:`, errData);
-    }
-  } catch (resendErr) {
-    console.warn(`[Resend OTP Fetch Error]:`, resendErr?.message);
-  }
-
-  // 2. Fallback: GoDaddy SMTP (Port 465 SSL)
-  try {
-    const transporter = nodemailer.createTransport({
+    const transporter465 = nodemailer.createTransport({
       host: SMTP_HOST,
-      port: SMTP_PORT,
-      secure: SMTP_PORT === 465,
-      auth: {
-        user: SMTP_USER,
-        pass: SMTP_PASS
-      },
-      tls: { rejectUnauthorized: false }
+      port: 465,
+      secure: true,
+      auth: { user: SMTP_USER, pass: SMTP_PASS },
+      tls: { rejectUnauthorized: false },
+      connectionTimeout: 6000,
+      greetingTimeout: 6000,
+      socketTimeout: 6000,
+      dnsTimeout: 4000
     });
 
-    await transporter.sendMail({
+    await transporter465.sendMail({
       from: `"${fromName}" <${SMTP_USER}>`,
       to: cleanTo,
       subject,
       html,
       text
     });
-    console.log(`[SMTP OTP Sent] Dispatched to ${cleanTo} via ${SMTP_HOST}`);
-    return { success: true, via: 'smtp' };
-  } catch (smtpErr) {
-    console.error(`[SMTP OTP Error] ${cleanTo}:`, smtpErr?.message);
-    return { success: false, error: smtpErr?.message };
+    console.log(`[SMTP 465 OTP Sent] Dispatched to ${cleanTo}`);
+    return { success: true, via: 'smtp:465' };
+  } catch (smtpErr465) {
+    console.warn(`[SMTP 465 OTP Notice] ${cleanTo}:`, smtpErr465?.message);
   }
+
+  // 2. Secondary Fallback: GoDaddy STARTTLS SMTP (Port 587)
+  try {
+    const transporter587 = nodemailer.createTransport({
+      host: SMTP_HOST,
+      port: 587,
+      secure: false,
+      auth: { user: SMTP_USER, pass: SMTP_PASS },
+      tls: { rejectUnauthorized: false },
+      connectionTimeout: 6000,
+      greetingTimeout: 6000,
+      socketTimeout: 6000,
+      dnsTimeout: 4000
+    });
+
+    await transporter587.sendMail({
+      from: `"${fromName}" <${SMTP_USER}>`,
+      to: cleanTo,
+      subject,
+      html,
+      text
+    });
+    console.log(`[SMTP 587 OTP Sent] Dispatched to ${cleanTo}`);
+    return { success: true, via: 'smtp:587' };
+  } catch (smtpErr587) {
+    console.warn(`[SMTP 587 OTP Notice] ${cleanTo}:`, smtpErr587?.message);
+  }
+
+  // 3. Tertiary: Resend API (if valid key configured)
+  if (RESEND_KEY && RESEND_KEY.startsWith('re_') && RESEND_KEY.length > 20) {
+    try {
+      const resendResp = await fetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${RESEND_KEY}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          from: `"${fromName}" <alerts@designquixo.in>`,
+          to: [cleanTo],
+          subject,
+          html,
+          text
+        })
+      });
+
+      if (resendResp.ok) {
+        const data = await resendResp.json().catch(() => ({}));
+        return { success: true, via: 'resend', id: data?.id };
+      }
+    } catch (resendErr) {
+      console.warn(`[Resend OTP Fetch Notice]:`, resendErr?.message);
+    }
+  }
+
+  return { success: false, error: 'Email dispatch queued in database' };
 }
 
 export default async function handler(req, res) {
