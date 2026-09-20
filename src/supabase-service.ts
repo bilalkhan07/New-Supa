@@ -427,38 +427,25 @@ export const DQSupabase = {
       }
     } catch (e) {}
 
-    // 2. Prepare exact payload to match Supabase jobs schema columns strictly (supporting both designs)
+    // 2. Prepare exact payload to match Supabase jobs schema columns strictly
+    // Note: The database 'jobs' table has ONLY 11 valid columns: id, title, client, budget, deadline, category, status, description, assigned_to, designer, created_at.
+    // Any extra columns will cause PostgREST to fail with column schema cache errors.
     const supabaseJobRow = {
       id: cleanId,
       title: normalizedJob.project || normalizedJob.service || 'Design Request',
-      project: normalizedJob.project || normalizedJob.service || 'Design Request',
       client: `${normalizedJob.clientName || 'Client'} (${normalizedJob.phone || normalizedJob.whatsapp || 'N/A'})`,
-      clientname: normalizedJob.clientName || 'Client',
-      clientphone: normalizedJob.phone || normalizedJob.whatsapp || '',
-      phone: normalizedJob.phone || normalizedJob.whatsapp || '',
-      whatsapp: normalizedJob.whatsapp || normalizedJob.phone || '',
       budget: Number(normalizedJob.price || normalizedJob.budget) || 399,
-      price: Number(normalizedJob.price || normalizedJob.budget) || 399,
       deadline: normalizedJob.time || normalizedJob.urgency || 'ASAP',
-      time: normalizedJob.time || normalizedJob.urgency || 'ASAP',
       category: normalizedJob.service || 'Graphic Design',
-      service: normalizedJob.service || 'Graphic Design',
       status: normalizedJob.status || 'Pending',
       description: [
         normalizedJob.brief || normalizedJob.details || '',
         refImg ? `Ref Image: ${refImg}` : '',
         normalizedJob.ratio ? `Ratio: ${normalizedJob.ratio}` : ''
       ].filter(Boolean).join(' | '),
-      brief: normalizedJob.brief || '',
-      details: normalizedJob.brief || '',
-      ratio: normalizedJob.ratio || 'Square (1:1)',
-      referenceimage: refImg,
-      referenceImage: refImg,
-      image: refImg,
       assigned_to: normalizedJob.assignedTo || '',
       designer: normalizedJob.designerName || (Array.isArray(normalizedJob.acceptedBy) ? normalizedJob.acceptedBy.join(', ') : '') || '',
-      created_at: normalizedJob.createdAt || nowIso,
-      createdat: normalizedJob.createdAt || nowIso
+      created_at: normalizedJob.createdAt || nowIso
     };
 
     try {
