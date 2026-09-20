@@ -148,13 +148,14 @@ export async function querySupabaseRest(sqlText, params = []) {
           name: name || 'Designer',
           phone: clean10 || phone || '',
           email: cleanEm || email || '',
-          experience: skills || 'Graphic Design',
-          software: skills ? skills.split(',').map(s => s.trim()).filter(Boolean) : ['Photoshop'],
+          specialization: skills || 'Graphic Design',
+          skills: skills ? skills.split(',').map(s => s.trim()).filter(Boolean) : ['Photoshop'],
           portfolio: portfolio || '',
-          photo: avatar || null,
-          role: 'designer',
+          avatar: avatar || null,
           status: status || 'Pending',
-          createdat: new Date().toISOString()
+          createdat: new Date().toISOString(),
+          password: params[5] || 'Designer@123',
+          identifier: cleanEm || clean10 || primaryId
         };
       } else if (table === 'jobs') {
         payload = {
@@ -215,5 +216,3 @@ export function getPgPool() {
 }
 
 export default getPgPool;
-
-
