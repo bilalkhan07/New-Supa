@@ -1545,7 +1545,14 @@
               const orderPrice = (window.DQStore && window.DQStore.getJobPrice) ? window.DQStore.getJobPrice(job) : (Number(job.price) || 399);
               const designerCut = Math.round(orderPrice * 0.60);
 
-              const refImgUrl = job.referenceImage || job.referenceimage || job.reference_image || job.refImage || job.image || job.sampleImage || job.reference || job.imageUrl || (Array.isArray(job.attachments) ? job.attachments[0] : null);
+              let refImgUrl = job.referenceImage || job.referenceimage || job.reference_image || job.refImage || job.image || job.sampleImage || job.reference || job.imageUrl || (Array.isArray(job.attachments) ? job.attachments[0] : null);
+              if (!refImgUrl) {
+                const descSearch = (job.description || job.details || job.brief || '').toString();
+                if (descSearch.includes('Ref Image:')) {
+                  const m = descSearch.match(/Ref Image:\s*([^\s|]+)/i);
+                  if (m && m[1]) refImgUrl = m[1];
+                }
+              }
               window._dq_job_images = window._dq_job_images || {};
               if (refImgUrl && job.id) {
                 window._dq_job_images[job.id] = refImgUrl;
@@ -1640,7 +1647,14 @@
               const myIdentifier = currentUser ? (currentUser.identifier || currentUser.phone || '') : '';
               const orderPrice = (window.DQStore && window.DQStore.getJobPrice) ? window.DQStore.getJobPrice(job) : (Number(job.price) || 399);
               const designerCut = Math.round(orderPrice * 0.60);
-              const refImgUrl = job.referenceImage || job.referenceimage || job.reference_image || job.refImage || job.image || job.sampleImage || job.reference || job.imageUrl || (Array.isArray(job.attachments) ? job.attachments[0] : null);
+              let refImgUrl = job.referenceImage || job.referenceimage || job.reference_image || job.refImage || job.image || job.sampleImage || job.reference || job.imageUrl || (Array.isArray(job.attachments) ? job.attachments[0] : null);
+              if (!refImgUrl) {
+                const descSearch = (job.description || job.details || job.brief || '').toString();
+                if (descSearch.includes('Ref Image:')) {
+                  const m = descSearch.match(/Ref Image:\s*([^\s|]+)/i);
+                  if (m && m[1]) refImgUrl = m[1];
+                }
+              }
 
               const currentStatus = job.status || 'Drafting in Progress';
               const isCompleted = job.completed === true || 
