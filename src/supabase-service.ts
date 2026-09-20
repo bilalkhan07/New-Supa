@@ -774,11 +774,35 @@ export const DQSupabase = {
           if (id && !deletedNormSet.has(id) && id !== 'DQ-8492' && id !== 'DQ-7319') {
             const localJob = localJobsMap.get(id);
             const accepted = sj.acceptedby || sj.acceptedBy;
-            const refImg = extractImageUrl(
+            
+            let refImg = extractImageUrl(
               sj.referenceimage || sj.referenceImage || sj.reference_image || sj.refImage || sj.image || sj.sampleImage || sj.reference || (Array.isArray(sj.attachments) ? sj.attachments[0] : '')
-            ) || extractImageUrl(
-              localJob ? (localJob.referenceImage || localJob.image || localJob.referenceimage || localJob.refImage) : ''
             );
+
+            const descStr = (sj.description || sj.brief || sj.details || '').toString();
+            if (!refImg && descStr.includes('Ref Image:')) {
+              const match = descStr.match(/Ref Image:\s*([^\s|]+)/i);
+              if (match && match[1]) {
+                refImg = extractImageUrl(match[1]);
+              }
+            }
+
+            if (!refImg && localJob) {
+              refImg = extractImageUrl(
+                localJob.referenceImage || localJob.image || localJob.referenceimage || localJob.refImage || ''
+              );
+            }
+
+            let cleanBrief = sj.brief || sj.details || descStr;
+            if (cleanBrief && typeof cleanBrief === 'string' && cleanBrief.includes('Ref Image:')) {
+              cleanBrief = cleanBrief.split(' | Ref Image:')[0].replace(/Ref Image:[^\s|]+/gi, '').trim();
+            }
+
+            let ratioVal = sj.ratio || localJob?.ratio || '';
+            if (!ratioVal && descStr.includes('Ratio:')) {
+              const rMatch = descStr.match(/Ratio:\s*([^|]+)/i);
+              if (rMatch && rMatch[1]) ratioVal = rMatch[1].trim();
+            }
 
             // Determine exact status and completion status consistency
             const localHasStatus = localJob && localJob.status && localJob.status !== 'Pending';
@@ -796,6 +820,9 @@ export const DQSupabase = {
               ...sj,
               ...localJob,
               id,
+              brief: cleanBrief || sj.brief || localJob?.brief || '',
+              details: cleanBrief || sj.details || localJob?.details || '',
+              ratio: ratioVal || 'Square (1:1)',
               status: finalStatus,
               completed: finalCompleted,
               adminCompleted: finalAdminCompleted,
