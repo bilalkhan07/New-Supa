@@ -1,0 +1,759 @@
+<!doctype html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>About Us - Design Quixo | India's Fastest Graphic Design Service</title>
+    <meta name="description" content="Learn the story of Design Quixo. How we are revolutionizing the Indian graphic design industry with verified professional designers, 30-minute turnarounds on WhatsApp, and zero AI slop." />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+    <link rel="canonical" href="https://designquixo.in/about.html" />
+    <meta property="og:title" content="About Us - Design Quixo" />
+    <meta property="og:description" content="Learn the story of Design Quixo, India's fastest manual graphic design network." />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://designquixo.in/about.html" />
+    <meta property="og:image" content="https://designquixo.in/favicon.png" />
+    <link rel="icon" type="image/png" href="favicon.png" />
+    <link rel="shortcut icon" type="image/png" href="favicon.png" />
+    <link rel="apple-touch-icon" href="favicon.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="security.js"></script>
+    <!-- Design Quixo Source & UI Security -->
+    <script>
+      (function(){
+        const blockEvent = function(e){ e.preventDefault(); e.stopPropagation(); return false; };
+        window.addEventListener('contextmenu', blockEvent, true);
+        document.addEventListener('contextmenu', blockEvent, true);
+        window.oncontextmenu = function(){ return false; };
+        document.oncontextmenu = function(){ return false; };
+        const blockKeys = function(e){
+          if (e.key === 'F12' || e.keyCode === 123) { e.preventDefault(); e.stopPropagation(); return false; }
+          const ctrl = e.ctrlKey || e.metaKey;
+          if (ctrl && (e.shiftKey || e.altKey)) {
+            const k = (e.key || '').toUpperCase();
+            if (k === 'I' || k === 'J' || k === 'C' || k === 'K' || k === 'S' || k === 'E') {
+              e.preventDefault(); e.stopPropagation(); return false;
+            }
+          }
+          if (ctrl) {
+            const k = (e.key || '').toUpperCase();
+            if (k === 'U' || k === 'S' || k === 'P') { e.preventDefault(); e.stopPropagation(); return false; }
+          }
+        };
+        window.addEventListener('keydown', blockKeys, true);
+        document.addEventListener('keydown', blockKeys, true);
+        document.addEventListener('selectstart', function(e){
+          const t = e.target && e.target.tagName ? e.target.tagName.toUpperCase() : '';
+          if (t !== 'INPUT' && t !== 'TEXTAREA') { e.preventDefault(); return false; }
+        }, true);
+        document.addEventListener('copy', function(e){
+          const t = e.target && e.target.tagName ? e.target.tagName.toUpperCase() : '';
+          if (t !== 'INPUT' && t !== 'TEXTAREA') { e.preventDefault(); return false; }
+        }, true);
+      })();
+    </script>
+    <link rel="stylesheet" href="src/index.css" />
+    <script type="module" src="/src/supabase-service.ts"></script>
+    <script src="store.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+  </head>
+  <body class="bg-white text-slate-800 antialiased min-h-screen flex flex-col font-['Plus_Jakarta_Sans',sans-serif]">
+    
+    <!-- Navigation Header -->
+    <header class="sticky top-0 z-50 backdrop-blur-md bg-white/95 border-b border-slate-200 transition-all shadow-xs">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between gap-4">
+        <div class="flex items-center justify-start shrink-0">
+          <a href="index.html" class="flex items-center gap-2.5 sm:gap-3 group shrink-0">
+            <img src="favicon.png" alt="Design Quixo Logo" class="w-8 h-8 sm:w-10 sm:h-10 object-contain rounded-xl group-hover:scale-105 transition-transform shrink-0" onerror="this.onerror=null; this.src='favicon.png';" />
+            <span class="font-extrabold text-lg sm:text-xl tracking-tight font-['Space_Grotesk'] text-slate-900">DESIGN <span class="text-blue-600">QUIXO</span></span>
+          </a>
+        </div>
+
+        <!-- Desktop Navigation - Centered -->
+        <nav class="hidden lg:flex items-center justify-center gap-7 xl:gap-8 text-xs xl:text-sm font-semibold text-slate-600 mx-auto">
+          <a href="index.html" class="hover:text-blue-600 transition-colors">Home</a>
+          <a href="services.html" class="hover:text-blue-600 transition-colors">Services</a>
+          <a href="latest-works.html" class="hover:text-blue-600 transition-colors">Portfolio</a>
+          <a href="about.html" class="text-blue-600 font-bold">About Us</a>
+          <a href="cities.html" class="hover:text-blue-600 transition-colors flex items-center gap-1">
+            <i data-lucide="map-pin" class="w-3.5 h-3.5 text-blue-600"></i>
+            Cities
+          </a>
+          <a href="contact.html" class="hover:text-blue-600 transition-colors">Contact</a>
+        </nav>
+
+        <!-- Right Action CTAs -->
+        <div class="flex items-center justify-end gap-2.5 sm:gap-3 shrink-0">
+          <a href="login.html?mode=signup" class="hidden sm:inline-flex items-center gap-1.5 text-xs font-semibold text-slate-700 hover:text-blue-600 px-3.5 py-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 shadow-xs transition-colors shrink-0">
+            <i data-lucide="user-plus" class="w-3.5 h-3.5 text-blue-600"></i>
+            <span>Join as Designer</span>
+          </a>
+          <a href="login.html?mode=login" class="inline-flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 text-white font-bold px-3.5 py-2 sm:px-4 sm:py-2 rounded-xl text-xs sm:text-sm shadow-sm transition-all shrink-0">
+            <i data-lucide="log-in" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i>
+            <span>Login</span>
+          </a>
+          <button id="mobile-menu-btn" class="lg:hidden p-2 text-slate-600 hover:text-slate-900 rounded-xl border border-slate-200 hover:bg-slate-50 transition-colors" aria-label="Toggle Navigation">
+            <i data-lucide="menu" class="w-5 h-5"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Mobile Dropdown -->
+      <div id="mobile-menu" class="hidden lg:hidden border-b border-slate-200 bg-white px-4 pt-2 pb-5 space-y-2.5 shadow-md">
+        <a href="index.html" class="block py-2 text-slate-700 hover:text-blue-600 font-medium text-sm">Home</a>
+        <a href="services.html" class="block py-2 text-slate-700 hover:text-blue-600 font-medium text-sm">Services</a>
+        <a href="latest-works.html" class="block py-2 text-slate-700 hover:text-blue-600 font-medium text-sm">Portfolio</a>
+        <a href="about.html" class="block py-2 text-blue-600 font-bold text-sm">About Us</a>
+        <a href="cities.html" class="block py-2 text-slate-700 hover:text-blue-600 font-medium text-sm">Cities Directory</a>
+        <a href="contact.html" class="block py-2 text-slate-700 hover:text-blue-600 font-medium text-sm">Contact Support</a>
+        <div class="pt-3 border-t border-slate-200 flex flex-col gap-2">
+          <a href="login.html?mode=signup" class="flex items-center justify-center gap-2 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-slate-700 font-bold text-xs">
+            <i data-lucide="user-plus" class="w-3.5 h-3.5 text-blue-600"></i>
+            <span>Join as Designer</span>
+          </a>
+          <a href="login.html?mode=login" class="flex items-center justify-center gap-2 py-2.5 rounded-xl bg-blue-600 text-white font-bold text-xs shadow-sm">
+            <i data-lucide="log-in" class="w-3.5 h-3.5"></i>
+            <span>Login</span>
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Body -->
+    <main class="flex-grow">
+      
+      <!-- Section 1: Hero Manifesto & Philosophy -->
+      <section class="py-16 sm:py-24 bg-gradient-to-b from-slate-50 via-white to-slate-50/50 border-b border-slate-200">
+        <div class="max-w-4xl mx-auto px-4 text-center space-y-6">
+          <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-50 border border-blue-200 text-blue-800 text-xs font-bold shadow-xs">
+            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
+            <span>Real Human Talent • Zero-AI Slop • 30-Minute Dispatch</span>
+          </div>
+
+          <h1 class="text-3xl sm:text-5xl lg:text-6xl font-extrabold text-slate-900 font-['Space_Grotesk'] tracking-tight leading-tight">
+            Crafting India's Fastest Network of <span class="text-blue-600">Professional Designers</span>
+          </h1>
+
+          <p class="text-slate-600 text-base sm:text-lg max-w-3xl mx-auto leading-relaxed">
+            We started Design Quixo with a singular conviction: creative design should be lightning fast, genuinely professional, completely transparent, and built by real human hands on WhatsApp.
+          </p>
+
+          <div class="flex flex-wrap items-center justify-center gap-3 pt-4">
+            <a href="request.html" class="px-6 py-3.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs sm:text-sm shadow-md transition-all flex items-center gap-2">
+              <span>Start a Design Request</span>
+              <i data-lucide="arrow-right" class="w-4 h-4"></i>
+            </a>
+            <a href="https://wa.me/918602420897" target="_blank" class="px-6 py-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs sm:text-sm shadow-sm transition-all flex items-center gap-2">
+              <img src="wa_icon.png" alt="WhatsApp" class="w-4 h-4 object-contain rounded-full" onerror="this.onerror=null; this.src='wa_icon.png';" />
+              <span>Chat Directly on WhatsApp</span>
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 2: How the Idea Came to Life (Hamare Thought Ki Kahani) -->
+      <section class="py-16 sm:py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+          
+          <div class="lg:col-span-6 space-y-6">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-50 border border-amber-200 text-amber-800 text-xs font-bold uppercase tracking-wider">
+              <i data-lucide="lightbulb" class="w-3.5 h-3.5 text-amber-600"></i>
+              <span>The Genesis of Design Quixo</span>
+            </div>
+
+            <h2 class="text-2xl sm:text-4xl font-extrabold text-slate-900 font-['Space_Grotesk'] leading-tight">
+              How the Frustration of Waiting 3 Days Sparked a Revolution
+            </h2>
+
+            <p class="text-sm sm:text-base text-slate-600 leading-relaxed">
+              In 2024, our founders were running marketing campaigns for regional brands across Madhya Pradesh, Maharashtra, and Karnataka. Every single week, we witnessed the same painful bottleneck:
+            </p>
+
+            <div class="space-y-4 text-xs sm:text-sm text-slate-700">
+              <div class="flex items-start gap-3.5 p-4 rounded-2xl bg-slate-50 border border-slate-200">
+                <div class="w-8 h-8 rounded-xl bg-red-100 text-red-600 flex items-center justify-center font-bold shrink-0">
+                  <i data-lucide="clock-alert" class="w-4 h-4"></i>
+                </div>
+                <div>
+                  <h4 class="font-bold text-slate-900">The 3 to 5-Day Agency Delay</h4>
+                  <p class="text-slate-500 text-xs mt-0.5">Traditional design agencies treated simple social posts, thumbnails, and visiting cards like multi-week corporate contracts with endless meetings and exorbitant retainers.</p>
+                </div>
+              </div>
+
+              <div class="flex items-start gap-3.5 p-4 rounded-2xl bg-slate-50 border border-slate-200">
+                <div class="w-8 h-8 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center font-bold shrink-0">
+                  <i data-lucide="cpu" class="w-4 h-4"></i>
+                </div>
+                <div>
+                  <h4 class="font-bold text-slate-900">The Flood of Cheap, Uneditable "AI Slop"</h4>
+                  <p class="text-slate-500 text-xs mt-0.5">Automated AI tools started generating hallucinated hands, broken typography, and flat JPEGs that no printer could use, and no brand could legally own or edit.</p>
+                </div>
+              </div>
+
+              <div class="flex items-start gap-3.5 p-4 rounded-2xl bg-slate-50 border border-slate-200">
+                <div class="w-8 h-8 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center font-bold shrink-0">
+                  <i data-lucide="smartphone" class="w-4 h-4"></i>
+                </div>
+                <div>
+                  <h4 class="font-bold text-slate-900">The WhatsApp Epiphany</h4>
+                  <p class="text-slate-500 text-xs mt-0.5">India does not conduct business through complex ticketing portals or slow email chains. India runs on WhatsApp. We realized: connect vetted human creators directly on WhatsApp with clear 30-minute turnarounds.</p>
+                </div>
+              </div>
+            </div>
+
+            <p class="text-xs sm:text-sm text-slate-600 italic">
+              "We removed all middlemen, automated the dispatch matching, and put real human craftsmanship back in the hands of everyday businesses."
+            </p>
+          </div>
+
+          <div class="lg:col-span-6 bg-slate-900 rounded-3xl p-8 sm:p-12 text-white space-y-6 relative overflow-hidden shadow-2xl border border-slate-800">
+            <div class="absolute -top-10 -right-10 w-72 h-72 bg-blue-600/20 rounded-full blur-3xl"></div>
+            
+            <div class="relative z-10 space-y-6">
+              <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/20 text-blue-300 text-xs font-bold">
+                <i data-lucide="target" class="w-3.5 h-3.5"></i>
+                <span>Our Core Operating Principle</span>
+              </div>
+
+              <h3 class="text-xl sm:text-2xl font-bold font-['Space_Grotesk'] leading-snug">
+                "Speed should never compromise craft, and true talent deserves dignity and instant payouts."
+              </h3>
+
+              <div class="grid grid-cols-2 gap-4 pt-4 border-t border-slate-800 text-center">
+                <div class="p-4 rounded-2xl bg-slate-800/60 border border-slate-700/50">
+                  <span class="block text-2xl sm:text-3xl font-extrabold text-blue-400 font-['Space_Grotesk']">30-45m</span>
+                  <span class="text-[11px] text-slate-400 font-semibold uppercase tracking-wider">Average Delivery Time</span>
+                </div>
+                <div class="p-4 rounded-2xl bg-slate-800/60 border border-slate-700/50">
+                  <span class="block text-2xl sm:text-3xl font-extrabold text-emerald-400 font-['Space_Grotesk']">100%</span>
+                  <span class="text-[11px] text-slate-400 font-semibold uppercase tracking-wider">Layered Master Files</span>
+                </div>
+                <div class="p-4 rounded-2xl bg-slate-800/60 border border-slate-700/50">
+                  <span class="block text-2xl sm:text-3xl font-extrabold text-purple-400 font-['Space_Grotesk']">16+ Hubs</span>
+                  <span class="text-[11px] text-slate-400 font-semibold uppercase tracking-wider">Active Creator Cities</span>
+                </div>
+                <div class="p-4 rounded-2xl bg-slate-800/60 border border-slate-700/50">
+                  <span class="block text-2xl sm:text-3xl font-extrabold text-amber-400 font-['Space_Grotesk']">0% AI</span>
+                  <span class="text-[11px] text-slate-400 font-semibold uppercase tracking-wider">Zero AI Hallucinations</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- Section 3: Why Our Designers are Truly Professional -->
+      <section class="py-16 sm:py-24 bg-slate-50 border-y border-slate-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+          
+          <div class="text-center max-w-3xl mx-auto space-y-4">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 border border-blue-200 text-blue-700 text-xs font-bold uppercase tracking-wider">
+              <i data-lucide="award" class="w-3.5 h-3.5 text-blue-600"></i>
+              <span>Vetted Creator Collective</span>
+            </div>
+            <h2 class="text-2xl sm:text-4xl font-extrabold text-slate-900 font-['Space_Grotesk']">
+              Why Our Designers Stand in the Top 3%
+            </h2>
+            <p class="text-slate-600 text-sm sm:text-base leading-relaxed">
+              We do not accept open, unverified crowdsourcing. Every creator on the Design Quixo workstation is rigorously vetted, tested, and held to commercial standards.
+            </p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
+            
+            <!-- Pillar 1 -->
+            <div class="p-6 sm:p-8 rounded-3xl bg-white border border-slate-200 shadow-xs space-y-4 hover:border-blue-300 hover:shadow-md transition-all flex flex-col justify-between">
+              <div class="space-y-4">
+                <div class="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold">
+                  <i data-lucide="shield-check" class="w-6 h-6"></i>
+                </div>
+                <h3 class="text-lg sm:text-xl font-bold text-slate-900 font-['Space_Grotesk']">Live Technical Skill Audit</h3>
+                <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">
+                  Before any designer receives customer orders, they undergo real-time design tests on Adobe Illustrator, Photoshop, and InDesign. We test typography hierarchy, pen tool precision, color spaces (RGB vs CMYK), and dieline mathematics.
+                </p>
+              </div>
+              <div class="pt-4 border-t border-slate-100 flex items-center gap-2 text-xs font-semibold text-blue-600">
+                <i data-lucide="check-circle" class="w-4 h-4"></i>
+                <span>Strict Pen Tool & Vector Mastery</span>
+              </div>
+            </div>
+
+            <!-- Pillar 2 -->
+            <div class="p-6 sm:p-8 rounded-3xl bg-white border border-slate-200 shadow-xs space-y-4 hover:border-blue-300 hover:shadow-md transition-all flex flex-col justify-between">
+              <div class="space-y-4">
+                <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold">
+                  <i data-lucide="trending-up" class="w-6 h-6"></i>
+                </div>
+                <h3 class="text-lg sm:text-xl font-bold text-slate-900 font-['Space_Grotesk']">Commercial & High-CTR Psychology</h3>
+                <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">
+                  Our designers aren't just artistic; they understand business conversion. They know what YouTube thumbnails achieve 12%+ CTR, how Instagram carousels drive saves, and how retail packaging communicates trust on a supermarket shelf.
+                </p>
+              </div>
+              <div class="pt-4 border-t border-slate-100 flex items-center gap-2 text-xs font-semibold text-emerald-600">
+                <i data-lucide="check-circle" class="w-4 h-4"></i>
+                <span>Marketing & Conversion Focused</span>
+              </div>
+            </div>
+
+            <!-- Pillar 3 -->
+            <div class="p-6 sm:p-8 rounded-3xl bg-white border border-slate-200 shadow-xs space-y-4 hover:border-blue-300 hover:shadow-md transition-all flex flex-col justify-between">
+              <div class="space-y-4">
+                <div class="w-12 h-12 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center font-bold">
+                  <i data-lucide="layers" class="w-6 h-6"></i>
+                </div>
+                <h3 class="text-lg sm:text-xl font-bold text-slate-900 font-['Space_Grotesk']">100% Clean Layer Hygiene</h3>
+                <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">
+                  We enforce zero-flattening guidelines. Every deliverable includes logically grouped and named layers in PSD, AI, or SVG format, complete with embedded or linked commercial typography and bleed guidelines for commercial printers.
+                </p>
+              </div>
+              <div class="pt-4 border-t border-slate-100 flex items-center gap-2 text-xs font-semibold text-purple-600">
+                <i data-lucide="check-circle" class="w-4 h-4"></i>
+                <span>Full Copyright & PSD Source Included</span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 4: Speed Engineering — Why We are Unmatched in Speed -->
+      <section class="py-16 sm:py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+          
+          <div class="lg:col-span-5 order-2 lg:order-1 space-y-6">
+            <div class="p-6 rounded-3xl bg-slate-900 text-white space-y-4">
+              <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                <span class="text-xs font-bold text-blue-400 uppercase tracking-wider">Traditional Agency vs Design Quixo</span>
+                <span class="text-[11px] text-slate-400">Time Comparison</span>
+              </div>
+              
+              <div class="space-y-3 text-xs">
+                <div>
+                  <div class="flex justify-between text-slate-400 mb-1">
+                    <span>Traditional Freelancer / Agency</span>
+                    <span class="font-bold text-red-400">48 - 72 Hours</span>
+                  </div>
+                  <div class="w-full bg-slate-800 rounded-full h-2">
+                    <div class="bg-red-500 h-2 rounded-full w-full"></div>
+                  </div>
+                </div>
+
+                <div>
+                  <div class="flex justify-between text-slate-400 mb-1">
+                    <span>Design Quixo Express Dispatch</span>
+                    <span class="font-bold text-emerald-400">30 - 45 Minutes</span>
+                  </div>
+                  <div class="w-full bg-slate-800 rounded-full h-2">
+                    <div class="bg-emerald-500 h-2 rounded-full w-1/8"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="p-5 rounded-2xl bg-blue-50 border border-blue-100 text-blue-900 text-xs space-y-2">
+              <div class="font-bold flex items-center gap-1.5 text-blue-800">
+                <i data-lucide="zap" class="w-4 h-4 text-blue-600"></i>
+                <span>How We Achieve 30-Minute Turnarounds Without Cutting Corners:</span>
+              </div>
+              <ul class="space-y-1.5 list-disc list-inside text-slate-700">
+                <li>Creators are stationed live on duty during peak Indian business hours.</li>
+                <li>Instant automated dispatch assigns your brief directly to an available specialist.</li>
+                <li>WhatsApp voice notes cut 90% of back-and-forth email misunderstandings.</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="lg:col-span-7 order-1 lg:order-2 space-y-6">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-bold uppercase tracking-wider">
+              <i data-lucide="clock" class="w-3.5 h-3.5 text-emerald-600"></i>
+              <span>Engineering Turnaround Speed</span>
+            </div>
+
+            <h2 class="text-2xl sm:text-4xl font-extrabold text-slate-900 font-['Space_Grotesk'] leading-tight">
+              Speed is Not a Shortcut. It is an Engineered Discipline.
+            </h2>
+
+            <p class="text-sm sm:text-base text-slate-600 leading-relaxed">
+              When a YouTube creator uploads a trending video or an e-commerce brand launches a flash sale, waiting 3 days for creative assets is effectively a lost business opportunity.
+            </p>
+
+            <p class="text-sm sm:text-base text-slate-600 leading-relaxed">
+              We redesigned the entire creative delivery pipeline. By keeping our team on active shifts with dedicated workstations in Indore, Pune, Bengaluru, and Delhi, your design work begins within 120 seconds of brief confirmation.
+            </p>
+
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 pt-2">
+              <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200">
+                <span class="block font-bold text-sm text-slate-900 font-['Space_Grotesk']">YouTube Thumbnails</span>
+                <span class="text-xs text-emerald-600 font-semibold">⚡ 30-45 mins</span>
+              </div>
+              <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200">
+                <span class="block font-bold text-sm text-slate-900 font-['Space_Grotesk']">Social Media Ads</span>
+                <span class="text-xs text-emerald-600 font-semibold">⚡ 30-45 mins</span>
+              </div>
+              <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200">
+                <span class="block font-bold text-sm text-slate-900 font-['Space_Grotesk']">Visiting Cards</span>
+                <span class="text-xs text-emerald-600 font-semibold">⚡ 30 mins</span>
+              </div>
+              <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200">
+                <span class="block font-bold text-sm text-slate-900 font-['Space_Grotesk']">Vector Redraws</span>
+                <span class="text-xs text-emerald-600 font-semibold">⚡ 45-60 mins</span>
+              </div>
+              <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200">
+                <span class="block font-bold text-sm text-slate-900 font-['Space_Grotesk']">Vector Logo Design</span>
+                <span class="text-xs text-emerald-600 font-semibold">⚡ 1-2 hours</span>
+              </div>
+              <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200">
+                <span class="block font-bold text-sm text-slate-900 font-['Space_Grotesk']">Packaging & Labels</span>
+                <span class="text-xs text-emerald-600 font-semibold">⚡ 1.5-2 hours</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- Section 5: How We Want to Advance the Design Industry (Industry Ko Aage Lekar Jana) - Styled In Theme -->
+      <section class="py-16 sm:py-24 bg-gradient-to-b from-blue-50/30 via-white to-slate-50 border-y border-slate-200 text-slate-900">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+          
+          <div class="max-w-3xl mx-auto text-center space-y-4">
+            <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 text-blue-700 text-xs font-bold uppercase tracking-wider border border-blue-200 shadow-xs">
+              <i data-lucide="compass" class="w-3.5 h-3.5 text-blue-600"></i>
+              <span>Our Industry Mission</span>
+            </div>
+            <h2 class="text-2xl sm:text-4xl font-extrabold font-['Space_Grotesk'] leading-tight text-slate-900">
+              How We Are Elevating India's Creative Economy
+            </h2>
+            <p class="text-slate-600 text-sm sm:text-base leading-relaxed">
+              Design Quixo is not merely a service; it is a movement to build sustainable, dignified careers for Indian creators while offering world-class design accessibility to Indian entrepreneurs.
+            </p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            
+            <!-- Card 1 -->
+            <div class="p-6 sm:p-8 rounded-3xl bg-white border border-slate-200 space-y-4 hover:border-blue-300 hover:shadow-md transition-all shadow-xs">
+              <div class="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold">
+                <i data-lucide="wallet" class="w-6 h-6"></i>
+              </div>
+              <h3 class="text-xl font-bold font-['Space_Grotesk'] text-slate-900">1. Fair Economics & Direct Payouts</h3>
+              <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">
+                Global freelancing portals charge designers predatory 20% commissions and force them to wait 14 days for payout clearance. At Design Quixo, verified designers receive transparent compensation immediately upon job completion via direct UPI.
+              </p>
+              <div class="pt-3 border-t border-slate-100 flex items-center gap-2 text-xs font-semibold text-blue-600">
+                <i data-lucide="check-circle" class="w-4 h-4"></i>
+                <span>Instant 0% Commission Payouts</span>
+              </div>
+            </div>
+
+            <!-- Card 2 -->
+            <div class="p-6 sm:p-8 rounded-3xl bg-white border border-slate-200 space-y-4 hover:border-blue-300 hover:shadow-md transition-all shadow-xs">
+              <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold">
+                <i data-lucide="sparkles" class="w-6 h-6"></i>
+              </div>
+              <h3 class="text-xl font-bold font-['Space_Grotesk'] text-slate-900">2. Preserving True Human Artistry</h3>
+              <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">
+                As the internet gets filled with generic AI imagery and distorted text, true brand value comes from original thinking, intentional typography, cultural relevance, and vector precision. We champion human designers as creative leaders.
+              </p>
+              <div class="pt-3 border-t border-slate-100 flex items-center gap-2 text-xs font-semibold text-emerald-600">
+                <i data-lucide="check-circle" class="w-4 h-4"></i>
+                <span>Strict Zero-AI Human Craft</span>
+              </div>
+            </div>
+
+            <!-- Card 3 -->
+            <div class="p-6 sm:p-8 rounded-3xl bg-white border border-slate-200 space-y-4 hover:border-blue-300 hover:shadow-md transition-all shadow-xs">
+              <div class="w-12 h-12 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center font-bold">
+                <i data-lucide="store" class="w-6 h-6"></i>
+              </div>
+              <h3 class="text-xl font-bold font-['Space_Grotesk'] text-slate-900">3. Democratizing High-End Branding</h3>
+              <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">
+                A retail shop in Indore, a cafe in Patna, or a startup in Bengaluru deserves the same caliber of visual packaging as a billion-dollar conglomerate. We make elite commercial graphics affordable and accessible to all.
+              </p>
+              <div class="pt-3 border-t border-slate-100 flex items-center gap-2 text-xs font-semibold text-purple-600">
+                <i data-lucide="check-circle" class="w-4 h-4"></i>
+                <span>Accessible to Every Indian SMB</span>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Bottom Banner Quote in Theme -->
+          <div class="p-8 rounded-3xl bg-white border border-blue-200 shadow-sm flex flex-col md:flex-row items-center justify-between gap-6">
+            <div class="space-y-1 text-center md:text-left">
+              <h4 class="text-lg font-bold font-['Space_Grotesk'] text-slate-900">Are You a Talented Graphic Designer in India?</h4>
+              <p class="text-xs sm:text-sm text-slate-600">Join our verified network, work flexible hours from anywhere, and get paid directly to your bank/UPI instantly.</p>
+            </div>
+            <a href="login.html?mode=signup" class="px-6 py-3.5 rounded-xl bg-blue-600 hover:bg-blue-700 font-bold text-xs sm:text-sm text-white shrink-0 shadow-md shadow-blue-500/20 transition-all flex items-center gap-2">
+              <i data-lucide="user-plus" class="w-4 h-4"></i>
+              <span>Apply as Verified Creator</span>
+            </a>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- Section 5.5: How the 30-Minute Dispatch Works (New Enriched Section) -->
+      <section class="py-16 sm:py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+        <div class="text-center max-w-3xl mx-auto space-y-4">
+          <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 text-blue-700 text-xs font-bold uppercase tracking-wider border border-blue-200">
+            <i data-lucide="workflow" class="w-3.5 h-3.5 text-blue-600"></i>
+            <span>Transparent Workflow</span>
+          </div>
+          <h2 class="text-2xl sm:text-4xl font-extrabold text-slate-900 font-['Space_Grotesk']">
+            How Your Design Goes from Idea to Delivery in 45 Minutes
+          </h2>
+          <p class="text-slate-600 text-sm sm:text-base leading-relaxed">
+            Zero tickets, zero forms to fill, no multi-day email chains. Here is how our live studio model works seamlessly.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div class="p-6 rounded-3xl bg-white border border-slate-200 shadow-xs space-y-3 relative hover:border-blue-300 hover:shadow-md transition-all">
+            <span class="w-10 h-10 rounded-2xl bg-blue-50 text-blue-600 font-extrabold text-sm flex items-center justify-center font-mono">01</span>
+            <h4 class="font-bold text-base text-slate-900 font-['Space_Grotesk']">Instant Brief on WhatsApp</h4>
+            <p class="text-xs text-slate-600 leading-relaxed">Send your text, logo, or reference images directly on WhatsApp or our quick request form in under 60 seconds.</p>
+          </div>
+
+          <div class="p-6 rounded-3xl bg-white border border-slate-200 shadow-xs space-y-3 relative hover:border-blue-300 hover:shadow-md transition-all">
+            <span class="w-10 h-10 rounded-2xl bg-emerald-50 text-emerald-600 font-extrabold text-sm flex items-center justify-center font-mono">02</span>
+            <h4 class="font-bold text-base text-slate-900 font-['Space_Grotesk']">Specialist Assignment</h4>
+            <p class="text-xs text-slate-600 leading-relaxed">Our dispatch engine pairs your specific format (e.g. YouTube CTR thumbnail or retail packaging) with an active on-duty creator in under 2 minutes.</p>
+          </div>
+
+          <div class="p-6 rounded-3xl bg-white border border-slate-200 shadow-xs space-y-3 relative hover:border-blue-300 hover:shadow-md transition-all">
+            <span class="w-10 h-10 rounded-2xl bg-amber-50 text-amber-600 font-extrabold text-sm flex items-center justify-center font-mono">03</span>
+            <h4 class="font-bold text-base text-slate-900 font-['Space_Grotesk']">Craft & Live Preview</h4>
+            <p class="text-xs text-slate-600 leading-relaxed">Your creator handcrafts the vectors on Adobe Illustrator/Photoshop. You receive initial watermarked previews on WhatsApp within 30-45 minutes.</p>
+          </div>
+
+          <div class="p-6 rounded-3xl bg-white border border-slate-200 shadow-xs space-y-3 relative hover:border-blue-300 hover:shadow-md transition-all">
+            <span class="w-10 h-10 rounded-2xl bg-purple-50 text-purple-600 font-extrabold text-sm flex items-center justify-center font-mono">04</span>
+            <h4 class="font-bold text-base text-slate-900 font-['Space_Grotesk']">Master Files & Copyright</h4>
+            <p class="text-xs text-slate-600 leading-relaxed">Once approved, instant delivery of layered source files (AI, PSD, SVG, PDF) with 100% full commercial ownership rights.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 5.6: The Design Quixo Human Craft Pledge (100% Quality Guarantee) -->
+      <section class="py-14 bg-slate-50 border-y border-slate-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="bg-white rounded-3xl border border-slate-200 p-8 sm:p-12 shadow-xs grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+            <div class="lg:col-span-7 space-y-4">
+              <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 text-xs font-bold uppercase tracking-wider border border-emerald-200">
+                <i data-lucide="shield" class="w-3.5 h-3.5 text-emerald-600"></i>
+                <span>Our Quality Guarantee</span>
+              </div>
+              <h3 class="text-2xl sm:text-3xl font-extrabold text-slate-900 font-['Space_Grotesk']">
+                The Zero-AI Craftsmanship Guarantee
+              </h3>
+              <p class="text-sm text-slate-600 leading-relaxed">
+                Every design delivered through Design Quixo is handcrafted from a blank canvas by verified human artists. No Midjourney glitches, no warped text, and no flat uneditable bitmaps.
+              </p>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 text-xs font-semibold text-slate-800">
+                <div class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-emerald-600"></i><span>100% Layered Master Files (PSD/AI)</span></div>
+                <div class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-emerald-600"></i><span>Print-Ready CMYK & 3mm Bleed Margins</span></div>
+                <div class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-emerald-600"></i><span>Full Commercial Rights & Ownership</span></div>
+                <div class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-emerald-600"></i><span>Unlimited Revisions until Satisfaction</span></div>
+              </div>
+            </div>
+
+            <div class="lg:col-span-5 bg-gradient-to-br from-blue-50 to-indigo-50/50 rounded-2xl p-6 sm:p-8 border border-blue-100 text-center space-y-4">
+              <span class="text-4xl sm:text-5xl font-extrabold text-blue-600 font-['Space_Grotesk']">30m SLA</span>
+              <p class="text-xs font-bold text-slate-800 uppercase tracking-wider">Fastest Human Creative Turnaround in India</p>
+              <p class="text-xs text-slate-600">Stationed designers live on duty across 16+ metropolitan hubs for express fulfillment.</p>
+              <a href="request.html" class="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-sm transition-all">
+                <span>Try It Now</span>
+                <i data-lucide="arrow-right" class="w-4 h-4"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 6: Nationwide Presence Across 16+ Metro Hubs -->
+      <section class="py-16 sm:py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+        <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-slate-200 pb-6">
+          <div>
+            <span class="text-xs font-bold uppercase tracking-wider text-blue-600">Local Ground Operations</span>
+            <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 font-['Space_Grotesk']">16+ Regional Hubs Across India</h2>
+          </div>
+          <a href="cities.html" class="text-xs font-bold text-blue-600 hover:text-blue-800 flex items-center gap-1">
+            <span>Explore All Cities Directory</span>
+            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+          </a>
+        </div>
+
+        <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-4 gap-3.5 text-xs">
+          <a href="graphic-designer-in-indore.html" class="p-3.5 rounded-xl bg-slate-50 hover:bg-blue-50 border border-slate-200 hover:border-blue-200 font-semibold text-slate-800 transition-all flex items-center gap-2">
+            <i data-lucide="map-pin" class="w-3.5 h-3.5 text-blue-600 shrink-0"></i>
+            <span>Indore (Central HQ)</span>
+          </a>
+          <a href="graphic-designer-in-bhopal.html" class="p-3.5 rounded-xl bg-slate-50 hover:bg-blue-50 border border-slate-200 hover:border-blue-200 font-semibold text-slate-800 transition-all flex items-center gap-2">
+            <i data-lucide="map-pin" class="w-3.5 h-3.5 text-blue-600 shrink-0"></i>
+            <span>Bhopal</span>
+          </a>
+          <a href="graphic-designer-in-bangalore.html" class="p-3.5 rounded-xl bg-slate-50 hover:bg-blue-50 border border-slate-200 hover:border-blue-200 font-semibold text-slate-800 transition-all flex items-center gap-2">
+            <i data-lucide="map-pin" class="w-3.5 h-3.5 text-blue-600 shrink-0"></i>
+            <span>Bengaluru</span>
+          </a>
+          <a href="graphic-designer-in-mumbai.html" class="p-3.5 rounded-xl bg-slate-50 hover:bg-blue-50 border border-slate-200 hover:border-blue-200 font-semibold text-slate-800 transition-all flex items-center gap-2">
+            <i data-lucide="map-pin" class="w-3.5 h-3.5 text-blue-600 shrink-0"></i>
+            <span>Mumbai</span>
+          </a>
+          <a href="graphic-designer-in-delhi-ncr.html" class="p-3.5 rounded-xl bg-slate-50 hover:bg-blue-50 border border-slate-200 hover:border-blue-200 font-semibold text-slate-800 transition-all flex items-center gap-2">
+            <i data-lucide="map-pin" class="w-3.5 h-3.5 text-blue-600 shrink-0"></i>
+            <span>Delhi NCR</span>
+          </a>
+          <a href="graphic-designer-in-hyderabad.html" class="p-3.5 rounded-xl bg-slate-50 hover:bg-blue-50 border border-slate-200 hover:border-blue-200 font-semibold text-slate-800 transition-all flex items-center gap-2">
+            <i data-lucide="map-pin" class="w-3.5 h-3.5 text-blue-600 shrink-0"></i>
+            <span>Hyderabad</span>
+          </a>
+          <a href="graphic-designer-in-pune.html" class="p-3.5 rounded-xl bg-slate-50 hover:bg-blue-50 border border-slate-200 hover:border-blue-200 font-semibold text-slate-800 transition-all flex items-center gap-2">
+            <i data-lucide="map-pin" class="w-3.5 h-3.5 text-blue-600 shrink-0"></i>
+            <span>Pune</span>
+          </a>
+          <a href="graphic-designer-in-ahmedabad.html" class="p-3.5 rounded-xl bg-slate-50 hover:bg-blue-50 border border-slate-200 hover:border-blue-200 font-semibold text-slate-800 transition-all flex items-center gap-2">
+            <i data-lucide="map-pin" class="w-3.5 h-3.5 text-blue-600 shrink-0"></i>
+            <span>Ahmedabad</span>
+          </a>
+          <a href="graphic-designer-in-kolkata.html" class="p-3.5 rounded-xl bg-slate-50 hover:bg-blue-50 border border-slate-200 hover:border-blue-200 font-semibold text-slate-800 transition-all flex items-center gap-2">
+            <i data-lucide="map-pin" class="w-3.5 h-3.5 text-blue-600 shrink-0"></i>
+            <span>Kolkata</span>
+          </a>
+          <a href="graphic-designer-in-jaipur.html" class="p-3.5 rounded-xl bg-slate-50 hover:bg-blue-50 border border-slate-200 hover:border-blue-200 font-semibold text-slate-800 transition-all flex items-center gap-2">
+            <i data-lucide="map-pin" class="w-3.5 h-3.5 text-blue-600 shrink-0"></i>
+            <span>Jaipur</span>
+          </a>
+          <a href="graphic-designer-in-chandigarh.html" class="p-3.5 rounded-xl bg-slate-50 hover:bg-blue-50 border border-slate-200 hover:border-blue-200 font-semibold text-slate-800 transition-all flex items-center gap-2">
+            <i data-lucide="map-pin" class="w-3.5 h-3.5 text-blue-600 shrink-0"></i>
+            <span>Chandigarh</span>
+          </a>
+          <a href="graphic-designer-in-surat.html" class="p-3.5 rounded-xl bg-slate-50 hover:bg-blue-50 border border-slate-200 hover:border-blue-200 font-semibold text-slate-800 transition-all flex items-center gap-2">
+            <i data-lucide="map-pin" class="w-3.5 h-3.5 text-blue-600 shrink-0"></i>
+            <span>Surat</span>
+          </a>
+          <a href="graphic-designer-in-lucknow.html" class="p-3.5 rounded-xl bg-slate-50 hover:bg-blue-50 border border-slate-200 hover:border-blue-200 font-semibold text-slate-800 transition-all flex items-center gap-2">
+            <i data-lucide="map-pin" class="w-3.5 h-3.5 text-blue-600 shrink-0"></i>
+            <span>Lucknow</span>
+          </a>
+          <a href="graphic-designer-in-chennai.html" class="p-3.5 rounded-xl bg-slate-50 hover:bg-blue-50 border border-slate-200 hover:border-blue-200 font-semibold text-slate-800 transition-all flex items-center gap-2">
+            <i data-lucide="map-pin" class="w-3.5 h-3.5 text-blue-600 shrink-0"></i>
+            <span>Chennai</span>
+          </a>
+          <a href="graphic-designer-in-nagpur.html" class="p-3.5 rounded-xl bg-slate-50 hover:bg-blue-50 border border-slate-200 hover:border-blue-200 font-semibold text-slate-800 transition-all flex items-center gap-2">
+            <i data-lucide="map-pin" class="w-3.5 h-3.5 text-blue-600 shrink-0"></i>
+            <span>Nagpur</span>
+          </a>
+          <a href="graphic-designer-in-patna.html" class="p-3.5 rounded-xl bg-slate-50 hover:bg-blue-50 border border-slate-200 hover:border-blue-200 font-semibold text-slate-800 transition-all flex items-center gap-2">
+            <i data-lucide="map-pin" class="w-3.5 h-3.5 text-blue-600 shrink-0"></i>
+            <span>Patna</span>
+          </a>
+        </div>
+      </section>
+
+      <!-- Section 7: Bottom CTA -->
+      <section class="py-16 bg-slate-50 border-t border-slate-200 text-center">
+        <div class="max-w-3xl mx-auto px-4 space-y-6">
+          <h2 class="text-2xl sm:text-4xl font-extrabold text-slate-900 font-['Space_Grotesk']">
+            Ready to Experience High-Speed Human Design?
+          </h2>
+          <p class="text-sm sm:text-base text-slate-600">
+            Send your brief in under 60 seconds. Our verified creator matches instantly on WhatsApp and delivers editable files in 30-45 minutes.
+          </p>
+          <div class="flex flex-wrap items-center justify-center gap-3 pt-2">
+            <a href="request.html" class="px-6 py-3.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs sm:text-sm shadow-md transition-all flex items-center gap-2">
+              <span>Submit Instant Design Brief</span>
+              <i data-lucide="arrow-right" class="w-4 h-4"></i>
+            </a>
+            <a href="https://wa.me/918602420897" target="_blank" class="px-6 py-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs sm:text-sm shadow-sm transition-all flex items-center gap-2">
+              <img src="wa_icon.png" alt="WhatsApp" class="w-4 h-4 object-contain rounded-full shrink-0" onerror="this.onerror=null; this.src='wa_icon.png';" />
+              <span>Talk to Dispatch Desk</span>
+            </a>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Global Trustworthy Footer -->
+    <footer class="border-t border-slate-200 bg-slate-50 py-12 text-xs text-slate-600">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div class="space-y-3">
+          <div class="flex items-center gap-2">
+            <img src="favicon.png" alt="Design Quixo Logo" class="w-8 h-8 object-contain rounded-lg shrink-0" onerror="this.onerror=null; this.src='favicon.png';" />
+            <span class="font-extrabold text-lg font-['Space_Grotesk'] text-slate-900">DESIGN <span class="text-blue-600">QUIXO</span></span>
+          </div>
+          <p class="text-slate-500 leading-relaxed">India's fastest manual graphic design network. Real human creators delivering high-res vector files in 30-60 minutes directly on WhatsApp.</p>
+        </div>
+
+        <div>
+          <h4 class="font-bold text-slate-900 uppercase tracking-wider text-[11px] mb-3">Quick Navigation</h4>
+          <ul class="space-y-2">
+            <li><a href="index.html" class="hover:text-blue-600 transition-colors">Home Page</a></li>
+            <li><a href="services.html" class="hover:text-blue-600 transition-colors">All Design Services</a></li>
+            <li><a href="latest-works.html" class="hover:text-blue-600 transition-colors">Portfolio Gallery</a></li>
+            <li><a href="about.html" class="text-blue-600 font-semibold transition-colors">About Our Platform</a></li>
+            <li><a href="cities.html" class="hover:text-blue-600 transition-colors">Cities Directory (16+ Hubs)</a></li>
+            <li><a href="terms.html" class="hover:text-blue-600 transition-colors">Terms of Service</a></li>
+            <li><a href="privacy.html" class="hover:text-blue-600 transition-colors">Privacy & Cookie Policy</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="font-bold text-slate-900 uppercase tracking-wider text-[11px] mb-3">Creator & Careers</h4>
+          <ul class="space-y-2">
+            <li><a href="login.html?mode=signup" class="hover:text-blue-600 font-semibold text-blue-600 transition-colors">Apply as Verified Designer</a></li>
+            <li><a href="login.html" class="hover:text-blue-600 transition-colors">Designer Workstation Login</a></li>
+            <li><a href="request.html" class="hover:text-blue-600 transition-colors">Submit Instant Design Brief</a></li>
+            <li><a href="terms.html" class="hover:text-blue-600 transition-colors">Terms & Conditions</a></li>
+            <li><a href="contact.html" class="hover:text-blue-600 transition-colors">Help & Contact Desk</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="font-bold text-slate-900 uppercase tracking-wider text-[11px] mb-3">Direct Support Desk</h4>
+          <p class="text-slate-500 mb-2">Design Quixo Operations & Dispatch</p>
+          <div class="space-y-2">
+            <a href="https://wa.me/918602420897" target="_blank" class="inline-flex items-center gap-2 font-bold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 px-3.5 py-2 rounded-xl border border-emerald-200 transition-colors shadow-xs w-full">
+              <img src="wa_icon.png" alt="WhatsApp" class="w-4 h-4 object-contain rounded-full shrink-0" onerror="this.onerror=null; this.src='wa_icon.png';" />
+              <span>+91 86024 20897</span>
+            </a>
+            <a href="mailto:designquixo@gmail.com" class="inline-flex items-center gap-2 font-bold text-blue-700 bg-blue-50 hover:bg-blue-100 px-3.5 py-2 rounded-xl border border-blue-200 transition-colors shadow-xs w-full text-xs">
+              <i data-lucide="mail" class="w-4 h-4 text-blue-600 shrink-0"></i>
+              <span>designquixo@gmail.com</span>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8 pt-6 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left text-slate-400">
+        <p>&copy; 2026 Design Quixo India. All rights reserved.</p>
+        <div class="flex items-center gap-4 text-[11px] flex-wrap justify-center sm:justify-end">
+          <a href="terms.html" class="hover:text-slate-600 underline">Terms of Service</a>
+          <a href="privacy.html" class="hover:text-slate-600 underline">Privacy Policy</a>
+          <a href="privacy.html#cookies" class="hover:text-slate-600 underline">Cookie Policy</a>
+          <a href="contact.html" class="hover:text-slate-600 underline">Contact Desk</a>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Global Cookie Consent Component Script -->
+    <script src="cookie-banner.js"></script>
+
+    <script>
+      lucide.createIcons();
+
+      const mobileBtn = document.getElementById('mobile-menu-btn');
+      const mobileMenu = document.getElementById('mobile-menu');
+      if (mobileBtn && mobileMenu) {
+        mobileBtn.addEventListener('click', () => {
+          mobileMenu.classList.toggle('hidden');
+        });
+      }
+    </script>
+  </body>
+</html>

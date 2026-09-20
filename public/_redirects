@@ -1,0 +1,7 @@
+/api/email-otp-send /.netlify/functions/email-otp-send 200
+/api/email-otp-verify /.netlify/functions/email-otp-verify 200
+/api/send-email /.netlify/functions/send-email 200
+/api/notify-new-job /.netlify/functions/notify-new-job 200
+/api/sms-send /.netlify/functions/sms-send 200
+/api/sms-verify /.netlify/functions/sms-verify 200
+

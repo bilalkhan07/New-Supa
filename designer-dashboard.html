@@ -1,0 +1,3401 @@
+  <!doctype html>
+  <html lang="en" class="scroll-smooth">
+    <head>
+      <meta charset="UTF-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <title>Designer Workstation - Design Quixo India</title>
+      <meta name="description" content="Verified designer portal for receiving real-time human graphic design briefs and collaborating with clients." />
+      <link rel="icon" type="image/png" href="favicon.png" />
+      <link rel="shortcut icon" type="image/png" href="favicon.png" />
+      <link rel="apple-touch-icon" href="favicon.png" />
+      <link rel="preconnect" href="https://fonts.googleapis.com">
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+      <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+      <script src="https://cdn.tailwindcss.com"></script>
+      <script src="security.js"></script>
+      <script src="notification-sound.js"></script>
+      <script src="store.js"></script>
+      <script>
+        (function(){
+          const filterMsg = function(msg) {
+            if (!msg) return false;
+            const s = typeof msg === 'string' ? msg : (msg.message || msg.toString());
+            return s.includes('vite') || s.includes('websocket') || s.includes('WebSocket') || s.includes('failed to connect');
+          };
+          const _err = console.error;
+          const _warn = console.warn;
+          console.error = function(...args) {
+            if (args.some(filterMsg)) return;
+            _err.apply(console, args);
+          };
+          console.warn = function(...args) {
+            if (args.some(filterMsg)) return;
+            _warn.apply(console, args);
+          };
+          window.addEventListener('error', function(e) {
+            if (filterMsg(e.message)) { e.stopImmediatePropagation(); e.preventDefault(); }
+          }, true);
+        })();
+      </script>
+      <script>
+        function enforceDesignerAuth() {
+          const rawUser = localStorage.getItem('dq_current_user') || sessionStorage.getItem('dq_current_user');
+          if (!rawUser) {
+            window.location.replace('login.html?logged_out=true');
+            return false;
+          }
+          try {
+            const u = JSON.parse(rawUser);
+            if (!u || (!u.phone && !u.identifier && !u.email)) {
+              window.location.replace('login.html?logged_out=true');
+              return false;
+            }
+          } catch(e) {
+            window.location.replace('login.html?logged_out=true');
+            return false;
+          }
+          return true;
+        }
+        enforceDesignerAuth();
+        window.addEventListener('pageshow', function(e) {
+          enforceDesignerAuth();
+        });
+      </script>
+      <!-- Design Quixo Source & UI Security -->
+      <script>
+        (function(){
+          const blockEvent = function(e){ e.preventDefault(); e.stopPropagation(); return false; };
+          window.addEventListener('contextmenu', blockEvent, true);
+          document.addEventListener('contextmenu', blockEvent, true);
+          window.oncontextmenu = function(){ return false; };
+          document.oncontextmenu = function(){ return false; };
+          const blockKeys = function(e){
+            if (e.key === 'F12' || e.keyCode === 123) { e.preventDefault(); e.stopPropagation(); return false; }
+            const ctrl = e.ctrlKey || e.metaKey;
+            if (ctrl && (e.shiftKey || e.altKey)) {
+              const k = (e.key || '').toUpperCase();
+              if (k === 'I' || k === 'J' || k === 'C' || k === 'K' || k === 'S' || k === 'E') {
+                e.preventDefault(); e.stopPropagation(); return false;
+              }
+            }
+            if (ctrl) {
+              const k = (e.key || '').toUpperCase();
+              if (k === 'U' || k === 'S' || k === 'P') { e.preventDefault(); e.stopPropagation(); return false; }
+            }
+          };
+          window.addEventListener('keydown', blockKeys, true);
+          document.addEventListener('keydown', blockKeys, true);
+          document.addEventListener('selectstart', function(e){
+            const t = e.target && e.target.tagName ? e.target.tagName.toUpperCase() : '';
+            if (t !== 'INPUT' && t !== 'TEXTAREA') { e.preventDefault(); return false; }
+          }, true);
+          document.addEventListener('copy', function(e){
+            const t = e.target && e.target.tagName ? e.target.tagName.toUpperCase() : '';
+            if (t !== 'INPUT' && t !== 'TEXTAREA') { e.preventDefault(); return false; }
+          }, true);
+        })();
+      </script>
+      <link rel="stylesheet" href="src/index.css" />
+      <script src="https://unpkg.com/lucide@latest"></script>
+      <script src="store.js"></script>
+      <script src="notification-sound.js"></script>
+      <script src="push-notifications.js"></script>
+      <script type="module" src="/src/supabase-service.ts"></script>
+      <script type="module" src="/src/agreement-service.ts"></script>
+    </head>
+    <body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col font-['Plus_Jakarta_Sans',sans-serif]">
+      
+      <!-- Top Bar -->
+      <header class="bg-white border-b border-slate-200 min-h-16 py-2 sm:py-0 flex items-center justify-between px-3 sm:px-6 lg:px-8 sticky top-0 z-30 shadow-xs">
+        <div class="flex items-center gap-2 sm:gap-3 shrink-0">
+          <a href="index.html" class="flex items-center gap-2 sm:gap-2.5">
+            <img src="favicon.png" alt="Design Quixo Logo" class="w-8 h-8 sm:w-9 sm:h-9 object-contain rounded-xl shrink-0" onerror="this.onerror=null; this.src='favicon.png';" />
+            <span class="font-extrabold text-sm sm:text-base font-['Space_Grotesk'] text-slate-900 whitespace-nowrap">DESIGN <span class="text-blue-600">QUIXO</span></span>
+          </a>
+          <span class="hidden sm:inline-block bg-slate-100 border border-slate-200 text-slate-600 text-xs px-2.5 py-0.5 rounded-full font-medium whitespace-nowrap">Designer Workstation</span>
+        </div>
+
+        <!-- Top Right Status & Profile Pill -->
+        <div class="flex items-center gap-2 sm:gap-3 shrink-0 flex-wrap sm:flex-nowrap">
+          <!-- Chrome Push Notification Status / Enable Button -->
+          <button type="button" id="dq-push-status-pill" onclick="if(window.DQPush) window.DQPush.requestPermissionAndSubscribe()" class="flex items-center gap-1.5 bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-300 px-2.5 sm:px-3 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer shadow-2xs" title="Enable Chrome Desktop & Mobile Push Notifications (Alerts when tab/browser is closed)">
+            <i data-lucide="bell-ring" class="w-3.5 h-3.5 text-amber-600"></i>
+            <span class="hidden sm:inline">🔔 Enable Chrome Alerts</span>
+            <span class="sm:hidden">Alerts</span>
+          </button>
+
+          <!-- Test Sound & Push Notification Button -->
+          <button type="button" id="designer-test-sound-btn" onclick="if(window.DQPush) { window.DQPush.testNotificationWithChime(); } else if(window.DQSoundService) { window.DQSoundService.unlockAudio(); window.DQSoundService.playNewJobChime(5); if(typeof showToast==='function') showToast('🔊 Playing sound alert 5 times...'); }" class="flex items-center gap-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 px-2.5 sm:px-3 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer shadow-2xs" title="Test Chrome System Push Notification & 5x Chime Alert">
+            <i data-lucide="volume-2" class="w-3.5 h-3.5 text-emerald-600"></i>
+            <span class="hidden sm:inline">🔊 Test Alert (5x)</span>
+            <span class="sm:hidden">Test (5x)</span>
+          </button>
+
+          <!-- Live Status Indicator -->
+          <button id="toggle-availability-btn" class="flex items-center gap-1.5 sm:gap-2 bg-slate-100 hover:bg-slate-200 border border-slate-200 px-2.5 sm:px-3 py-1.5 rounded-full text-xs font-semibold transition-colors">
+            <span id="status-indicator" class="w-2 h-2 rounded-full bg-amber-500 animate-ping shrink-0"></span>
+            <span id="status-text" class="text-amber-700 font-bold hidden sm:inline whitespace-nowrap">Checking Clearance...</span>
+            <span class="sm:hidden text-slate-700 font-bold text-xs whitespace-nowrap">Status</span>
+          </button>
+
+          <!-- Designer Avatar & Info -->
+          <div class="flex items-center gap-2 pl-2 border-l border-slate-200">
+            <div id="designer-avatar" class="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold text-xs shadow-xs shrink-0">
+              DQ
+            </div>
+            <div class="hidden md:block text-left text-xs">
+              <span id="designer-name-top" class="font-bold text-slate-900 block truncate max-w-[120px]">Creator</span>
+              <span id="designer-role-badge" class="text-[10px] text-amber-600 font-medium">Under Review</span>
+            </div>
+            <!-- Global Top Bar Sign Out Button -->
+            <button id="topbar-logout-btn" class="ml-1 sm:ml-2 px-2.5 sm:px-3 py-1.5 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 text-xs font-bold flex items-center gap-1 transition-colors" title="Sign Out">
+              <i data-lucide="log-out" class="w-3.5 h-3.5"></i>
+              <span class="hidden sm:inline">Sign Out</span>
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <!-- Main Workspace with Left Sidebar -->
+      <div class="flex-grow flex flex-col md:flex-row">
+        
+        <!-- Left Sidebar (Desktop) -->
+        <aside class="w-full md:w-64 bg-white border-r border-slate-200 p-4 shrink-0 flex flex-col justify-between hidden md:flex">
+          <div class="space-y-6">
+            <nav class="space-y-1.5" id="sidebar-nav">
+              <button class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all bg-blue-600 text-white shadow-sm" data-view="live-jobs" id="nav-btn-jobs">
+                <i data-lucide="inbox" class="w-4 h-4"></i>
+                <span class="flex-grow text-left">Available Jobs</span>
+                <span id="live-job-badge" class="bg-blue-700 text-white text-[10px] font-extrabold px-2 py-0.5 rounded-full">0</span>
+              </button>
+
+              <button class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all text-slate-600 hover:text-slate-900 hover:bg-slate-100" data-view="my-jobs" id="nav-btn-my-jobs">
+                <i data-lucide="check-square" class="w-4 h-4 text-slate-400"></i>
+                <span class="flex-grow text-left">My Accepted Jobs</span>
+                <span id="my-jobs-badge" class="bg-emerald-100 text-emerald-700 text-[10px] font-extrabold px-2 py-0.5 rounded-full">0</span>
+              </button>
+
+              <button class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all text-slate-600 hover:text-slate-900 hover:bg-slate-100" data-view="earnings" id="nav-btn-earnings">
+                <i data-lucide="wallet" class="w-4 h-4 text-emerald-600"></i>
+                <span class="flex-grow text-left">Earnings & Payouts</span>
+                <span id="earnings-badge" class="bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] font-extrabold px-2 py-0.5 rounded-full font-mono">60%</span>
+              </button>
+
+              <button class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all text-slate-600 hover:text-slate-900 hover:bg-slate-100" data-view="guidelines" id="nav-btn-guidelines">
+                <i data-lucide="shield-check" class="w-4 h-4 text-slate-400"></i>
+                <span class="flex-grow text-left">Quality Standards</span>
+              </button>
+
+              <button class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all text-slate-600 hover:text-slate-900 hover:bg-slate-100" data-view="agreement" id="nav-btn-agreement">
+                <i data-lucide="file-signature" class="w-4 h-4 text-blue-600"></i>
+                <span class="flex-grow text-left">Agreement & E-Sign</span>
+                <span id="designer-agreement-nav-badge" class="bg-amber-100 text-amber-800 text-[10px] font-extrabold px-2 py-0.5 rounded-full">Required ✍</span>
+              </button>
+
+              <button class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all text-slate-600 hover:text-slate-900 hover:bg-slate-100" data-view="profile" id="nav-btn-profile">
+                <i data-lucide="user-check" class="w-4 h-4 text-slate-400"></i>
+                <span class="flex-grow text-left">Profile & Clearances</span>
+              </button>
+            </nav>
+
+            <div class="p-4 rounded-2xl bg-emerald-50/80 border border-emerald-200 text-xs text-slate-700 space-y-2">
+              <div class="flex items-center gap-1.5 text-emerald-900 font-bold">
+                <i data-lucide="banknote" class="w-4 h-4 text-emerald-600"></i>
+                <span>60% Guaranteed Payout</span>
+              </div>
+              <p class="text-[11px] text-slate-600 leading-relaxed">
+                Designers receive 60% of every accepted client order. Instant payout upon delivery via UPI or Bank Transfer.
+              </p>
+            </div>
+          </div>
+
+          <!-- Desktop Sidebar Footer Actions -->
+          <div class="pt-6 border-t border-slate-200 space-y-2">
+            <a href="index.html" class="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors">
+              <i data-lucide="arrow-left" class="w-4 h-4"></i>
+              <span>Public Website</span>
+            </a>
+            <button id="designer-logout-btn" class="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-semibold text-rose-600 hover:bg-rose-50 transition-colors text-left">
+              <i data-lucide="log-out" class="w-4 h-4"></i>
+              <span>Sign Out</span>
+            </button>
+          </div>
+        </aside>
+
+        <!-- Mobile Top Navigation Tabs -->
+        <div class="md:hidden bg-white border-b border-slate-200 px-3 py-2 flex items-center gap-1.5 overflow-x-auto scrollbar-none sticky top-14 z-20 shadow-2xs">
+          <button class="nav-item px-3 py-1.5 rounded-lg text-xs font-bold transition-all bg-blue-600 text-white shadow-xs shrink-0 flex items-center gap-1.5" data-view="live-jobs">
+            <i data-lucide="inbox" class="w-3.5 h-3.5"></i>
+            <span>Available Jobs</span>
+            <span id="mobile-live-badge" class="bg-white/20 text-white text-[9px] px-1.5 py-0.2 rounded-full">0</span>
+          </button>
+          <button class="nav-item px-3 py-1.5 rounded-lg text-xs font-semibold transition-all bg-slate-100 text-slate-700 shrink-0 flex items-center gap-1.5" data-view="my-jobs">
+            <i data-lucide="check-square" class="w-3.5 h-3.5 text-slate-500"></i>
+            <span>My Jobs</span>
+          </button>
+          <button class="nav-item px-3 py-1.5 rounded-lg text-xs font-semibold transition-all bg-slate-100 text-slate-700 shrink-0 flex items-center gap-1.5" data-view="earnings">
+            <i data-lucide="wallet" class="w-3.5 h-3.5 text-emerald-600"></i>
+            <span>Earnings</span>
+          </button>
+          <button class="nav-item px-3 py-1.5 rounded-lg text-xs font-semibold transition-all bg-slate-100 text-slate-700 shrink-0 flex items-center gap-1.5" data-view="guidelines">
+            <i data-lucide="shield-check" class="w-3.5 h-3.5 text-slate-500"></i>
+            <span>Quality</span>
+          </button>
+          <button class="nav-item px-3 py-1.5 rounded-lg text-xs font-semibold transition-all bg-slate-100 text-slate-700 shrink-0 flex items-center gap-1.5" data-view="agreement">
+            <i data-lucide="file-signature" class="w-3.5 h-3.5 text-blue-600"></i>
+            <span>Agreement</span>
+          </button>
+          <button class="nav-item px-3 py-1.5 rounded-lg text-xs font-semibold transition-all bg-slate-100 text-slate-700 shrink-0 flex items-center gap-1.5" data-view="profile">
+            <i data-lucide="user-check" class="w-3.5 h-3.5 text-slate-500"></i>
+            <span>Profile</span>
+          </button>
+        </div>
+
+        <!-- Dynamic Content Area -->
+        <main class="flex-grow p-4 sm:p-8 bg-slate-50/70 min-h-[85vh] flex flex-col justify-between">
+          
+          <div class="space-y-6 flex-grow">
+            <!-- ================= VIEW 0: PENDING APPROVAL WALL ================= -->
+            <section id="view-pending-approval" class="space-y-6">
+              <div class="max-w-3xl mx-auto space-y-6">
+                
+                <!-- Pending Header Banner -->
+                <div class="p-8 rounded-3xl bg-white border border-amber-200 text-center relative overflow-hidden shadow-sm">
+                  <div class="w-14 h-14 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center mx-auto mb-4 border border-amber-200">
+                    <i data-lucide="clock" class="w-7 h-7"></i>
+                  </div>
+
+                  <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-amber-50 border border-amber-200 text-amber-800 text-xs font-bold mb-3">
+                    <span class="w-2 h-2 rounded-full bg-amber-500 animate-ping"></span>
+                    <span>STATUS: PENDING VERIFICATION CLEARANCE</span>
+                  </div>
+
+                  <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 font-['Space_Grotesk'] mb-2">
+                    Designer Application Under Review
+                  </h2>
+                  <p class="text-sm text-slate-600 max-w-xl mx-auto leading-relaxed">
+                    Thank you for applying to Design Quixo. To protect client quality and uphold our strict <strong class="text-slate-900">Zero-AI Human Craftsmanship</strong> standard, our Support & Quality Team reviews each designer's portfolio before client briefs are unlocked.
+                  </p>
+                </div>
+
+                <!-- Verification Progress Roadmap -->
+                <div class="p-6 rounded-3xl bg-white border border-slate-200 space-y-4 shadow-xs">
+                  <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider font-mono">Verification Progress Roadmap</h3>
+                  
+                  <div class="space-y-3">
+                    <div class="flex items-center gap-3 p-3.5 rounded-xl bg-emerald-50 border border-emerald-200">
+                      <div class="w-7 h-7 rounded-full bg-emerald-600 text-white flex items-center justify-center font-bold text-xs shrink-0">✓</div>
+                      <div class="flex-grow">
+                        <span class="text-xs font-bold text-slate-900 block">Step 1: Application & Portfolio Submitted</span>
+                        <span class="text-[11px] text-emerald-800">Your profile details and portfolio link have been recorded to the central registry.</span>
+                      </div>
+                      <span class="text-[10px] text-emerald-700 font-bold bg-emerald-100 px-2 py-0.5 rounded">Completed</span>
+                    </div>
+
+                    <div class="flex items-center gap-3 p-3.5 rounded-xl bg-amber-50 border border-amber-200">
+                      <div class="w-7 h-7 rounded-full bg-amber-500 text-white flex items-center justify-center font-bold text-xs shrink-0">2</div>
+                      <div class="flex-grow">
+                        <span class="text-xs font-bold text-slate-900 block">Step 2: Manual Portfolio Quality Audit</span>
+                        <span class="text-[11px] text-amber-800">Support team reviews your Behance/Dribbble/Drive link for original vector & layered PSD capability.</span>
+                      </div>
+                      <span class="text-[10px] text-amber-700 font-bold bg-amber-100 px-2 py-0.5 rounded animate-pulse">In Review</span>
+                    </div>
+
+                    <div class="flex items-center gap-3 p-3.5 rounded-xl bg-slate-50 border border-slate-200 text-slate-400">
+                      <div class="w-7 h-7 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center font-bold text-xs shrink-0">3</div>
+                      <div class="flex-grow">
+                        <span class="text-xs font-bold text-slate-700 block">Step 3: Workstation Brief Receiving Clearance</span>
+                        <span class="text-[11px] text-slate-500">Upon approval, client jobs appear instantly in real-time on your dashboard.</span>
+                      </div>
+                      <span class="text-[10px] text-slate-500 font-bold bg-slate-200 px-2 py-0.5 rounded">Locked</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Profile Summary Submitted -->
+                <div class="p-6 rounded-3xl bg-white border border-slate-200 space-y-4 shadow-xs" id="pending-applicant-summary">
+                  <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                    <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 font-mono">Submitted Profile Details</h3>
+                    <span class="text-[10px] font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full border border-blue-100">Verified Submission</span>
+                  </div>
+                  
+                  <div class="flex items-center gap-4 p-3 rounded-2xl bg-slate-50 border border-slate-200">
+                    <div id="pending-dp-container" class="w-14 h-14 rounded-full bg-slate-200 border-2 border-blue-400 flex items-center justify-center overflow-hidden shrink-0 shadow-xs">
+                      <i data-lucide="user" id="pending-dp-default-icon" class="w-7 h-7 text-slate-400"></i>
+                      <img id="pending-dp-img" src="" alt="Applicant DP" class="hidden w-full h-full object-cover" />
+                    </div>
+                    <div>
+                      <span class="text-xs font-bold text-slate-900 block">Uploaded Profile Photo / DP</span>
+                      <span class="text-[11px] text-slate-500">Identity photograph registered with application.</span>
+                    </div>
+                  </div>
+
+                  <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                    <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200">
+                      <span class="text-slate-500 block text-[10px]">Applicant Name:</span>
+                      <span id="pending-name" class="font-bold text-slate-900 text-sm">Designer Applicant</span>
+                    </div>
+                    <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200">
+                      <span class="text-slate-500 block text-[10px]">Contact Identifier:</span>
+                      <span id="pending-contact" class="font-mono text-blue-600 font-bold text-sm">+91 Contact</span>
+                    </div>
+                    <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200 sm:col-span-2">
+                      <span class="text-slate-500 block text-[10px]">Portfolio URL:</span>
+                      <a id="pending-portfolio" href="#" target="_blank" class="font-mono text-blue-600 hover:underline font-semibold block truncate">https://behance.net/portfolio</a>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Action Controls with Official WhatsApp Logo & Sign Out -->
+                <div class="flex flex-col sm:flex-row gap-3">
+                  <button id="recheck-approval-btn" class="flex-1 py-3.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm shadow-sm flex items-center justify-center gap-2 transition-all">
+                    <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+                    <span>Check Approval Status</span>
+                  </button>
+                  
+                  <a href="https://wa.me/918602420897?text=Hello%20Design%20Quixo%20Support,%20I%20have%20submitted%20my%20designer%20application.%20Please%20review%20my%20portfolio." target="_blank" class="flex-1 py-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm shadow-sm flex items-center justify-center gap-2 transition-all">
+                    <img src="wa_icon.png" alt="WhatsApp" class="w-4 h-4 object-contain rounded-full shrink-0" onerror="this.onerror=null; this.src='wa_icon.png';" />
+                    <span>WhatsApp Support Desk</span>
+                  </a>
+                </div>
+
+                <div class="pt-2 text-center">
+                  <button id="pending-logout-btn" class="inline-flex items-center gap-1.5 text-xs text-rose-600 hover:text-rose-700 font-bold py-2 px-4 rounded-xl hover:bg-rose-50 transition-colors">
+                    <i data-lucide="log-out" class="w-3.5 h-3.5"></i>
+                    <span>Sign Out / Switch Account</span>
+                  </button>
+                </div>
+
+              </div>
+            </section>
+
+
+            <!-- ================= VIEW 1: LIVE AVAILABLE JOBS (Max 2 Designers per Job) ================= -->
+            <section id="view-live-jobs" class="hidden space-y-6">
+              
+              <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-3xl border border-slate-200 shadow-xs">
+                <div>
+                  <div class="inline-flex items-center gap-2 px-3 py-0.5 rounded-full bg-blue-50 border border-blue-200 text-blue-700 text-xs font-bold mb-1">
+                    <span class="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span>
+                    <span>VERIFIED CREATOR WORKSTATION • LIVE INCOMING ORDERS</span>
+                  </div>
+                  <h1 class="text-2xl font-extrabold text-slate-900 font-['Space_Grotesk']">Available Jobs</h1>
+                  <p class="text-xs text-slate-500">Select an open client work below to claim your spot and coordinate directly with operations.</p>
+                </div>
+
+                <div class="flex items-center gap-2 flex-wrap">
+                  <button type="button" onclick="if(window.DQSoundService) { window.DQSoundService.playNewJobChime(5); if(typeof showToast==='function') showToast('🔊 Playing your MP3 5 times...'); }" class="p-2.5 px-3.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer shadow-2xs" title="Test 5x MP3 Notification Sound">
+                    <i data-lucide="volume-2" class="w-4 h-4 text-emerald-600"></i>
+                    <span>Test MP3 Sound (5x)</span>
+                  </button>
+                  <button id="refresh-jobs-btn" class="p-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 text-xs font-bold flex items-center gap-1.5 transition-colors">
+                    <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+                    <span>Refresh Feed</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Live Jobs Cards Grid -->
+              <div id="jobs-list" class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+                <!-- Populated dynamically via JS -->
+              </div>
+
+              <!-- Empty State -->
+              <div id="empty-queue" class="py-16 text-center rounded-3xl bg-white border border-slate-200 shadow-xs space-y-4">
+                <div class="w-16 h-16 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center mx-auto border border-blue-100">
+                  <i data-lucide="inbox" class="w-8 h-8"></i>
+                </div>
+                <div class="max-w-md mx-auto space-y-1">
+                  <h3 class="text-base font-bold text-slate-900 font-['Space_Grotesk']">No Open Briefs in Queue</h3>
+                  <p class="text-xs text-slate-500">All current jobs are either claimed (max 2/2 designers) or in progress. New incoming briefs will appear here instantly.</p>
+                </div>
+              </div>
+
+            </section>
+
+
+            <!-- ================= VIEW 2: MY ACCEPTED JOBS ================= -->
+            <section id="view-my-jobs" class="hidden space-y-6">
+              <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                  <h2 class="text-xl font-bold text-slate-900 font-['Space_Grotesk']">My Active Working Briefs</h2>
+                  <p class="text-xs text-slate-500">Update your live job status, submit drafts to operations, and earn your 60% payout upon delivery.</p>
+                </div>
+                <button onclick="requestDesignerPayoutWhatsApp()" class="py-2.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center gap-2 shadow-xs transition-all self-start sm:self-auto cursor-pointer">
+                  <i data-lucide="wallet" class="w-4 h-4"></i>
+                  <span>Claim Payout</span>
+                </button>
+              </div>
+
+              <div id="my-jobs-list" class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+                <!-- Rendered via JS with Status Controls & 60% Earning Pill -->
+              </div>
+
+              <div id="empty-my-jobs" class="py-16 text-center rounded-3xl bg-white border border-slate-200 shadow-xs space-y-4">
+                <div class="w-16 h-16 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center mx-auto border border-emerald-100">
+                  <i data-lucide="check-square" class="w-8 h-8"></i>
+                </div>
+                <div class="max-w-md mx-auto space-y-1">
+                  <h3 class="text-base font-bold text-slate-900 font-['Space_Grotesk']">No Accepted Jobs Yet</h3>
+                  <p class="text-xs text-slate-500">Go to "Available Briefs" and accept any open job to start working on it.</p>
+                </div>
+              </div>
+            </section>
+
+
+            <!-- ================= VIEW 2.5: DEDICATED EARNINGS & PAYOUTS DETAIL ================= -->
+            <section id="view-earnings" class="hidden space-y-6">
+              <div class="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-xs space-y-6 max-w-4xl">
+                
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-6">
+                  <div>
+                    <div class="inline-flex items-center gap-2 px-3 py-0.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs font-bold mb-1">
+                      <i data-lucide="banknote" class="w-3.5 h-3.5 text-emerald-600"></i>
+                      <span>DESIGNER 60% REVENUE SHARE MODEL</span>
+                    </div>
+                    <h2 class="text-2xl font-bold text-slate-900 font-['Space_Grotesk']">Earnings & Payouts</h2>
+                    <p class="text-xs text-slate-500">Your earnings overview and full delivery ledger for completed client projects.</p>
+                  </div>
+
+                  <button onclick="requestDesignerPayoutWhatsApp()" class="py-3 px-5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-sm flex items-center gap-2 transition-all shrink-0 cursor-pointer hover:scale-[1.02] active:scale-[0.98]">
+                    <img src="wa_icon.png" alt="WhatsApp" class="w-4 h-4 object-contain rounded-full shrink-0" onerror="this.onerror=null; this.src='wa_icon.png';" />
+                    <span>Claim Payout via WhatsApp</span>
+                  </button>
+                </div>
+
+                <!-- High Contrast Solid Financial Summary Cards -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  
+                  <!-- Card 1: Solid Emerald Total Earnings -->
+                  <div class="p-6 rounded-3xl bg-emerald-700 text-white shadow-sm space-y-2 border border-emerald-800">
+                    <div class="flex items-center justify-between">
+                      <span class="text-xs font-bold uppercase tracking-wider text-emerald-100 flex items-center gap-1.5">
+                        <i data-lucide="wallet" class="w-4 h-4 text-emerald-200"></i> Total Delivered Earnings (60%)
+                      </span>
+                      <span class="text-[10px] font-bold bg-white text-emerald-800 px-2.5 py-0.5 rounded-full shadow-2xs">Paid / Ready</span>
+                    </div>
+                    <div class="flex items-baseline gap-1 py-1">
+                      <span id="earnings-page-total" class="text-3xl sm:text-4xl font-extrabold font-['Space_Grotesk'] text-white">₹0</span>
+                      <span class="text-sm text-emerald-100 font-semibold">/- INR</span>
+                    </div>
+                    <p class="text-xs text-emerald-100/90 leading-tight">60% guaranteed cut credited upon each completed vector delivery.</p>
+                  </div>
+
+                  <!-- Card 2: Solid Slate Completed Deliveries -->
+                  <div class="p-6 rounded-3xl bg-slate-900 text-white shadow-sm space-y-2 border border-slate-800">
+                    <div class="flex items-center justify-between">
+                      <span class="text-xs font-bold uppercase tracking-wider text-slate-300 flex items-center gap-1.5">
+                        <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-400"></i> Completed Deliveries
+                      </span>
+                      <span class="text-[10px] font-bold bg-emerald-500/20 text-emerald-300 px-2.5 py-0.5 rounded-full border border-emerald-500/30">100% Zero-AI</span>
+                    </div>
+                    <div class="flex items-baseline gap-1 py-1">
+                      <span id="earnings-page-completed-count" class="text-3xl sm:text-4xl font-extrabold font-['Space_Grotesk'] text-white">0</span>
+                      <span class="text-sm text-slate-300 font-semibold">Orders</span>
+                    </div>
+                    <p class="text-xs text-slate-300 leading-tight">High quality vector & layered drafts successfully dispatched to client.</p>
+                  </div>
+
+                </div>
+
+                <!-- Completed Jobs History List -->
+                <div class="space-y-3 pt-2">
+                  <div class="flex items-center justify-between">
+                    <h3 class="text-sm font-bold text-slate-900 font-['Space_Grotesk']">Completed Delivery History & Breakdown</h3>
+                    <span class="text-xs text-slate-500 font-medium">Automatic 60% credit per order</span>
+                  </div>
+                  <div id="designer-completed-ledger" class="space-y-3">
+                    <!-- Populated via JS -->
+                  </div>
+                </div>
+
+              </div>
+            </section>
+
+
+            <!-- ================= VIEW 3: QUALITY GUIDELINES ================= -->
+            <section id="view-guidelines" class="hidden space-y-6">
+              <div class="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-xs space-y-6 max-w-4xl">
+                <div>
+                  <h2 class="text-2xl font-bold text-slate-900 font-['Space_Grotesk']">Zero-AI Quality & Delivery Protocols</h2>
+                  <p class="text-xs text-slate-500">Strict adherence is mandatory to maintain active designer clearance.</p>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
+                    <div class="flex items-center gap-2 text-blue-600 font-bold text-sm">
+                      <i data-lucide="layers" class="w-4 h-4"></i>
+                      <span>Layered Source Files</span>
+                    </div>
+                    <p class="text-xs text-slate-600 leading-relaxed">Deliver editable files (.PSD, .AI, or Figma link) organized with named folders and non-destructive layers.</p>
+                  </div>
+
+                  <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
+                    <div class="flex items-center gap-2 text-amber-600 font-bold text-sm">
+                      <i data-lucide="timer" class="w-4 h-4"></i>
+                      <span>30–60 Min Turnaround</span>
+                    </div>
+                    <p class="text-xs text-slate-600 leading-relaxed">First draft concept must be dispatched via WhatsApp within 45 minutes of accepting a job brief.</p>
+                  </div>
+
+                  <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
+                    <div class="flex items-center gap-2 text-emerald-600 font-bold text-sm">
+                      <i data-lucide="shield-alert" class="w-4 h-4"></i>
+                      <span>Zero AI Artifacts</span>
+                    </div>
+                    <p class="text-xs text-slate-600 leading-relaxed">No Midjourney or Dall-E illustrations. Only clean typographic layouts, manual masking, and authentic vectors.</p>
+                  </div>
+
+                  <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
+                    <div class="flex items-center gap-2 text-indigo-600 font-bold text-sm">
+                      <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+                      <span>Unlimited Fast Revisions</span>
+                    </div>
+                    <p class="text-xs text-slate-600 leading-relaxed">Accommodate minor client adjustments (color tweaks, typo fixes, sizing) promptly on WhatsApp.</p>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+
+            <!-- ================= VIEW 4: PROFILE & CLEARANCES ================= -->
+            <section id="view-profile" class="hidden space-y-6">
+              <div class="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-xs space-y-6 max-w-4xl">
+                <div class="flex items-center justify-between">
+                  <div>
+                    <h2 class="text-2xl font-bold text-slate-900 font-['Space_Grotesk']">Creator Profile & Clearance</h2>
+                    <p class="text-xs text-slate-500">Your verified workstation account parameters.</p>
+                  </div>
+                  <span id="profile-status-badge" class="text-xs px-3 py-1 rounded-full font-bold bg-emerald-100 text-emerald-700 border border-emerald-200">
+                    Verified Active
+                  </span>
+                </div>
+
+                <div class="flex items-center justify-between gap-4 p-4 rounded-2xl bg-slate-50 border border-slate-200">
+                  <div class="flex items-center gap-4">
+                    <div id="profile-dp-container" class="w-16 h-16 rounded-full bg-slate-200 border-2 border-slate-300 flex items-center justify-center overflow-hidden shrink-0 shadow-xs relative">
+                      <i data-lucide="user" id="profile-dp-default-icon" class="w-8 h-8 text-slate-400"></i>
+                      <img id="profile-dp-img" src="" alt="Profile DP" class="hidden w-full h-full object-cover" />
+                    </div>
+                    <div>
+                      <span class="text-xs font-bold text-slate-800 block">Creator Profile Photo / DP</span>
+                      <p class="text-[11px] text-slate-500">Verified identity image registered with Design Quixo.</p>
+                    </div>
+                  </div>
+                  <div>
+                    <input type="file" id="change-profile-dp-file" accept="image/*" class="hidden" onchange="updateProfileDp(event)" />
+                    <label for="change-profile-dp-file" class="px-3 py-1.5 rounded-xl bg-white border border-slate-300 hover:bg-blue-50 hover:border-blue-400 text-slate-700 font-bold text-xs cursor-pointer flex items-center gap-1.5 transition-colors shadow-2xs whitespace-nowrap">
+                      <i data-lucide="camera" class="w-3.5 h-3.5 text-blue-600"></i>
+                      <span>Change Photo</span>
+                    </label>
+                  </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+                  <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+                    <span class="text-slate-500 block text-[10px] uppercase font-bold">Designer Name</span>
+                    <span id="profile-name-val" class="text-sm font-bold text-slate-900">Designer</span>
+                  </div>
+                  <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 flex flex-col justify-between">
+                    <div>
+                      <div class="flex items-center justify-between mb-1">
+                        <span class="text-slate-500 block text-[10px] uppercase font-bold">Registered Email</span>
+                        <button type="button" onclick="openChangeEmailModal()" class="text-blue-600 hover:text-blue-800 text-[11px] font-bold flex items-center gap-1 cursor-pointer">
+                          <i data-lucide="edit-3" class="w-3 h-3"></i>
+                          <span>Change Email</span>
+                        </button>
+                      </div>
+                      <span id="profile-email-val" class="text-sm font-mono font-bold text-blue-600 truncate block">email@example.com</span>
+                    </div>
+                    <span class="text-[10px] text-slate-400 mt-1">Editable via OTP verification</span>
+                  </div>
+                  <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 flex flex-col justify-between">
+                    <div>
+                      <div class="flex items-center justify-between mb-1">
+                        <span class="text-slate-500 block text-[10px] uppercase font-bold">Registered Mobile Number</span>
+                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-slate-200/80 text-[10px] font-bold text-slate-600">
+                          <i data-lucide="lock" class="w-2.5 h-2.5 text-slate-500"></i> Locked
+                        </span>
+                      </div>
+                      <span id="profile-phone-val" class="text-sm font-mono font-bold text-slate-900">+91 ----------</span>
+                    </div>
+                    <span class="text-[10px] text-slate-400 mt-1">🔒 Permanent • Cannot be edited or changed</span>
+                  </div>
+                  <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 flex flex-col justify-between">
+                    <div>
+                      <div class="flex items-center justify-between mb-1">
+                        <span class="text-slate-500 block text-[10px] uppercase font-bold">Account Security</span>
+                        <button type="button" onclick="openChangePasswordModal()" class="text-blue-600 hover:text-blue-800 text-[11px] font-bold flex items-center gap-1 cursor-pointer">
+                          <i data-lucide="key-round" class="w-3 h-3"></i>
+                          <span>Change Password</span>
+                        </button>
+                      </div>
+                      <span class="text-xs font-medium text-slate-600">••••••••••••</span>
+                    </div>
+                    <span class="text-[10px] text-slate-400 mt-1">Secure workstation password</span>
+                  </div>
+                  <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 sm:col-span-2">
+                    <span class="text-slate-500 block text-[10px] uppercase font-bold">Portfolio Record</span>
+                    <a id="profile-portfolio-val" href="#" target="_blank" class="text-xs font-mono text-blue-600 underline block truncate">Portfolio Link</a>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <!-- ================= VIEW 5: CREATOR AGREEMENT & E-SIGN ================= -->
+            <section id="view-agreement" class="hidden space-y-6 max-w-4xl mx-auto">
+              <!-- Header Banner -->
+              <div class="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                  <div class="flex items-center gap-2 mb-1.5">
+                    <span class="w-2.5 h-2.5 rounded-full bg-blue-600 animate-pulse"></span>
+                    <span class="text-xs font-bold font-mono uppercase tracking-wider text-blue-700 bg-blue-50 px-2.5 py-0.5 rounded-full border border-blue-100">Legal Onboarding & E-Sign</span>
+                  </div>
+                  <h1 class="text-2xl sm:text-3xl font-bold text-slate-900 font-['Space_Grotesk']">Creator Agreement & E-Signature</h1>
+                  <p class="text-xs sm:text-sm text-slate-500 mt-1">Official platform agreement. Sign digitally to execute your agreement and download your stamped legal copy.</p>
+                </div>
+                <div id="designer-agreement-status-pill" class="self-start sm:self-auto">
+                  <span class="px-3.5 py-1.5 rounded-full text-xs font-bold bg-amber-50 text-amber-800 border border-amber-200 flex items-center gap-1.5 shadow-2xs">
+                    <span class="w-2 h-2 rounded-full bg-amber-500 animate-ping"></span>
+                    <span>Signature Required ✍</span>
+                  </span>
+                </div>
+              </div>
+
+              <!-- SIGNED STATE CARD (Shown when user has signed) -->
+              <div id="agreement-signed-banner" class="hidden bg-emerald-50 border-2 border-emerald-300 rounded-3xl p-6 sm:p-8 space-y-5 shadow-xs">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-emerald-200/80 pb-4">
+                  <div class="flex items-center gap-3.5">
+                    <div class="w-12 h-12 rounded-2xl bg-emerald-600 text-white flex items-center justify-center font-bold text-lg shadow-xs shrink-0">
+                      <i data-lucide="shield-check" class="w-7 h-7"></i>
+                    </div>
+                    <div>
+                      <h3 class="text-lg font-bold text-emerald-950 font-['Space_Grotesk']">Agreement Legally Signed & Verified ✓</h3>
+                      <p class="text-xs text-emerald-800">Your digital e-signature and registration details have been stamped onto the official agreement PDF.</p>
+                    </div>
+                  </div>
+                  <button type="button" onclick="downloadMySignedAgreementPdf()" class="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-sm flex items-center gap-2 cursor-pointer transition-colors shrink-0">
+                    <i data-lucide="download" class="w-4 h-4"></i>
+                    <span>Download Signed PDF</span>
+                  </button>
+                </div>
+
+                <!-- Executed Parameters Snapshot -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
+                  <div class="bg-white/90 p-3.5 rounded-2xl border border-emerald-200">
+                    <span class="text-[10px] uppercase font-bold text-emerald-800 block mb-0.5">Creator Name:</span>
+                    <span id="signed-card-name" class="font-bold text-slate-900 text-sm">--</span>
+                  </div>
+                  <div class="bg-white/90 p-3.5 rounded-2xl border border-emerald-200">
+                    <span class="text-[10px] uppercase font-bold text-emerald-800 block mb-0.5">Date Signed:</span>
+                    <span id="signed-card-date" class="font-bold text-slate-900 text-sm font-mono">--</span>
+                  </div>
+                  <div class="bg-white/90 p-3.5 rounded-2xl border border-emerald-200">
+                    <span class="text-[10px] uppercase font-bold text-emerald-800 flex items-center gap-1 mb-0.5">
+                      <i data-lucide="phone" class="w-3 h-3 text-blue-600"></i>
+                      <img src="wa_icon.png" class="w-3 h-3 object-contain rounded-full" alt="WA" onerror="this.onerror=null; this.src='wa_icon.png';" />
+                      <span>Calling & WhatsApp:</span>
+                    </span>
+                    <span id="signed-card-phone" class="font-bold text-slate-900 text-sm font-mono">--</span>
+                  </div>
+                  <div class="bg-white/90 p-3.5 rounded-2xl border border-emerald-200">
+                    <span class="text-[10px] uppercase font-bold text-emerald-800 block mb-0.5">Status:</span>
+                    <span class="font-bold text-emerald-700 text-xs flex items-center gap-1">
+                      <span class="w-2 h-2 rounded-full bg-emerald-600"></span>
+                      <span>Archived & Active</span>
+                    </span>
+                  </div>
+                </div>
+
+                <!-- Signature Graphic -->
+                <div class="bg-white rounded-2xl border border-emerald-200 p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                  <div>
+                    <span class="text-[10px] uppercase font-bold text-slate-400 block mb-1">Your Executed Digital Signature:</span>
+                    <div class="h-16 w-48 bg-slate-50 border border-slate-200 rounded-xl p-1.5 flex items-center justify-center">
+                      <img id="signed-card-sig-img" src="" alt="Digital Signature" class="max-h-full max-w-full object-contain" />
+                    </div>
+                  </div>
+                  <div class="flex items-center gap-2 self-end sm:self-center">
+                    <span class="px-3.5 py-2 rounded-xl bg-emerald-100 text-emerald-800 font-bold text-xs border border-emerald-300 flex items-center gap-1.5 shadow-2xs">
+                      <i data-lucide="lock" class="w-3.5 h-3.5 text-emerald-700"></i>
+                      <span>Executed & Locked</span>
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- KEY TERMS SUMMARY ACCORDION / CARDS -->
+              <div class="bg-white rounded-3xl border border-slate-200 p-6 sm:p-8 space-y-4 shadow-xs">
+                <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                  <h3 class="font-bold text-slate-900 text-base font-['Space_Grotesk'] flex items-center gap-2">
+                    <i data-lucide="book-open" class="w-5 h-5 text-blue-600"></i>
+                    <span>Design Quixo Creator Network Terms</span>
+                  </h3>
+                  <button type="button" onclick="downloadMyAgreementTemplate()" class="text-xs text-blue-600 hover:text-blue-800 font-bold flex items-center gap-1 underline cursor-pointer">
+                    <i data-lucide="file-down" class="w-3.5 h-3.5"></i>
+                    <span>Inspect Master PDF</span>
+                  </button>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5 text-xs text-slate-600">
+                  <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-1">
+                    <div class="flex items-center gap-2 font-bold text-slate-900">
+                      <i data-lucide="percent" class="w-4 h-4 text-emerald-600"></i>
+                      <span>60% Guaranteed Payout</span>
+                    </div>
+                    <p class="text-[11px] leading-relaxed">Creators receive 60% of all accepted client job fees. Instant transfers via UPI/Bank upon client satisfaction.</p>
+                  </div>
+
+                  <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-1">
+                    <div class="flex items-center gap-2 font-bold text-slate-900">
+                      <i data-lucide="shield-alert" class="w-4 h-4 text-rose-600"></i>
+                      <span>Strict Zero-AI Policy</span>
+                    </div>
+                    <p class="text-[11px] leading-relaxed">All creatives must be 100% human-crafted in vector/raster software. AI generation results in immediate disqualification.</p>
+                  </div>
+
+                  <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-1">
+                    <div class="flex items-center gap-2 font-bold text-slate-900">
+                      <i data-lucide="copyright" class="w-4 h-4 text-blue-600"></i>
+                      <span>Work-for-Hire IP Transfer</span>
+                    </div>
+                    <p class="text-[11px] leading-relaxed">Upon final delivery and client payment, full commercial copyright ownership transfers exclusively to the client.</p>
+                  </div>
+
+                  <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-1">
+                    <div class="flex items-center gap-2 font-bold text-slate-900">
+                      <i data-lucide="clock-4" class="w-4 h-4 text-amber-600"></i>
+                      <span>30-45 Minute SLA Commitment</span>
+                    </div>
+                    <p class="text-[11px] leading-relaxed">Designers agree to adhere to rapid turnarounds for live express briefs once an order is accepted.</p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- E-SIGNATURE EXECUTION PAD CONTAINER -->
+              <div id="agreement-execution-card" class="bg-white rounded-3xl border border-slate-200 p-6 sm:p-8 space-y-6 shadow-xs">
+                <div class="border-b border-slate-100 pb-3">
+                  <h3 class="font-bold text-slate-900 text-base font-['Space_Grotesk'] flex items-center gap-2">
+                    <i data-lucide="file-signature" class="w-5 h-5 text-blue-600"></i>
+                    <span>Digital Execution Block (4 Mandatory Parameters)</span>
+                  </h3>
+                  <p class="text-xs text-slate-500 mt-0.5">The following 4 fields will be stamped onto the official agreement PDF document.</p>
+                </div>
+
+                <!-- 3 Pre-filled Fields from Registration -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
+                  <div>
+                    <label class="block font-bold text-slate-700 uppercase tracking-wider mb-1">1. Creator Name *</label>
+                    <input type="text" id="esign-creator-name" readonly class="w-full bg-slate-100 border border-slate-300 rounded-xl p-3 text-slate-900 font-bold outline-none cursor-not-allowed" />
+                    <span class="text-[10px] text-slate-400 mt-0.5 block">Pre-filled from registration</span>
+                  </div>
+
+                  <div>
+                    <label class="block font-bold text-slate-700 uppercase tracking-wider mb-1">2. Execution Date *</label>
+                    <input type="text" id="esign-date" readonly class="w-full bg-slate-100 border border-slate-300 rounded-xl p-3 text-slate-900 font-bold font-mono outline-none cursor-not-allowed" />
+                    <span class="text-[10px] text-slate-400 mt-0.5 block">Today's Date (IST)</span>
+                  </div>
+
+                  <div>
+                    <label class="flex items-center gap-1.5 font-bold text-slate-700 uppercase tracking-wider mb-1 text-xs">
+                      <i data-lucide="phone" class="w-3.5 h-3.5 text-blue-600"></i>
+                      <img src="wa_icon.png" class="w-3.5 h-3.5 object-contain rounded-full" alt="WhatsApp" onerror="this.onerror=null; this.src='wa_icon.png';" />
+                      <span>3. Calling & WhatsApp Number *</span>
+                    </label>
+                    <input type="text" id="esign-whatsapp" readonly class="w-full bg-slate-100 border border-slate-300 rounded-xl p-3 text-slate-900 font-bold font-mono outline-none cursor-not-allowed" />
+                    <span class="text-[10px] text-slate-400 mt-0.5 block">Pre-filled 10-digit Mobile Contact</span>
+                  </div>
+                </div>
+
+                <!-- Field 4: Digital E-Signature Canvas -->
+                <div class="space-y-3 pt-2">
+                  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                    <div>
+                      <label class="block font-bold text-slate-900 uppercase tracking-wider text-xs">4. Creator Signature / E-Signature *</label>
+                      <p class="text-[11px] text-slate-500">Sign with your finger (on touchscreens) or with your mouse cursor inside the box below.</p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                      <button type="button" onclick="typeCalligraphicSignature()" class="px-3 py-1 rounded-lg border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700 text-xs font-semibold flex items-center gap-1 cursor-pointer transition-colors" title="Generate clean calligraphic signature from your name">
+                        <i data-lucide="type" class="w-3.5 h-3.5 text-blue-600"></i>
+                        <span>Type Name as Signature</span>
+                      </button>
+                      <button type="button" onclick="clearSignatureCanvas()" class="px-3 py-1 rounded-lg border border-rose-200 bg-rose-50 hover:bg-rose-100 text-rose-700 text-xs font-bold flex items-center gap-1 cursor-pointer transition-colors">
+                        <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
+                        <span>Clear</span>
+                      </button>
+                    </div>
+                  </div>
+
+                  <!-- Canvas Wrapper -->
+                  <div class="relative bg-white border-2 border-dashed border-blue-300 rounded-2xl overflow-hidden shadow-inner p-1">
+                    <canvas id="designer-signature-canvas" width="650" height="180" class="w-full h-44 bg-slate-50/50 rounded-xl cursor-crosshair touch-none"></canvas>
+                    
+                    <div id="sig-placeholder-hint" class="absolute inset-0 flex items-center justify-center pointer-events-none text-slate-400 text-xs font-medium gap-2">
+                      <i data-lucide="pen-tool" class="w-4 h-4 text-blue-400"></i>
+                      <span>Draw your digital signature here</span>
+                    </div>
+
+                    <!-- Color Switcher -->
+                    <div class="absolute bottom-2.5 right-3 flex items-center gap-1.5 bg-white/90 backdrop-blur-xs px-2.5 py-1 rounded-full border border-slate-200 text-[11px] font-semibold text-slate-600 shadow-2xs">
+                      <span>Ink:</span>
+                      <button type="button" onclick="setSignatureInkColor('#1e40af')" class="w-3.5 h-3.5 rounded-full bg-blue-800 border border-white shadow-2xs hover:scale-110 cursor-pointer" title="Royal Navy"></button>
+                      <button type="button" onclick="setSignatureInkColor('#0f172a')" class="w-3.5 h-3.5 rounded-full bg-slate-900 border border-white shadow-2xs hover:scale-110 cursor-pointer" title="Charcoal Black"></button>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Legal Checkbox & Submit Button -->
+                <div class="pt-4 border-t border-slate-100 space-y-4">
+                  <label class="flex items-start gap-3 cursor-pointer select-none">
+                    <input type="checkbox" id="esign-agree-checkbox" class="w-4 h-4 mt-0.5 text-blue-600 rounded border-slate-300 focus:ring-blue-500 cursor-pointer" />
+                    <span class="text-xs text-slate-700 leading-relaxed">
+                      I confirm my identity details, declare that I am the authorized creator, accept the 60% revenue model, Zero-AI quality standards, and IP ownership terms, and digitally execute this Design Quixo Creator Agreement.
+                    </span>
+                  </label>
+
+                  <div class="flex flex-col sm:flex-row items-center justify-between gap-3 pt-2">
+                    <span class="text-[11px] text-slate-400 font-mono">Digitally stamped via client-side PDF engine</span>
+                    <button type="button" id="btn-submit-esign-agreement" onclick="submitDesignerEsignAgreement()" class="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-sm flex items-center justify-center gap-2 cursor-pointer transition-all">
+                      <i data-lucide="check-circle" class="w-4 h-4"></i>
+                      <span id="btn-esign-text">Sign & Generate Stamped Agreement PDF</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </section>
+          </div>
+
+          <!-- Mobile Bottom Navigation & Actions (Public Website & Logout at the very bottom on mobile) -->
+          <div class="md:hidden mt-10 pt-6 border-t border-slate-200 space-y-3 pb-8">
+            <div class="grid grid-cols-2 gap-3">
+              <a href="index.html" class="flex items-center justify-center gap-2 py-3.5 px-3 rounded-xl bg-white border border-slate-300 text-xs font-bold text-slate-800 shadow-xs hover:bg-slate-50 transition-colors">
+                <i data-lucide="arrow-left" class="w-4 h-4 text-slate-600"></i>
+                <span>Public Website</span>
+              </a>
+              <button id="designer-mobile-logout-btn" class="flex items-center justify-center gap-2 py-3.5 px-3 rounded-xl bg-rose-50 border border-rose-200 text-xs font-bold text-rose-600 hover:bg-rose-100 transition-colors shadow-xs">
+                <i data-lucide="log-out" class="w-4 h-4"></i>
+                <span>Sign Out</span>
+              </button>
+            </div>
+            <p class="text-center text-[11px] text-slate-400 font-mono">Design Quixo Creator Workstation • Active</p>
+          </div>
+
+        </main>
+      </div>
+
+      <script>
+        lucide.createIcons();
+
+        // Check strict designer/admin auth
+        const currentUser = JSON.parse(localStorage.getItem('dq_current_user') || 'null');
+        if (!currentUser || (currentUser.role !== 'designer' && currentUser.role !== 'admin')) {
+          window.location.href = 'login.html';
+        }
+
+        // Check if designer account was deleted or revoked by Admin
+        function verifyDesignerActiveSession() {
+          const user = JSON.parse(localStorage.getItem('dq_current_user') || 'null');
+          if (!user) {
+            window.location.href = 'login.html';
+            return false;
+          }
+          if (user.role === 'admin') return true;
+
+          const myPhone = get10DigitPhone(user.phone || user.identifier);
+          let deletedList = [];
+          try { deletedList = JSON.parse(localStorage.getItem('dq_deleted_designers') || '[]'); } catch(e) {}
+
+          if (myPhone && deletedList.includes(myPhone)) {
+            localStorage.removeItem('dq_current_user');
+            alert('Access Revoked: Your designer account has been deleted by the administrator.');
+            window.location.href = 'login.html';
+            return false;
+          }
+          return true;
+        }
+
+        verifyDesignerActiveSession();
+
+        const navItems = document.querySelectorAll('.nav-item');
+        const views = [
+          document.getElementById('view-pending-approval'),
+          document.getElementById('view-live-jobs'),
+          document.getElementById('view-my-jobs'),
+          document.getElementById('view-earnings'),
+          document.getElementById('view-guidelines'),
+          document.getElementById('view-agreement'),
+          document.getElementById('view-profile')
+        ];
+
+        const statusIndicator = document.getElementById('status-indicator');
+        const statusText = document.getElementById('status-text');
+
+        // Availability Status Toggle
+        let isOnline = true;
+        document.getElementById('toggle-availability-btn').addEventListener('click', () => {
+          const approved = checkDesignerApproval();
+          if (!approved) {
+            alert('Workstation is locked: Your application is currently under review by Support.');
+            return;
+          }
+          isOnline = !isOnline;
+          if (isOnline) {
+            statusIndicator.className = 'w-2 h-2 rounded-full bg-emerald-500 animate-pulse';
+            statusText.className = 'text-emerald-700 font-bold';
+            statusText.textContent = 'Online & Receiving Briefs';
+          } else {
+            statusIndicator.className = 'w-2 h-2 rounded-full bg-slate-400';
+            statusText.className = 'text-slate-500 font-bold';
+            statusText.textContent = 'Offline (Paused)';
+          }
+        });
+
+        // Active view state tracker
+        let currentActiveView = 'live-jobs';
+
+        // View switching logic
+        function switchView(target) {
+          const approved = checkDesignerApproval();
+          if (!approved && target !== 'guidelines' && target !== 'profile' && target !== 'agreement') {
+            target = 'pending-approval';
+          }
+
+          currentActiveView = target;
+
+          navItems.forEach(n => {
+            const v = n.getAttribute('data-view');
+            const isSelected = (v === target);
+            if (n.classList.contains('shrink-0')) {
+              // mobile
+              n.className = isSelected 
+                ? 'nav-item px-3 py-1.5 rounded-lg text-xs font-bold transition-all bg-blue-600 text-white shadow-xs shrink-0 flex items-center gap-1.5'
+                : 'nav-item px-3 py-1.5 rounded-lg text-xs font-semibold transition-all bg-slate-100 text-slate-700 shrink-0 flex items-center gap-1.5';
+            } else {
+              // desktop
+              n.className = isSelected 
+                ? 'nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all bg-blue-600 text-white shadow-sm'
+                : 'nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all text-slate-600 hover:text-slate-900 hover:bg-slate-100';
+            }
+          });
+
+          views.forEach(v => { if (v) v.classList.add('hidden'); });
+
+          if (!approved && target === 'pending-approval') {
+            const pv = document.getElementById('view-pending-approval');
+            if (pv) pv.classList.remove('hidden');
+            const statsBar = document.getElementById('designer-stats-bar');
+            if (statsBar) statsBar.classList.add('hidden');
+          } else {
+            const statsBar = document.getElementById('designer-stats-bar');
+            if (statsBar) {
+              if (approved) statsBar.classList.remove('hidden');
+              else statsBar.classList.add('hidden');
+            }
+
+            const targetView = document.getElementById(`view-${target}`);
+            if (targetView) {
+              targetView.classList.remove('hidden');
+            } else {
+              const defView = document.getElementById('view-live-jobs');
+              if (defView) defView.classList.remove('hidden');
+            }
+
+            if (target === 'earnings') {
+              renderEarningsPage();
+            } else if (target === 'agreement') {
+              renderDesignerAgreementView();
+            } else if (target === 'live-jobs' || target === 'my-jobs') {
+              loadLiveJobs();
+            }
+          }
+        }
+
+        navItems.forEach(item => {
+          item.addEventListener('click', () => {
+            const approved = checkDesignerApproval();
+            const target = item.getAttribute('data-view');
+
+            if (!approved && (target === 'live-jobs' || target === 'my-jobs' || target === 'earnings')) {
+              alert('Access Gated: Your application is pending review. Live briefs and earnings unlock once approved.');
+              return;
+            }
+
+            switchView(target);
+          });
+        });
+
+        // Log Out handler (All Buttons)
+        const handleLogout = () => {
+          localStorage.removeItem('dq_current_user');
+          sessionStorage.removeItem('dq_current_user');
+          window.location.replace('login.html?logged_out=true');
+        };
+        ['designer-logout-btn', 'designer-mobile-logout-btn', 'topbar-logout-btn', 'pending-logout-btn'].forEach(id => {
+          const el = document.getElementById(id);
+          if (el) el.addEventListener('click', handleLogout);
+        });
+
+        // Immediate purge of stale cache from previous Supabase projects
+        try {
+          const db = window.DQSupabase || window.DQFirebase;
+          const currentDbUrl = (db && db.url) ? db.url : 'https://gzbwvleuuxyidohujibj.supabase.co';
+          const expectedInstance = currentDbUrl.replace(/https?:\/\/|\.supabase\.co/g, '') + '_v1';
+          if (localStorage.getItem('dq_db_instance_id') !== expectedInstance) {
+            localStorage.removeItem('dq_registered_designers');
+            localStorage.removeItem('dq_approved_designers');
+            localStorage.removeItem('dq_live_jobs');
+            localStorage.removeItem('dq_deleted_jobs');
+            localStorage.removeItem('dq_deleted_designers');
+            localStorage.removeItem('dq_login_history');
+            localStorage.setItem('dq_db_instance_id', expectedInstance);
+          }
+        } catch (e) {}
+
+        // Normalize to 10-digit phone
+        function get10DigitPhone(p) {
+          if (!p) return '';
+          const str = p.toString().trim();
+          if (str.includes('@') || /[a-zA-Z]/.test(str)) return '';
+          const digits = str.replace(/[^0-9]/g, '');
+          return digits.length >= 10 ? digits.slice(-10) : '';
+        }
+        function clean10Phone(p) {
+          return get10DigitPhone(p);
+        }
+
+        function getCurrentDesigner() {
+          try {
+            return JSON.parse(localStorage.getItem('dq_current_user') || 'null');
+          } catch(e) { return null; }
+        }
+
+        function compressImageToDataUrl(file, maxWidth = 300, maxHeight = 300, quality = 0.85) {
+          return new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+              const img = new Image();
+              img.onload = function() {
+                let width = img.width;
+                let height = img.height;
+                if (width > height) {
+                  if (width > maxWidth) {
+                    height = Math.round((height * maxWidth) / width);
+                    width = maxWidth;
+                  }
+                } else {
+                  if (height > maxHeight) {
+                    width = Math.round((width * maxHeight) / height);
+                    height = maxHeight;
+                  }
+                }
+                const canvas = document.createElement('canvas');
+                canvas.width = width;
+                canvas.height = height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, width, height);
+                resolve(canvas.toDataURL('image/jpeg', quality));
+              };
+              img.onerror = function() { resolve(e.target.result || ''); };
+              img.src = e.target.result;
+            };
+            reader.onerror = function() { resolve(''); };
+            reader.readAsDataURL(file);
+          });
+        }
+
+        window.updateProfileDp = async function(event) {
+          const file = event.target.files && event.target.files[0];
+          if (!file) return;
+
+          if (file.size > 10 * 1024 * 1024) {
+            alert('Please select an image smaller than 10MB.');
+            return;
+          }
+
+          try {
+            const compressedDp = await compressImageToDataUrl(file, 300, 300, 0.85);
+            if (!compressedDp) return;
+
+            const currentUser = getCurrentDesigner();
+            if (!currentUser) return;
+
+            currentUser.avatar = compressedDp;
+            currentUser.avatarUrl = compressedDp;
+            localStorage.setItem('dq_current_user', JSON.stringify(currentUser));
+
+            const cleanPhone = (currentUser.phone || currentUser.identifier || '').toString().replace(/\D/g, '').slice(-10);
+            const cleanEmail = (currentUser.email || (currentUser.identifier && currentUser.identifier.includes('@') ? currentUser.identifier : '')).toString().trim().toLowerCase();
+
+            try {
+              const dpMap = JSON.parse(localStorage.getItem('dq_user_dp_map') || '{}');
+              if (cleanPhone) dpMap[cleanPhone] = compressedDp;
+              if (cleanEmail) dpMap[cleanEmail] = compressedDp;
+              if (cleanPhone) dpMap['+91' + cleanPhone] = compressedDp;
+              if (currentUser.identifier) dpMap[currentUser.identifier] = compressedDp;
+              localStorage.setItem('dq_user_dp_map', JSON.stringify(dpMap));
+            } catch(e) {}
+
+            // Also save in Supabase designers & login_history
+            const db = window.DQSupabase || window.DQFirebase;
+            const SUPABASE_URL = (db && db.url) ? db.url : 'https://gzbwvleuuxyidohujibj.supabase.co';
+            const SUPABASE_ANON_KEY = (db && db.key) ? db.key : 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd6Ynd2bGV1dXh5aWRvaHVqaWJqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk5MDg3ODEsImV4cCI6MjEwNTQ4NDc4MX0.qIvmq3FnjJPkKOcxnvFYS158NxF0GHKvd0PSwP7hECk';
+
+             if (cleanPhone) {
+              fetch('/api/save-login-history', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  id: 'log-' + Date.now() + '-' + Math.random().toString(36).substring(2, 7),
+                  phone: cleanPhone,
+                  name: currentUser.name || 'Designer',
+                  role: 'user_dp',
+                  status: compressedDp,
+                  timestamp: new Date().toISOString()
+                })
+              }).catch(() => {});
+            }
+
+            checkDesignerApproval();
+            alert('Profile photo updated successfully!');
+          } catch(err) {
+            console.error('Error updating profile DP:', err);
+            alert('Could not update profile photo: ' + (err.message || err));
+          }
+        };
+
+        // Check Designer Verification & Approval Status
+        function checkDesignerApproval() {
+          const currentUser = getCurrentDesigner();
+          let approvedList = [];
+          try {
+            approvedList = JSON.parse(localStorage.getItem('dq_approved_designers') || '[]');
+          } catch(e) { approvedList = []; }
+
+          let registeredList = [];
+          try {
+            registeredList = JSON.parse(localStorage.getItem('dq_registered_designers') || '[]');
+          } catch(e) { registeredList = []; }
+
+          let isApproved = false;
+
+          if (currentUser) {
+            const rawPhone = (currentUser.phone || '').toString();
+            const cleanPhone = get10DigitPhone(rawPhone) || (currentUser.identifier && !currentUser.identifier.includes('@') ? get10DigitPhone(currentUser.identifier) : '');
+            const cleanEmail = (currentUser.email || (currentUser.identifier && currentUser.identifier.includes('@') ? currentUser.identifier : '')).toString().trim().toLowerCase();
+
+            if (currentUser.role === 'admin' || currentUser.role === 'support') {
+              isApproved = true;
+            } else {
+              // Find registered record for this current user
+              const regRecord = registeredList.find(d => {
+                const dPhone = get10DigitPhone(d.phone || d.identifier);
+                const dEmail = (d.email || (d.identifier && d.identifier.includes('@') ? d.identifier : '')).toString().trim().toLowerCase();
+                return (cleanPhone && cleanPhone.length === 10 && dPhone === cleanPhone) ||
+                      (cleanEmail && cleanEmail.includes('@') && dEmail === cleanEmail);
+              });
+
+              const inApprovedList = (cleanPhone && cleanPhone.length === 10 && approvedList.some(d => get10DigitPhone(d.identifier || d.phone) === cleanPhone)) ||
+                                     (cleanEmail && cleanEmail.includes('@') && approvedList.some(d => (d.email || d.identifier || '').toString().trim().toLowerCase() === cleanEmail));
+
+              if (regRecord && regRecord.status === 'Approved') {
+                isApproved = true;
+              } else if (inApprovedList) {
+                isApproved = true;
+              } else if (currentUser.status === 'Approved' || currentUser.isapproved === true) {
+                isApproved = true;
+              } else if (regRecord && (regRecord.status === 'Pending' || regRecord.status === 'Pending Review')) {
+                isApproved = false;
+              } else {
+                isApproved = (currentUser.status === 'Approved' || currentUser.isapproved === true);
+              }
+            }
+
+            currentUser.status = isApproved ? 'Approved' : 'Pending';
+            currentUser.isapproved = isApproved;
+            localStorage.setItem('dq_current_user', JSON.stringify(currentUser));
+          }
+
+          const pendingView = document.getElementById('view-pending-approval');
+          const liveJobsView = document.getElementById('view-live-jobs');
+          const guidelinesView = document.getElementById('view-guidelines');
+          const profileView = document.getElementById('view-profile');
+          const statsBar = document.getElementById('designer-stats-bar');
+          const jobsList = document.getElementById('jobs-list');
+
+          if (currentUser) {
+            const name = currentUser.name || 'Designer Applicant';
+            const id = currentUser.identifier || '+91 Contact';
+            const pf = currentUser.portfolio || '';
+
+            document.getElementById('designer-name-top').textContent = name;
+
+            // Render DP avatar image if available with comprehensive resolution
+            const cleanPhone = (currentUser.phone || currentUser.identifier || '').toString().replace(/\D/g, '').slice(-10);
+            const cleanEmail = (currentUser.email || (currentUser.identifier && currentUser.identifier.includes('@') ? currentUser.identifier : '')).toString().trim().toLowerCase();
+
+            let userAvatar = currentUser.avatar || currentUser.avatarUrl || currentUser.avatar_url || currentUser.dpUrl || currentUser.photo || '';
+            if (userAvatar === 'designer') userAvatar = '';
+            if (!userAvatar) {
+              try {
+                const dpMap = JSON.parse(localStorage.getItem('dq_user_dp_map') || '{}');
+                userAvatar = dpMap[cleanPhone] || dpMap[cleanEmail] || dpMap['+91' + cleanPhone] || dpMap[currentUser.identifier] || '';
+              } catch(e) {}
+            }
+            if (!userAvatar) {
+              try {
+                const registered = JSON.parse(localStorage.getItem('dq_registered_designers') || '[]');
+                const match = registered.find(d => 
+                  (cleanPhone && (d.phone === cleanPhone || (d.phone && d.phone.toString().replace(/\D/g, '').slice(-10) === cleanPhone))) ||
+                  (cleanEmail && d.email && d.email.toLowerCase() === cleanEmail)
+                );
+                if (match) {
+                  userAvatar = match.avatar || match.avatarUrl || match.avatar_url || match.dpUrl || '';
+                }
+              } catch(e) {}
+            }
+
+            const topAvatarEl = document.getElementById('designer-avatar');
+            if (topAvatarEl) {
+              if (userAvatar) {
+                topAvatarEl.innerHTML = `<img src="${userAvatar}" alt="${name}" class="w-full h-full object-cover rounded-full" />`;
+                topAvatarEl.className = "w-8 h-8 rounded-full overflow-hidden border border-slate-300 shadow-2xs shrink-0";
+              } else {
+                topAvatarEl.textContent = name.substring(0, 2).toUpperCase();
+              }
+            }
+
+            const profileDpImg = document.getElementById('profile-dp-img');
+            const profileDpIcon = document.getElementById('profile-dp-default-icon');
+            if (profileDpImg && profileDpIcon) {
+              if (userAvatar) {
+                profileDpImg.src = userAvatar;
+                profileDpImg.classList.remove('hidden');
+                profileDpIcon.classList.add('hidden');
+              } else {
+                profileDpImg.classList.add('hidden');
+                profileDpIcon.classList.remove('hidden');
+              }
+            }
+
+            const pendingDpImg = document.getElementById('pending-dp-img');
+            const pendingDpIcon = document.getElementById('pending-dp-default-icon');
+            if (pendingDpImg && pendingDpIcon) {
+              if (userAvatar) {
+                pendingDpImg.src = userAvatar;
+                pendingDpImg.classList.remove('hidden');
+                pendingDpIcon.classList.add('hidden');
+              } else {
+                pendingDpImg.classList.add('hidden');
+                pendingDpIcon.classList.remove('hidden');
+              }
+            }
+
+            const userEmail = cleanEmail || (currentUser.email || '');
+            const userPhone = cleanPhone || (currentUser.phone ? currentUser.phone.replace(/\D/g, '').slice(-10) : '');
+
+            document.getElementById('pending-name').textContent = name;
+            document.getElementById('pending-contact').textContent = userEmail || (userPhone ? `+91 ${userPhone}` : id);
+            document.getElementById('profile-name-val').textContent = name;
+
+            const profEmailEl = document.getElementById('profile-email-val');
+            if (profEmailEl) profEmailEl.textContent = userEmail || 'No email registered';
+
+            const profPhoneEl = document.getElementById('profile-phone-val');
+            if (profPhoneEl) profPhoneEl.textContent = userPhone ? `+91 ${userPhone}` : '+91 Contact';
+
+            const profContactEl = document.getElementById('profile-contact-val');
+            if (profContactEl) profContactEl.textContent = userEmail || (userPhone ? `+91 ${userPhone}` : id);
+
+            const pfLink = document.getElementById('pending-portfolio');
+            const pfVal = document.getElementById('profile-portfolio-val');
+            if (pf) {
+              pfLink.textContent = pf;
+              pfLink.href = pf.startsWith('http') ? pf : `https://${pf}`;
+              pfVal.textContent = pf;
+              pfVal.href = pf.startsWith('http') ? pf : `https://${pf}`;
+            } else {
+              pfLink.textContent = 'Submitted with registration';
+              pfLink.href = '#';
+            }
+          }
+
+          if (!isApproved) {
+            pendingView.classList.remove('hidden');
+            liveJobsView.classList.add('hidden');
+            guidelinesView.classList.add('hidden');
+            profileView.classList.add('hidden');
+            if (statsBar) statsBar.classList.add('hidden');
+            const myJobsView = document.getElementById('view-my-jobs');
+            if (myJobsView) myJobsView.classList.add('hidden');
+            const earnView = document.getElementById('view-earnings');
+            if (earnView) earnView.classList.add('hidden');
+            jobsList.innerHTML = '';
+
+            statusIndicator.className = 'w-2 h-2 rounded-full bg-amber-500 animate-ping';
+            statusText.className = 'text-amber-700 font-bold';
+            statusText.textContent = 'Pending Support Approval';
+            document.getElementById('designer-role-badge').textContent = 'Pending Review';
+            document.getElementById('designer-role-badge').className = 'text-[10px] text-amber-600 font-medium';
+
+            return false;
+          } else {
+            pendingView.classList.add('hidden');
+            if (statsBar) statsBar.classList.remove('hidden');
+
+            const myJobsView = document.getElementById('view-my-jobs');
+            const earnView = document.getElementById('view-earnings');
+            const agreementView = document.getElementById('view-agreement');
+            const isOtherViewOpen = (myJobsView && !myJobsView.classList.contains('hidden')) || 
+                                    (earnView && !earnView.classList.contains('hidden')) ||
+                                    (!guidelinesView.classList.contains('hidden')) || 
+                                    (agreementView && !agreementView.classList.contains('hidden')) ||
+                                    (!profileView.classList.contains('hidden'));
+
+            if (!isOtherViewOpen) {
+              liveJobsView.classList.remove('hidden');
+            } else {
+              liveJobsView.classList.add('hidden');
+            }
+
+            statusIndicator.className = 'w-2 h-2 rounded-full bg-emerald-500 animate-pulse';
+            statusText.className = 'text-emerald-700 font-bold';
+            statusText.textContent = isOnline ? 'Online & Receiving Briefs' : 'Offline (Paused)';
+            document.getElementById('designer-role-badge').textContent = 'Verified Creator';
+            document.getElementById('designer-role-badge').className = 'text-[10px] text-emerald-600 font-semibold';
+
+            return true;
+          }
+        }
+
+        // Helper to check if a job is accepted by current designer (handles phone, email, name, identifier matching)
+        function isJobAcceptedByDesigner(job, currentUser) {
+          if (!job || !Array.isArray(job.acceptedBy) || !currentUser) return false;
+          const myId = (currentUser.identifier || '').toString().trim();
+          const myPhone = (currentUser.phone || '').toString().trim();
+          const myPhone10 = get10DigitPhone(myPhone || myId);
+          const myEmail = (currentUser.email || (myId.includes('@') ? myId : '')).toString().trim().toLowerCase();
+          const myName = (currentUser.name || '').toString().trim().toLowerCase();
+
+          return job.acceptedBy.some(acc => {
+            if (!acc) return false;
+            const sAcc = acc.toString().trim();
+            if (sAcc === myId || sAcc === myPhone) return true;
+            if (myPhone10 && get10DigitPhone(sAcc) === myPhone10) return true;
+            if (myEmail && sAcc.toLowerCase() === myEmail) return true;
+            if (myName && sAcc.toLowerCase() === myName) return true;
+            return false;
+          });
+        }
+
+        // Financial Calculation Helper for Designer (Uses Persistent Ledger)
+        function getDesignerFinancials(myIdentifier) {
+          let allJobs = [];
+          if (window.DQStore && typeof window.DQStore.getMergedJobsForEarnings === 'function') {
+            allJobs = window.DQStore.getMergedJobsForEarnings();
+          } else {
+            try {
+              const liveJobs = JSON.parse(localStorage.getItem('dq_live_jobs') || '[]');
+              const ledger = JSON.parse(localStorage.getItem('dq_earnings_ledger') || '[]');
+              allJobs = [...ledger, ...liveJobs];
+            } catch(e) { allJobs = []; }
+          }
+
+          const currentUser = getCurrentDesigner();
+          const rawMyJobs = allJobs.filter(j => isJobAcceptedByDesigner(j, currentUser));
+          
+          // Deduplicate jobs by ID
+          const seenIds = new Set();
+          const myJobs = [];
+          rawMyJobs.forEach(j => {
+            const normId = (window.DQStore && window.DQStore.normalizeJobId) ? window.DQStore.normalizeJobId(j.id || j.jobId) : (j.id || '').toString().toUpperCase();
+            if (normId && !seenIds.has(normId)) {
+              seenIds.add(normId);
+              myJobs.push(j);
+            }
+          });
+
+          let completedEarnings = 0;
+          let pendingEarnings = 0;
+          let completedCount = 0;
+          let activeCount = 0;
+
+          myJobs.forEach(job => {
+            const rawPrice = (window.DQStore && window.DQStore.getJobPrice) ? window.DQStore.getJobPrice(job) : (Number(job.price) || 399);
+            const payout = Math.round(rawPrice * 0.60);
+
+            const isCompleted = job.completed === true || 
+                                (job.status || '').toLowerCase().includes('completed') || 
+                                (job.status || '').toLowerCase().includes('delivered');
+
+            if (isCompleted) {
+              completedEarnings += payout;
+              completedCount++;
+            } else {
+              pendingEarnings += payout;
+              activeCount++;
+            }
+          });
+
+          // Extra manual adjustments if any
+          try {
+            const extraKey = `dq_extra_earnings_${get10DigitPhone(myIdentifier)}`;
+            const extra = Number(localStorage.getItem(extraKey) || 0);
+            completedEarnings += extra;
+          } catch(e) {}
+
+          return { completedEarnings, pendingEarnings, completedCount, activeCount, myJobs };
+        }
+
+        // Render Earnings Summary
+        function renderDesignerStatsBar() {
+          const currentUser = getCurrentDesigner();
+          if (!currentUser) return;
+          const myIdentifier = currentUser.identifier || currentUser.phone || currentUser.name || '';
+
+          const fin = getDesignerFinancials(myIdentifier);
+
+          const earnTotal = document.getElementById('earnings-page-total');
+          const earnCount = document.getElementById('earnings-page-completed-count');
+          if (earnTotal) earnTotal.textContent = `₹${fin.completedEarnings.toLocaleString('en-IN')}`;
+          if (earnCount) earnCount.textContent = `${fin.completedCount}`;
+        }
+
+        // Live Jobs Queue & My Jobs Renderer
+        function loadLiveJobs() {
+          if (!checkDesignerApproval()) return;
+
+          const currentUser = getCurrentDesigner();
+          const myIdentifier = currentUser ? (currentUser.identifier || currentUser.phone || currentUser.name) : 'unknown';
+
+          renderDesignerStatsBar();
+
+          const jobsList = document.getElementById('jobs-list');
+          const emptyQueue = document.getElementById('empty-queue');
+          const liveBadge = document.getElementById('live-job-badge');
+          const mobileLiveBadge = document.getElementById('mobile-live-badge');
+
+          const myJobsList = document.getElementById('my-jobs-list');
+          const emptyMyJobs = document.getElementById('empty-my-jobs');
+          const myJobsBadge = document.getElementById('my-jobs-badge');
+
+          let liveJobs = [];
+          if (window.DQStore && typeof window.DQStore.getJobs === 'function') {
+            liveJobs = window.DQStore.getJobs();
+          } else {
+            try {
+              liveJobs = JSON.parse(localStorage.getItem('dq_live_jobs') || '[]');
+            } catch(e) { liveJobs = []; }
+          }
+
+          // Strict filter against dq_deleted_jobs
+          let deletedList = [];
+          try { deletedList = JSON.parse(localStorage.getItem('dq_deleted_jobs') || '[]'); } catch(e) {}
+          const deletedSet = new Set(deletedList.map(d => (window.DQStore && window.DQStore.normalizeJobId) ? window.DQStore.normalizeJobId(d) : d.toString().trim().toUpperCase()));
+
+          if (window.DQStore && typeof window.DQStore.deduplicateJobs === 'function') {
+            liveJobs = window.DQStore.deduplicateJobs(liveJobs);
+          }
+
+          liveJobs = liveJobs.filter(j => {
+            if (!j) return false;
+            if ((j.status || '').toLowerCase() === 'deleted') return false;
+            const rawId = (j.id || j.jobId || '').toString().trim();
+            const normId = (window.DQStore && window.DQStore.normalizeJobId) ? window.DQStore.normalizeJobId(rawId) : rawId.toUpperCase();
+            const bareId = normId.replace(/^DQ-/, '');
+            return !deletedSet.has(normId) && !deletedSet.has(bareId) && !deletedSet.has(rawId.toUpperCase());
+          });
+
+          if (window.DQSoundService && typeof window.DQSoundService.checkAndAlertNewJobs === 'function') {
+            window.DQSoundService.checkAndAlertNewJobs(liveJobs, 'Designer Workspace');
+          }
+
+          const availableJobs = [];
+          const myAcceptedJobs = [];
+
+          liveJobs.forEach((job, globalIndex) => {
+            if (!Array.isArray(job.acceptedBy)) {
+              job.acceptedBy = [];
+            }
+            const isCompleted = job.completed === true || job.adminCompleted === true || (job.status && (job.status.toLowerCase().includes('completed') || job.status.toLowerCase().includes('delivered')));
+            const hasAccepted = isJobAcceptedByDesigner(job, currentUser);
+
+            if (hasAccepted && !isCompleted) {
+              myAcceptedJobs.push({ job, globalIndex });
+            }
+
+            // Automatically delete / remove from available briefs once 2 designers accept, or if completed / claimed
+            if (!hasAccepted && !isCompleted && (job.acceptedBy.length < 2) && !job.claimed) {
+              availableJobs.push({ job, globalIndex });
+            }
+          });
+
+          if (liveBadge) liveBadge.textContent = `${availableJobs.length}`;
+          if (mobileLiveBadge) mobileLiveBadge.textContent = `${availableJobs.length}`;
+          if (myJobsBadge) myJobsBadge.textContent = `${myAcceptedJobs.length}`;
+
+          // 1. Render Available Jobs (Clean client brief focus)
+          if (availableJobs.length === 0) {
+            jobsList.innerHTML = '';
+            emptyQueue.classList.remove('hidden');
+          } else {
+            emptyQueue.classList.add('hidden');
+            jobsList.innerHTML = availableJobs.map(({ job, globalIndex }) => {
+              const slotsUsed = (job.acceptedBy || []).length;
+              const slotsLeft = 2 - slotsUsed;
+              const orderPrice = (window.DQStore && window.DQStore.getJobPrice) ? window.DQStore.getJobPrice(job) : (Number(job.price) || 399);
+              const designerCut = Math.round(orderPrice * 0.60);
+
+              const refImgUrl = job.referenceImage || job.referenceimage || job.reference_image || job.refImage || job.image || job.sampleImage || job.reference || job.imageUrl || (Array.isArray(job.attachments) ? job.attachments[0] : null);
+              window._dq_job_images = window._dq_job_images || {};
+              if (refImgUrl && job.id) {
+                window._dq_job_images[job.id] = refImgUrl;
+              }
+
+              return `
+                <div class="p-6 rounded-3xl bg-white border border-slate-200 hover:border-blue-400 space-y-4 shadow-sm transition-all flex flex-col justify-between">
+                  <div class="space-y-3">
+                    <div class="flex items-start justify-between gap-3">
+                      <div>
+                        <div class="flex items-center gap-2 mb-1 flex-wrap">
+                          <span class="font-mono text-xs font-bold text-blue-600 bg-blue-50 px-2.5 py-0.5 rounded-md border border-blue-100">#${job.id || 'DQ-JOB'}</span>
+                          <span class="text-[10px] font-bold px-2.5 py-0.5 rounded-full ${slotsLeft === 1 ? 'bg-amber-50 text-amber-800 border border-amber-200' : 'bg-emerald-50 text-emerald-700 border border-emerald-200'}">
+                            ${slotsLeft} slot${slotsLeft > 1 ? 's' : ''} left (${slotsUsed}/2 Claimed)
+                          </span>
+                          <span class="text-[10px] font-semibold bg-slate-100 text-slate-700 px-2 py-0.5 rounded-md border border-slate-200">
+                            ${job.service || 'Graphic Design'}
+                          </span>
+                          <span class="text-[10px] font-bold bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded-md border border-emerald-200">
+                            60% Payout: ₹${designerCut}/-
+                          </span>
+                        </div>
+                        <h3 class="text-lg font-bold text-slate-900 font-['Space_Grotesk']">${job.project || 'Design Project'}</h3>
+                      </div>
+                      <span class="text-[11px] text-slate-400 font-mono shrink-0">${job.time || 'Active'}</span>
+                    </div>
+
+                    <!-- DIRECT FULL BRIEF BOX -->
+                    <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 text-xs space-y-2">
+                      <div class="flex items-center justify-between pb-1.5 border-b border-slate-200">
+                        <span class="text-[10px] text-slate-600 uppercase font-bold tracking-wider flex items-center gap-1">
+                          <i data-lucide="file-text" class="w-3.5 h-3.5 text-blue-600"></i> Client Design Brief & Requirements:
+                        </span>
+                        <span class="font-bold text-slate-800 bg-white px-2 py-0.5 rounded border border-slate-200 text-[11px]">
+                          Ratio: ${job.ratio || '1:1'}
+                        </span>
+                      </div>
+                      <p class="text-slate-800 font-medium text-sm leading-relaxed whitespace-pre-line">${job.brief || 'No custom instructions provided by client.'}</p>
+                      
+                      ${refImgUrl ? `
+                        <div class="pt-2 mt-2 border-t border-slate-200 space-y-2 bg-blue-50/70 p-3 rounded-xl border border-blue-100">
+                          <div class="flex items-center justify-between">
+                            <span class="text-[11px] font-bold text-blue-900 flex items-center gap-1.5">
+                              <i data-lucide="image" class="w-3.5 h-3.5 text-blue-600"></i> Client Attached Reference Image
+                            </span>
+                            <button type="button" onclick="openReferenceImageModal('${(job.id || '').replace(/'/g, "\\'")}', '${(job.id || '').replace(/'/g, "\\'")}')" class="px-2.5 py-1 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-bold text-[11px] flex items-center gap-1 shadow-2xs transition-colors cursor-pointer">
+                              <i data-lucide="eye" class="w-3 h-3"></i>
+                              <span>Full View</span>
+                            </button>
+                          </div>
+                          <div class="relative group rounded-lg overflow-hidden border border-blue-200/80 bg-white max-h-48 flex items-center justify-center p-1 cursor-pointer" onclick="openReferenceImageModal('${(job.id || '').replace(/'/g, "\\'")}', '${(job.id || '').replace(/'/g, "\\'")}')">
+                            <img src="${refImgUrl}" alt="Reference Image" class="max-h-40 w-auto object-contain rounded-md transition-transform duration-300 group-hover:scale-105" onerror="this.onerror=null; console.warn('Ref image load fallback');" />
+                            <div class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white font-bold text-xs gap-1 rounded-lg">
+                              <i data-lucide="zoom-in" class="w-4 h-4"></i> Click to Enlarge
+                            </div>
+                          </div>
+                        </div>
+                      ` : ''}
+                    </div>
+                  </div>
+
+                  <div class="pt-2">
+                    <button onclick="openAcceptJobModal(${globalIndex})" class="w-full py-3.5 rounded-xl bg-blue-600 hover:bg-blue-700 active:scale-[0.99] text-white font-bold text-xs flex items-center justify-center gap-2 shadow-xs transition-all cursor-pointer">
+                      <i data-lucide="check-circle" class="w-4 h-4"></i>
+                      <span>Accept Job (Claim Slot ${slotsUsed}/2)</span>
+                    </button>
+                  </div>
+                </div>
+              `;
+            }).join('');
+          }
+
+          // 2. Render My Accepted Jobs with Status Controls & 60% Payout Display
+          if (myAcceptedJobs.length === 0) {
+            myJobsList.innerHTML = '';
+            emptyMyJobs.classList.remove('hidden');
+          } else {
+            emptyMyJobs.classList.add('hidden');
+            const adminWA = (function() {
+              const stored = localStorage.getItem('dq_admin_whatsapp');
+              if (stored && stored.trim()) {
+                const cleaned = stored.replace(/[^0-9]/g, '');
+                if (cleaned.length === 10) return '91' + cleaned;
+                if (cleaned.length >= 11) return cleaned;
+              }
+              return '918602420897';
+            })();
+
+            myJobsList.innerHTML = myAcceptedJobs.map(({ job, globalIndex }) => {
+              const currentUser = getCurrentDesigner();
+              const myName = currentUser ? (currentUser.name || 'Verified Designer') : 'Designer';
+              const myIdentifier = currentUser ? (currentUser.identifier || currentUser.phone || '') : '';
+              const orderPrice = (window.DQStore && window.DQStore.getJobPrice) ? window.DQStore.getJobPrice(job) : (Number(job.price) || 399);
+              const designerCut = Math.round(orderPrice * 0.60);
+              const refImgUrl = job.referenceImage || job.referenceimage || job.reference_image || job.refImage || job.image || job.sampleImage || job.reference || job.imageUrl || (Array.isArray(job.attachments) ? job.attachments[0] : null);
+
+              const currentStatus = job.status || 'Drafting in Progress';
+              const isCompleted = job.completed === true || 
+                                  currentStatus === 'Completed & Vector Delivered' ||
+                                  currentStatus === 'Completed';
+
+              let statusBadgeClass = 'bg-amber-100 text-amber-800 border-amber-200';
+              if (isCompleted) {
+                statusBadgeClass = 'bg-emerald-100 text-emerald-800 border-emerald-200';
+              } else if (currentStatus.includes('Submitted') || currentStatus.includes('Sent')) {
+                statusBadgeClass = 'bg-blue-100 text-blue-800 border-blue-200';
+              } else if (currentStatus.includes('Revision')) {
+                statusBadgeClass = 'bg-purple-100 text-purple-800 border-purple-200';
+              }
+
+              const waMessage = encodeURIComponent(
+                `*DESIGN QUIXO - JOB UPDATE*\n\n` +
+                `*Designer:* ${myName} (+91 ${myIdentifier})\n` +
+                `*Job ID:* #${job.id || 'DQ-JOB'}\n` +
+                `*Status:* ${currentStatus}\n` +
+                `*Project:* ${job.project || 'Graphic Design'}\n` +
+                `*Service:* ${job.service || 'Design'}\n` +
+                `*Designer Payout (60%):* ₹${designerCut}/-\n\n` +
+                `*Client Brief:*\n` +
+                `${job.brief || 'No brief'}\n\n` +
+                `Hello Operations Desk, sharing the draft/revision update for this job.`
+              );
+              const waUrl = `https://wa.me/${adminWA}?text=${waMessage}`;
+
+              return `
+                <div class="p-6 rounded-3xl bg-white border ${isCompleted ? 'border-emerald-300 ring-1 ring-emerald-200' : 'border-slate-200'} space-y-4 shadow-xs flex flex-col justify-between">
+                  <div class="space-y-3">
+                    <div class="flex items-start justify-between gap-3">
+                      <div>
+                        <div class="flex items-center gap-2 mb-1 flex-wrap">
+                          <span class="font-mono text-xs font-bold text-blue-600 bg-blue-50 px-2.5 py-0.5 rounded-md border border-blue-100">#${job.id || 'DQ-JOB'}</span>
+                          <span class="text-[10px] font-bold px-2.5 py-0.5 rounded-full border ${statusBadgeClass}">
+                            ${currentStatus}
+                          </span>
+                        </div>
+                        <h3 class="text-base font-bold text-slate-900 font-['Space_Grotesk']">${job.project || 'Untitled Design'}</h3>
+                        <span class="text-xs text-slate-500 font-medium">${job.service || 'General Design'}</span>
+                      </div>
+                      
+                      <!-- Designer Payout Pill -->
+                      <div class="text-right shrink-0">
+                        <span class="text-[10px] text-slate-400 uppercase font-bold block">Your 60% Payout</span>
+                        <span class="text-base font-extrabold text-emerald-600 font-['Space_Grotesk']">₹${designerCut}/-</span>
+                      </div>
+                    </div>
+
+                    <!-- Brief Box -->
+                    <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 text-xs space-y-2">
+                      <div class="flex items-center justify-between pb-1 border-b border-slate-200">
+                        <span class="text-[10px] text-slate-400 uppercase font-bold tracking-wider">Client Brief:</span>
+                        <span class="text-[11px] text-slate-600 font-bold">Ratio: ${job.ratio || '1:1'}</span>
+                      </div>
+                      <p class="text-slate-800 font-medium text-sm leading-relaxed whitespace-pre-line">${job.brief || 'No brief'}</p>
+
+                      ${refImgUrl ? `
+                        <div class="pt-2 mt-2 border-t border-slate-200 space-y-2 bg-blue-50/70 p-3 rounded-xl border border-blue-100">
+                          <div class="flex items-center justify-between">
+                            <span class="text-[11px] font-bold text-blue-900 flex items-center gap-1.5">
+                              <i data-lucide="image" class="w-3.5 h-3.5 text-blue-600"></i> Client Attached Reference Image
+                            </span>
+                            <button type="button" onclick="openReferenceImageModal('${(job.id || '').replace(/'/g, "\\'")}', '${(job.id || '').replace(/'/g, "\\'")}')" class="px-2.5 py-1 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-bold text-[11px] flex items-center gap-1 shadow-2xs transition-colors cursor-pointer">
+                              <i data-lucide="eye" class="w-3 h-3"></i>
+                              <span>Full View</span>
+                            </button>
+                          </div>
+                          <div class="relative group rounded-lg overflow-hidden border border-blue-200/80 bg-white max-h-48 flex items-center justify-center p-1 cursor-pointer" onclick="openReferenceImageModal('${(job.id || '').replace(/'/g, "\\'")}', '${(job.id || '').replace(/'/g, "\\'")}')">
+                            <img src="${refImgUrl}" alt="Reference Image" class="max-h-40 w-auto object-contain rounded-md transition-transform duration-300 group-hover:scale-105" onerror="this.onerror=null; console.warn('Ref image load fallback');" />
+                            <div class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white font-bold text-xs gap-1 rounded-lg">
+                              <i data-lucide="zoom-in" class="w-4 h-4"></i> Click to Enlarge
+                            </div>
+                          </div>
+                        </div>
+                      ` : ''}
+                    </div>
+
+                    <!-- INTERACTIVE STATUS CONTROLS FOR DESIGNER -->
+                    <div class="p-4 rounded-2xl bg-slate-50/80 border border-slate-200 space-y-2.5">
+                      <div class="flex items-center justify-between">
+                        <span class="text-[11px] font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1">
+                          <i data-lucide="sliders" class="w-3.5 h-3.5 text-blue-600"></i> Update Job Status:
+                        </span>
+                        <span class="text-[10px] text-slate-500 font-mono">Updates Earnings Instantly</span>
+                      </div>
+
+                      <div class="grid grid-cols-2 gap-2">
+                        <button onclick="updateDesignerJobStatus(${globalIndex}, 'Drafting in Progress')" class="py-2 px-2.5 rounded-xl border text-[11px] font-bold transition-all text-left flex items-center gap-1.5 cursor-pointer ${currentStatus === 'Drafting in Progress' ? 'bg-amber-100 border-amber-300 text-amber-900 shadow-2xs' : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-100'}">
+                          <span class="w-2 h-2 rounded-full bg-amber-500 shrink-0"></span>
+                          <span class="truncate">Working on Draft</span>
+                        </button>
+
+                        <button onclick="updateDesignerJobStatus(${globalIndex}, 'Draft Sent on WhatsApp')" class="py-2 px-2.5 rounded-xl border text-[11px] font-bold transition-all text-left flex items-center gap-1.5 cursor-pointer ${currentStatus === 'Draft Sent on WhatsApp' ? 'bg-blue-100 border-blue-300 text-blue-900 shadow-2xs' : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-100'}">
+                          <span class="w-2 h-2 rounded-full bg-blue-500 shrink-0"></span>
+                          <span class="truncate">Draft Submitted</span>
+                        </button>
+
+                        <button onclick="updateDesignerJobStatus(${globalIndex}, 'Revision in Progress')" class="py-2 px-2.5 rounded-xl border text-[11px] font-bold transition-all text-left flex items-center gap-1.5 cursor-pointer ${currentStatus === 'Revision in Progress' ? 'bg-purple-100 border-purple-300 text-purple-900 shadow-2xs' : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-100'}">
+                          <span class="w-2 h-2 rounded-full bg-purple-500 shrink-0"></span>
+                          <span class="truncate">Applying Revision</span>
+                        </button>
+
+                        <button onclick="updateDesignerJobStatus(${globalIndex}, 'Completed & Vector Delivered')" class="py-2 px-2.5 rounded-xl border text-[11px] font-bold transition-all text-left flex items-center gap-1.5 cursor-pointer ${isCompleted ? 'bg-emerald-600 border-emerald-600 text-white shadow-xs' : 'bg-emerald-50 border-emerald-300 text-emerald-800 hover:bg-emerald-100'}">
+                          <i data-lucide="check" class="w-3.5 h-3.5 shrink-0 ${isCompleted ? 'text-white' : 'text-emerald-600'}"></i>
+                          <span class="truncate">Mark Completed (₹${designerCut})</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="flex items-center gap-2 pt-1">
+                    <a href="${waUrl}" target="_blank" class="flex-grow py-3 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-xs transition-all cursor-pointer">
+                      <svg class="w-4 h-4 fill-white shrink-0" viewBox="0 0 24 24">
+                        <path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91C2.13 13.66 2.59 15.36 3.45 16.86L2.17 22L7.42 20.62C8.87 21.41 10.5 21.83 12.16 21.83C17.62 21.83 22.07 17.38 22.07 11.92C22.07 9.27 21.04 6.78 19.17 4.91C17.3 3.04 14.7 2 12.04 2ZM17.52 14.33C17.3 14.22 16.22 13.69 16.02 13.61C15.82 13.54 15.67 13.5 15.53 13.72C15.38 13.94 14.96 14.44 14.83 14.59C14.7 14.74 14.57 14.75 14.35 14.64C14.13 14.53 13.42 14.3 12.58 13.55C11.93 12.97 11.49 12.25 11.36 12.03C11.23 11.81 11.35 11.69 11.46 11.58C11.56 11.48 11.68 11.32 11.79 11.19C11.9 11.06 11.94 10.97 12.01 10.82C12.08 10.67 12.05 10.54 11.99 10.43C11.93 10.32 11.48 9.25 11.3 8.81C11.12 8.38 10.94 8.44 10.81 8.43C10.68 8.42 10.53 8.42 10.39 8.42C10.24 8.42 10 8.48 9.8 8.7C9.6 8.92 9.02 9.46 9.02 10.56C9.02 11.66 9.82 12.72 9.93 12.87C10.04 13.02 11.5 15.29 13.74 16.26C14.27 16.49 14.69 16.63 15.01 16.73C15.54 16.9 16.03 16.88 16.42 16.82C16.85 16.76 17.72 16.29 17.9 15.78C18.08 15.27 18.08 14.83 18.03 14.74C17.97 14.65 17.83 14.59 17.52 14.33Z"/>
+                      </svg>
+                      <span>Submit Drafts / Coordinate on WhatsApp</span>
+                    </a>
+                  </div>
+                </div>
+              `;
+            }).join('');
+          }
+
+          lucide.createIcons();
+        }
+
+        // Status update handler for designers
+        window.updateDesignerJobStatus = function(globalIdx, newStatus) {
+          try {
+            let liveJobs = JSON.parse(localStorage.getItem('dq_live_jobs') || '[]');
+            const targetJob = liveJobs[globalIdx];
+            if (!targetJob) return;
+
+            targetJob.status = newStatus;
+            targetJob.lastLocallyUpdated = Date.now();
+            if (newStatus === 'Completed & Vector Delivered') {
+              targetJob.completed = true;
+              targetJob.designerCompleted = true;
+              targetJob.designerCompletedAt = new Date().toISOString();
+              if (window.DQStore && typeof window.DQStore.recordCompletedJobToLedger === 'function') {
+                window.DQStore.recordCompletedJobToLedger(targetJob);
+              }
+            } else {
+              targetJob.completed = false;
+            }
+
+            localStorage.setItem('dq_live_jobs', JSON.stringify(liveJobs));
+            
+            // Realtime Supabase Sync
+            const db = window.DQSupabase || window.DQFirebase;
+            if (db && typeof db.updateJobStatus === 'function') {
+              db.updateJobStatus(targetJob.id, newStatus, {
+                completed: targetJob.completed,
+                designerCompleted: targetJob.designerCompleted,
+                lastLocallyUpdated: targetJob.lastLocallyUpdated
+              });
+            }
+
+            const rawPrice = (window.DQStore && window.DQStore.getJobPrice) ? window.DQStore.getJobPrice(targetJob) : (Number(targetJob.price) || 399);
+            const payout = Math.round(rawPrice * 0.60);
+
+            loadLiveJobs();
+            renderDesignerStatsBar();
+
+            if (newStatus === 'Completed & Vector Delivered') {
+              alert(`🎉 Great job! Status updated to "Completed & Vector Delivered". ₹${payout}/- (60% cut) has been added to your Total Earnings.`);
+
+              // Dispatch Delivery Alert to Admin and Designer
+              try {
+                const currentD = getCurrentDesigner();
+                const dName = (targetJob.designerName || (currentD && currentD.name) || 'Assigned Designer').trim();
+                const dEmail = (targetJob.designerEmail || (currentD && (currentD.email || (currentD.identifier && currentD.identifier.includes('@') ? currentD.identifier : ''))) || '').trim();
+                const cleanJobId = (targetJob.id || '').replace(/^DQ[-_]?/i, '');
+                const sName = targetJob.service || targetJob.project || 'Design Order';
+                const cName = targetJob.clientName || 'Direct Client';
+
+                const adminMsg = `Design Delivered for Job #${cleanJobId}!\n\nService: ${sName}\nClient: ${cName}\nDelivered By: ${dName}\nDesigner Payout: ₹${payout}\nTimestamp: ${new Date().toLocaleString('en-IN')}\n\nPlease check Admin Dashboard to review and approve files.`;
+                const adminHtml = `<div style="max-width:520px;margin:0 auto;font-family:sans-serif;padding:24px;border:1px solid #e2e8f0;border-radius:12px;background:#ffffff;">
+                  <h2 style="color:#0f172a;margin-top:0;">DESIGN QUIXO</h2>
+                  <h3 style="color:#16a34a;margin-bottom:12px;">✓ Design Completed & Delivered</h3>
+                  <p style="color:#334155;font-size:14px;"><strong>Job ID:</strong> #${cleanJobId}</p>
+                  <p style="color:#334155;font-size:14px;"><strong>Service:</strong> ${sName}</p>
+                  <p style="color:#334155;font-size:14px;"><strong>Delivered By:</strong> ${dName}</p>
+                  <p style="color:#334155;font-size:14px;"><strong>Client:</strong> ${cName}</p>
+                  <p style="color:#334155;font-size:14px;"><strong>Designer Payout:</strong> ₹${payout}</p>
+                  <p style="color:#64748b;font-size:12px;margin-top:16px;">Vector files are ready on the platform. Review from Admin Panel.</p>
+                </div>`;
+
+                // Send to Admin (Sent ONLY to designquixo@gmail.com)
+                fetch('/api/send-email', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({
+                    to: 'designquixo@gmail.com',
+                    subject: `Design Delivered: Job #${cleanJobId} by ${dName} (Ready for Review)`,
+                    html: adminHtml,
+                    text: adminMsg
+                  })
+                }).catch(() => {});
+
+                // Send to Designer if email available
+                if (dEmail && dEmail.includes('@')) {
+                  const designerHtml = `<div style="max-width:520px;margin:0 auto;font-family:sans-serif;padding:24px;border:1px solid #e2e8f0;border-radius:12px;background:#ffffff;">
+                    <h2 style="color:#0f172a;margin-top:0;">DESIGN QUIXO</h2>
+                    <h3 style="color:#16a34a;margin-bottom:12px;">✓ Design Delivery Confirmed</h3>
+                    <p style="color:#334155;font-size:14px;">Hello ${dName},</p>
+                    <p style="color:#334155;font-size:14px;">Your delivery for <strong>Job #${cleanJobId} (${sName})</strong> has been successfully registered.</p>
+                    <div style="background:#f8fafc;border:1px solid #e2e8f0;padding:14px;border-radius:8px;margin:16px 0;">
+                      <p style="margin:0;font-size:14px;color:#059669;font-weight:bold;">Payout Added to Earnings: ₹${payout}/- INR</p>
+                    </div>
+                    <p style="color:#64748b;font-size:12px;">Thank you for your timely delivery! Keep up the great work.</p>
+                  </div>`;
+
+                  fetch('/api/send-email', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                      to: dEmail,
+                      subject: `Design Delivery Confirmed: Job #${cleanJobId} (Payout: ₹${payout})`,
+                      html: designerHtml,
+                      text: `Hello ${dName},\n\nYour design delivery for Job #${cleanJobId} (${sName}) has been registered.\nPayout: ₹${payout}\n\nDesign Quixo India`
+                    })
+                  }).catch(() => {});
+                }
+              } catch (notifyErr) {
+                console.warn('Delivery alert notice:', notifyErr);
+              }
+            }
+          } catch(e) {
+            console.error('Update status error:', e);
+          }
+        };
+
+        // WhatsApp Payout Request Handler
+        window.requestDesignerPayoutWhatsApp = function() {
+          const currentUser = getCurrentDesigner();
+          const myName = currentUser ? (currentUser.name || 'Verified Creator') : 'Creator';
+          const myIdentifier = currentUser ? (currentUser.identifier || currentUser.phone || '') : '';
+          const fin = getDesignerFinancials(myIdentifier);
+
+          const adminWA = (function() {
+            const stored = localStorage.getItem('dq_admin_whatsapp');
+            if (stored && stored.trim()) {
+              const cleaned = stored.replace(/[^0-9]/g, '');
+              if (cleaned.length === 10) return '91' + cleaned;
+              if (cleaned.length >= 11) return cleaned;
+            }
+            return '918602420897';
+          })();
+
+          const waText = encodeURIComponent(
+            `*DESIGN QUIXO - CREATOR PAYOUT REQUEST*\n\n` +
+            `*Designer Name:* ${myName}\n` +
+            `*WhatsApp / Phone:* +91 ${myIdentifier}\n` +
+            `*Total Completed Earnings (60%):* ₹${fin.completedEarnings}/- INR\n` +
+            `*Completed Jobs Delivered:* ${fin.completedCount} orders\n` +
+            `*Pending Pipeline:* ₹${fin.pendingEarnings}/-\n\n` +
+            `Hello Operations Desk, I am requesting my earnings payout settlement for completed designs. Please process to my registered UPI / Bank account.`
+          );
+
+          window.open(`https://wa.me/${adminWA}?text=${waText}`, '_blank');
+        };
+
+        // Render Earnings Page
+        function renderEarningsPage() {
+          renderDesignerStatsBar();
+          const currentUser = getCurrentDesigner();
+          const myIdentifier = currentUser ? (currentUser.identifier || currentUser.phone || '') : '';
+          const fin = getDesignerFinancials(myIdentifier);
+
+          const ledger = document.getElementById('designer-completed-ledger');
+          if (!ledger) return;
+
+          if (fin.myJobs.length === 0) {
+            ledger.innerHTML = `
+              <div class="p-6 rounded-2xl bg-slate-50 border border-slate-200 text-center space-y-1">
+                <span class="text-slate-400 text-xs font-medium block">No job earnings recorded yet.</span>
+                <p class="text-[11px] text-slate-500">Accept open briefs from the queue and complete deliveries to earn 60% revenue on every order.</p>
+              </div>
+            `;
+            return;
+          }
+
+          ledger.innerHTML = fin.myJobs.map(job => {
+            const rawPrice = (window.DQStore && window.DQStore.getJobPrice) ? window.DQStore.getJobPrice(job) : (Number(job.price) || 399);
+            const payout = Math.round(rawPrice * 0.60);
+            let payoutMap = {};
+            try { payoutMap = JSON.parse(localStorage.getItem('dq_payout_records') || '{}'); } catch(e) {}
+            const jobIdNorm = (window.DQStore && window.DQStore.normalizeJobId) ? window.DQStore.normalizeJobId(job.id || job.jobId) : (job.id || '').toString().toUpperCase();
+            const isDone = job.completed === true || (job.status || '').toLowerCase().includes('completed') || (job.status || '').toLowerCase().includes('delivered');
+            const isPaid = job.payoutStatus === 'Paid' || job.payoutStatus === 'Amount Paid to Designer' || payoutMap[jobIdNorm] === 'Paid';
+
+            return `
+              <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 flex items-center justify-between gap-3 text-xs flex-wrap sm:flex-nowrap">
+                <div class="space-y-0.5">
+                  <div class="flex items-center gap-2">
+                    <span class="font-mono font-bold text-blue-600 bg-white px-2 py-0.5 rounded border border-slate-200 text-[10px]">#${job.id || 'DQ-JOB'}</span>
+                    <span class="font-bold text-slate-900">${job.project || 'Design Order'}</span>
+                  </div>
+                  <span class="text-[11px] text-slate-500 font-medium">${job.service || 'Design'} • Order Value: ₹${rawPrice}/- (60% Cut: ₹${payout}/-)</span>
+                </div>
+
+                <div class="text-right shrink-0">
+                  <span class="text-sm font-extrabold text-emerald-700 font-mono block">+₹${payout}/-</span>
+                  ${isPaid ? `
+                    <span class="text-[10px] font-bold px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-900 border border-emerald-300 inline-flex items-center gap-1">
+                      <i data-lucide="check-circle-2" class="w-3 h-3 text-emerald-600"></i> Amount Paid to Designer ✓
+                    </span>
+                  ` : isDone ? `
+                    <span class="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-800 border border-amber-200">
+                      Completed (Settlement Pending)
+                    </span>
+                  ` : `
+                    <span class="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-blue-100 text-blue-800 border border-blue-200">
+                      ${job.status || 'In Progress'}
+                    </span>
+                  `}
+                </div>
+              </div>
+            `;
+          }).join('');
+          lucide.createIcons();
+        }
+
+        // State for pending job acceptance
+        let pendingAcceptJobIndex = null;
+        let pendingAcceptJobObj = null;
+
+        // 1. Open Job Acceptance Confirmation Modal
+        window.openAcceptJobModal = function(globalIdx) {
+          const currentUser = getCurrentDesigner();
+          if (!currentUser) return;
+
+          let liveJobs = [];
+          if (window.DQStore && typeof window.DQStore.getJobs === 'function') {
+            liveJobs = window.DQStore.getJobs();
+          } else {
+            try {
+              liveJobs = JSON.parse(localStorage.getItem('dq_live_jobs') || '[]');
+            } catch(e) { liveJobs = []; }
+          }
+
+          const targetJob = liveJobs[globalIdx];
+          if (!targetJob) return;
+
+          if (!Array.isArray(targetJob.acceptedBy)) {
+            targetJob.acceptedBy = [];
+          }
+
+          if (targetJob.acceptedBy.length >= 2 && !isJobAcceptedByDesigner(targetJob, currentUser)) {
+            alert('This job has already been claimed by 2 designers (maximum limit reached).');
+            loadLiveJobs();
+            return;
+          }
+
+          pendingAcceptJobIndex = globalIdx;
+          pendingAcceptJobObj = targetJob;
+
+          // Calculate designer 60% payout
+          const clientPrice = typeof targetJob.price === 'number' ? targetJob.price : (parseFloat(targetJob.price) || 399);
+          const designerPayout = Math.round(clientPrice * 0.60);
+
+          // Populate Modal Fields
+          document.getElementById('accept-modal-job-id').textContent = '#' + (targetJob.id || 'DQ-JOB');
+          document.getElementById('accept-modal-project').textContent = targetJob.project || 'Graphic Design';
+          document.getElementById('accept-modal-service').textContent = targetJob.service || 'Design Brief';
+          document.getElementById('accept-modal-ratio').textContent = targetJob.ratio || '1:1';
+          document.getElementById('accept-modal-payout').textContent = `₹${designerPayout}/- (${clientPrice ? `60% of ₹${clientPrice}` : '60% Payout'})`;
+
+          // Reset Steps
+          document.getElementById('job-accept-step-1').classList.remove('hidden');
+          document.getElementById('job-accept-step-2').classList.add('hidden');
+          document.getElementById('job-accept-modal').classList.remove('hidden');
+
+          if (window.lucide) lucide.createIcons();
+        };
+
+        window.closeAcceptJobModal = function() {
+          document.getElementById('job-accept-modal').classList.add('hidden');
+          pendingAcceptJobIndex = null;
+          pendingAcceptJobObj = null;
+        };
+
+        window.closeAcceptModalAndGoMyJobs = function() {
+          closeAcceptJobModal();
+          if (typeof switchView === 'function') {
+            switchView('my-jobs');
+          } else {
+            const myJobsBtn = document.getElementById('nav-btn-my-jobs');
+            if (myJobsBtn) myJobsBtn.click();
+          }
+        };
+
+        // 2. Confirm and Accept Job Handler (Triggers alerts@designquixo.in and updates slot without forcing WhatsApp)
+        window.confirmAcceptJobBrief = async function() {
+          const currentUser = getCurrentDesigner();
+          if (!currentUser || pendingAcceptJobIndex === null) return;
+
+          const myIdentifier = currentUser.identifier || currentUser.phone || currentUser.name || '';
+          const myPhone10 = get10DigitPhone(currentUser.phone || myIdentifier);
+          const myEmail = (currentUser.email || (myIdentifier.includes('@') ? myIdentifier : '')).toString().trim().toLowerCase();
+          const myName = currentUser.name || 'Verified Designer';
+
+          const btn = document.getElementById('btn-confirm-accept-job');
+          if (btn) {
+            btn.disabled = true;
+            btn.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> <span>Claiming Slot...</span>`;
+            if (window.lucide) lucide.createIcons();
+          }
+
+          try {
+            let liveJobs = [];
+            if (window.DQStore && typeof window.DQStore.getJobs === 'function') {
+              liveJobs = window.DQStore.getJobs();
+            } else {
+              try {
+                liveJobs = JSON.parse(localStorage.getItem('dq_live_jobs') || '[]');
+              } catch(e) { liveJobs = []; }
+            }
+            const targetJob = liveJobs[pendingAcceptJobIndex];
+            if (!targetJob) return;
+
+            if (!Array.isArray(targetJob.acceptedBy)) {
+              targetJob.acceptedBy = [];
+            }
+
+            if (targetJob.acceptedBy.length >= 2 && !isJobAcceptedByDesigner(targetJob, currentUser)) {
+              alert('This job has already been claimed by 2 designers.');
+              closeAcceptJobModal();
+              loadLiveJobs();
+              return;
+            }
+
+            if (!isJobAcceptedByDesigner(targetJob, currentUser)) {
+              if (myIdentifier && !targetJob.acceptedBy.includes(myIdentifier)) {
+                targetJob.acceptedBy.push(myIdentifier);
+              }
+              if (myPhone10 && !targetJob.acceptedBy.includes(myPhone10)) {
+                targetJob.acceptedBy.push(myPhone10);
+              }
+              if (myEmail && !targetJob.acceptedBy.includes(myEmail)) {
+                targetJob.acceptedBy.push(myEmail);
+              }
+
+              if (targetJob.acceptedBy.length >= 2) {
+                targetJob.claimed = true;
+                targetJob.status = 'In Progress (Full)';
+              } else {
+                targetJob.status = 'In Progress';
+              }
+              localStorage.setItem('dq_live_jobs', JSON.stringify(liveJobs));
+              if (window.DQStore && window.DQStore.saveJobs) {
+                window.DQStore.saveJobs(liveJobs);
+              }
+
+              // Realtime Supabase Claim
+              const claimDb = window.DQSupabase || window.DQFirebase;
+              if (claimDb && typeof claimDb.claimJob === 'function') {
+                claimDb.claimJob(targetJob.id, myPhone10 || myEmail || myIdentifier, myName);
+              }
+
+              // Send notification email to alerts@designquixo.in
+              try {
+                await fetch('/api/notify-job-accepted', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({
+                    designerName: myName,
+                    designerPhone: myPhone10 ? `+91 ${myPhone10}` : myIdentifier,
+                    designerEmail: myEmail,
+                    clientName: targetJob.clientName || targetJob.project || 'Direct Client',
+                    jobId: targetJob.id || 'DQ-JOB',
+                    jobDetails: {
+                      project: targetJob.project || 'Graphic Design',
+                      service: targetJob.service || 'Design',
+                      ratio: targetJob.ratio || '1:1',
+                      brief: targetJob.brief || '',
+                      price: targetJob.price || 399
+                    }
+                  })
+                });
+              } catch (err) {
+                console.warn('Job accepted email notification warning:', err);
+              }
+            }
+
+            // Reload UI jobs
+            loadLiveJobs();
+
+            // Prepare WhatsApp link for optional discussion
+            const adminWA = (function() {
+              const stored = localStorage.getItem('dq_admin_whatsapp');
+              if (stored && stored.trim()) {
+                const cleaned = stored.replace(/[^0-9]/g, '');
+                if (cleaned.length === 10) return '91' + cleaned;
+                if (cleaned.length >= 11) return cleaned;
+              }
+              return '918602420897';
+            })();
+
+            const waMessage = encodeURIComponent(
+              `*DESIGN QUIXO - WORK ACCEPTED*\n\n` +
+              `*Designer:* ${myName} (${myPhone10 ? '+91 ' + myPhone10 : myIdentifier})\n` +
+              `*Job ID:* #${targetJob.id || 'DQ-JOB'}\n` +
+              `*Project:* ${targetJob.project || 'Graphic Design'}\n` +
+              `*Service:* ${targetJob.service || 'Design'}\n` +
+              `*Aspect Ratio:* ${targetJob.ratio || '1:1'}\n\n` +
+              `Hello Operations Desk, I have accepted Job #${targetJob.id || 'DQ-JOB'} and registered my spot. Let's coordinate client requirements!`
+            );
+
+            const waBtn = document.getElementById('btn-accept-whatsapp-discuss');
+            if (waBtn) {
+              waBtn.href = `https://wa.me/${adminWA}?text=${waMessage}`;
+            }
+
+            // Transition to Step 2: "Discuss with Admin to continue work"
+            document.getElementById('job-accept-step-1').classList.add('hidden');
+            document.getElementById('job-accept-step-2').classList.remove('hidden');
+
+            if (window.lucide) lucide.createIcons();
+
+          } catch (e) {
+            console.error(e);
+            alert('Failed to accept job: ' + (e.message || 'Unknown error'));
+          } finally {
+            if (btn) {
+              btn.disabled = false;
+              btn.innerHTML = `<i data-lucide="check-circle" class="w-4 h-4"></i> <span>Confirm & Accept Job</span>`;
+              if (window.lucide) lucide.createIcons();
+            }
+          }
+        };
+
+        // Compatibility bridge
+        window.acceptJobBrief = function(globalIdx) {
+          window.openAcceptJobModal(globalIdx);
+        };
+
+        // ================= EMAIL CHANGE MODAL HANDLERS =================
+        let pendingNewEmail = '';
+
+        window.openChangeEmailModal = function() {
+          const currentUser = getCurrentDesigner();
+          if (!currentUser) return;
+          const currentEmail = currentUser.email || (currentUser.identifier && currentUser.identifier.includes('@') ? currentUser.identifier : '');
+          document.getElementById('change-email-current').value = currentEmail || 'None registered';
+          document.getElementById('change-email-new-input').value = '';
+          document.getElementById('change-email-otp-input').value = '';
+          document.getElementById('change-email-alert').classList.add('hidden');
+          document.getElementById('change-email-step-1').classList.remove('hidden');
+          document.getElementById('change-email-step-2').classList.add('hidden');
+          document.getElementById('change-email-modal').classList.remove('hidden');
+          if (window.lucide) lucide.createIcons();
+        };
+
+        window.closeChangeEmailModal = function() {
+          document.getElementById('change-email-modal').classList.add('hidden');
+        };
+
+        window.backToEmailStep1 = function() {
+          document.getElementById('change-email-step-2').classList.add('hidden');
+          document.getElementById('change-email-step-1').classList.remove('hidden');
+          document.getElementById('change-email-alert').classList.add('hidden');
+          if (window.lucide) lucide.createIcons();
+        };
+
+        window.sendEmailChangeOtp = async function() {
+          const newEmailInput = document.getElementById('change-email-new-input');
+          const alertEl = document.getElementById('change-email-alert');
+          const btn = document.getElementById('btn-send-email-change-otp');
+          const newEmail = (newEmailInput.value || '').trim().toLowerCase();
+
+          if (!newEmail || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(newEmail)) {
+            alertEl.className = 'p-3 rounded-xl text-xs font-bold bg-rose-50 border border-rose-200 text-rose-700 block';
+            alertEl.textContent = 'Please enter a valid new email address.';
+            return;
+          }
+
+          pendingNewEmail = newEmail;
+          btn.disabled = true;
+          btn.innerHTML = `<i data-lucide="loader-2" class="w-3.5 h-3.5 animate-spin"></i> <span>Sending OTP...</span>`;
+          if (window.lucide) lucide.createIcons();
+
+          try {
+            const res = await fetch('/api/send-email-otp', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ email: newEmail, purpose: 'Email Change Verification' })
+            });
+            const data = await res.json();
+            if (data.success) {
+              document.getElementById('change-email-target-disp').textContent = newEmail;
+              document.getElementById('change-email-step-1').classList.add('hidden');
+              document.getElementById('change-email-step-2').classList.remove('hidden');
+              alertEl.className = 'p-3 rounded-xl text-xs font-bold bg-emerald-50 border border-emerald-200 text-emerald-700 block';
+              alertEl.textContent = '6-Digit verification OTP sent! Please check your email inbox.';
+            } else {
+              alertEl.className = 'p-3 rounded-xl text-xs font-bold bg-rose-50 border border-rose-200 text-rose-700 block';
+              alertEl.textContent = data.error || 'Failed to send OTP. Please try again.';
+            }
+          } catch (e) {
+            alertEl.className = 'p-3 rounded-xl text-xs font-bold bg-rose-50 border border-rose-200 text-rose-700 block';
+            alertEl.textContent = 'Network error while sending OTP. Please try again.';
+          } finally {
+            btn.disabled = false;
+            btn.innerHTML = `<i data-lucide="send" class="w-3.5 h-3.5"></i> <span>Send 6-Digit Verification OTP</span>`;
+            if (window.lucide) lucide.createIcons();
+          }
+        };
+
+        window.verifyEmailChangeOtp = async function() {
+          const otpInput = document.getElementById('change-email-otp-input');
+          const alertEl = document.getElementById('change-email-alert');
+          const btn = document.getElementById('btn-verify-email-change-otp');
+          const otp = (otpInput.value || '').trim();
+
+          if (!otp || otp.length !== 6) {
+            alertEl.className = 'p-3 rounded-xl text-xs font-bold bg-rose-50 border border-rose-200 text-rose-700 block';
+            alertEl.textContent = 'Please enter the 6-digit OTP received in your email.';
+            return;
+          }
+
+          btn.disabled = true;
+          btn.innerHTML = `<i data-lucide="loader-2" class="w-3.5 h-3.5 animate-spin"></i> <span>Verifying...</span>`;
+          if (window.lucide) lucide.createIcons();
+
+          try {
+            const res = await fetch('/api/verify-email-otp', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ email: pendingNewEmail, otp: otp })
+            });
+            const data = await res.json();
+
+            if (data.success) {
+              const currentUser = getCurrentDesigner();
+              const phone = currentUser ? (currentUser.phone || currentUser.identifier) : '';
+
+              // Update in Supabase & Server
+              if (window.DQSupabase && typeof window.DQSupabase.updateDesignerEmail === 'function') {
+                await window.DQSupabase.updateDesignerEmail(phone, pendingNewEmail);
+              } else {
+                await fetch('/api/update-designer-email', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ phone, newEmail: pendingNewEmail })
+                });
+              }
+
+              // Update local storage
+              if (currentUser) {
+                currentUser.email = pendingNewEmail;
+                localStorage.setItem('dq_current_user', JSON.stringify(currentUser));
+
+                let regList = [];
+                try { regList = JSON.parse(localStorage.getItem('dq_registered_designers') || '[]'); } catch(e) { regList = []; }
+                const idx = regList.findIndex(d => (d.phone && get10DigitPhone(d.phone) === get10DigitPhone(phone)) || d.email === currentUser.email);
+                if (idx !== -1) {
+                  regList[idx].email = pendingNewEmail;
+                  localStorage.setItem('dq_registered_designers', JSON.stringify(regList));
+                }
+              }
+
+              // Update DOM
+              const profEmail = document.getElementById('profile-email-val');
+              if (profEmail) profEmail.textContent = pendingNewEmail;
+
+              alert('Success! Your registered email has been verified and updated to: ' + pendingNewEmail);
+              closeChangeEmailModal();
+            } else {
+              alertEl.className = 'p-3 rounded-xl text-xs font-bold bg-rose-50 border border-rose-200 text-rose-700 block';
+              alertEl.textContent = data.error || 'Invalid or expired OTP code.';
+            }
+          } catch (e) {
+            alertEl.className = 'p-3 rounded-xl text-xs font-bold bg-rose-50 border border-rose-200 text-rose-700 block';
+            alertEl.textContent = 'Error verifying OTP: ' + (e.message || 'Unknown error');
+          } finally {
+            btn.disabled = false;
+            btn.innerHTML = `<i data-lucide="check" class="w-4 h-4"></i> <span>Verify & Update Email</span>`;
+            if (window.lucide) lucide.createIcons();
+          }
+        };
+
+        // ================= PASSWORD CHANGE MODAL HANDLERS =================
+        window.openChangePasswordModal = function() {
+          document.getElementById('change-pass-new').value = '';
+          document.getElementById('change-pass-confirm').value = '';
+          document.getElementById('change-pass-alert').classList.add('hidden');
+          document.getElementById('change-password-modal').classList.remove('hidden');
+          if (window.lucide) lucide.createIcons();
+        };
+
+        window.closeChangePasswordModal = function() {
+          document.getElementById('change-password-modal').classList.add('hidden');
+        };
+
+        window.submitChangePassword = async function(event) {
+          event.preventDefault();
+          const pNew = document.getElementById('change-pass-new').value;
+          const pConf = document.getElementById('change-pass-confirm').value;
+          const alertEl = document.getElementById('change-pass-alert');
+          const btn = document.getElementById('btn-submit-change-pass');
+
+          if (!pNew || pNew.length < 4) {
+            alertEl.className = 'p-3 rounded-xl text-xs font-bold bg-rose-50 border border-rose-200 text-rose-700 block';
+            alertEl.textContent = 'New password must be at least 4 characters long.';
+            return;
+          }
+
+          if (pNew !== pConf) {
+            alertEl.className = 'p-3 rounded-xl text-xs font-bold bg-rose-50 border border-rose-200 text-rose-700 block';
+            alertEl.textContent = 'Passwords do not match. Please verify.';
+            return;
+          }
+
+          const currentUser = getCurrentDesigner();
+          if (!currentUser) return;
+          const identifier = currentUser.phone || currentUser.email || currentUser.identifier;
+
+          btn.disabled = true;
+          btn.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> <span>Updating...</span>`;
+          if (window.lucide) lucide.createIcons();
+
+          try {
+            // Update in Supabase & Server (invalidating old passwords)
+            if (window.DQSupabase && typeof window.DQSupabase.updateDesignerPassword === 'function') {
+              await window.DQSupabase.updateDesignerPassword(identifier, pNew);
+            } else {
+              await fetch('/api/update-designer-password', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ identifier, newPassword: pNew })
+              });
+            }
+
+            // Update local storage
+            currentUser.password = pNew;
+            localStorage.setItem('dq_current_user', JSON.stringify(currentUser));
+
+            let regList = [];
+            try { regList = JSON.parse(localStorage.getItem('dq_registered_designers') || '[]'); } catch(e) { regList = []; }
+            const idx = regList.findIndex(d => (d.phone && get10DigitPhone(d.phone) === get10DigitPhone(identifier)) || d.email === identifier);
+            if (idx !== -1) {
+              regList[idx].password = pNew;
+              localStorage.setItem('dq_registered_designers', JSON.stringify(regList));
+            }
+
+            alert('Success! Your workstation password has been updated. Old passwords have been invalidated.');
+            closeChangePasswordModal();
+          } catch (e) {
+            alertEl.className = 'p-3 rounded-xl text-xs font-bold bg-rose-50 border border-rose-200 text-rose-700 block';
+            alertEl.textContent = 'Failed to update password: ' + (e.message || 'Unknown error');
+          } finally {
+            btn.disabled = false;
+            btn.innerHTML = `<i data-lucide="shield-check" class="w-4 h-4"></i> <span>Update Password</span>`;
+            if (window.lucide) lucide.createIcons();
+          }
+        };
+
+        document.getElementById('refresh-jobs-btn').addEventListener('click', () => {
+          syncFromSupabase();
+        });
+
+        async function syncFromSupabase() {
+          const curr = getCurrentDesigner();
+          const cleanMyPhone = curr ? get10DigitPhone(curr.phone || curr.identifier) : '';
+          const cleanMyEmail = curr ? (curr.email || (curr.identifier && curr.identifier.includes('@') ? curr.identifier : '')).toString().trim().toLowerCase() : '';
+          const myId = curr ? (curr.id || '').toString() : '';
+          const db = window.DQSupabase || window.DQFirebase;
+
+          // 1. Sync User Approval from Authoritative Primary Databases (Cloud SQL / Supabase)
+          try {
+            let designers = null;
+            try {
+              const apiRes = await fetch('/api/get-designers?fresh=true', { cache: 'no-store' });
+              if (apiRes.ok) {
+                const json = await apiRes.json();
+                if (json && Array.isArray(json.designers)) {
+                  designers = json.designers;
+                }
+              }
+            } catch(e) {}
+
+            if (!designers) {
+              const fetchDesFn = db && (typeof db.fetchDesigners === 'function' ? db.fetchDesigners : (typeof db.getDesigners === 'function' ? db.getDesigners : null));
+              if (fetchDesFn) {
+                designers = await fetchDesFn.call(db);
+              }
+            }
+
+            if (Array.isArray(designers)) {
+              let approved = [];
+              let registered = [];
+              let deletedDesigners = [];
+              try { deletedDesigners = JSON.parse(localStorage.getItem('dq_deleted_designers') || '[]'); } catch(e) {}
+
+              designers.forEach(u => {
+                const uPhone10 = get10DigitPhone(u.phone || u.identifier || u.id);
+                const uEmail = (u.email || (u.identifier && u.identifier.includes('@') ? u.identifier : u.id && u.id.includes('@') ? u.id : '')).toString().trim().toLowerCase();
+                const uId = (u.id || '').toString();
+                if ((uPhone10 && deletedDesigners.includes(uPhone10)) || (uEmail && deletedDesigners.includes(uEmail)) || (uId && deletedDesigners.includes(uId))) return;
+
+                const desStatus = u.status || 'Pending';
+                const avatarVal = u.photo || u.avatar || u.avatarUrl || u.dpUrl || '';
+                const sigVal = u.signature || u.signatureDataUrl || '';
+
+                registered.push({
+                  id: u.id || uEmail || uPhone10,
+                  name: u.name || 'Designer',
+                  phone: uPhone10 || '',
+                  email: uEmail,
+                  identifier: uEmail || uPhone10 || u.id || '',
+                  password: (u.password || '').toString(),
+                  portfolio: u.portfolio || u.portfolioUrl || '',
+                  skills: u.skills || (Array.isArray(u.software) ? u.software.join(', ') : '') || '',
+                  avatar: avatarVal,
+                  avatarUrl: avatarVal,
+                  signature: sigVal,
+                  signatureDataUrl: sigVal,
+                  status: desStatus,
+                  isapproved: desStatus === 'Approved',
+                  date: u.date || new Date().toLocaleDateString('en-IN')
+                });
+
+                const isMe = (cleanMyPhone && cleanMyPhone.length === 10 && uPhone10 === cleanMyPhone) ||
+                            (cleanMyEmail && cleanMyEmail.includes('@') && uEmail === cleanMyEmail) ||
+                            (myId && uId && uId === myId);
+                if (isMe && curr) {
+                  curr.status = desStatus;
+                  curr.isapproved = (desStatus === 'Approved');
+                  if (u.name) curr.name = u.name;
+                  if (uEmail) curr.email = uEmail;
+                  if (uPhone10) curr.phone = uPhone10;
+                  if (u.portfolio || u.portfolioUrl) curr.portfolio = u.portfolio || u.portfolioUrl;
+                  if (u.skills) curr.skills = u.skills;
+                  if (avatarVal) { curr.avatar = avatarVal; curr.avatarUrl = avatarVal; }
+                  if (sigVal) { curr.signature = sigVal; curr.signatureDataUrl = sigVal; }
+                  localStorage.setItem('dq_current_user', JSON.stringify(curr));
+                  sessionStorage.setItem('dq_current_user', JSON.stringify(curr));
+                }
+              });
+
+              // Preserve local-only designers that haven't been synced or are pending
+              let localReg = [];
+              try { localReg = JSON.parse(localStorage.getItem('dq_registered_designers') || '[]'); } catch(e) {}
+              if (Array.isArray(localReg)) {
+                localReg.forEach(ld => {
+                  const lp = get10DigitPhone(ld.phone || ld.identifier);
+                  const le = (ld.email || '').toLowerCase().trim();
+                  if ((lp && !deletedDesigners.includes(lp) && !registered.some(r => get10DigitPhone(r.phone || r.identifier) === lp)) ||
+                      (le && !deletedDesigners.includes(le) && !registered.some(r => (r.email || '').toLowerCase() === le))) {
+                    registered.push(ld);
+                  }
+                });
+              }
+
+              // Re-evaluate approved array from the fully merged registered array to avoid discrepancies
+              approved = registered.filter(r => r.status === 'Approved');
+
+              localStorage.setItem('dq_registered_designers', JSON.stringify(registered));
+              localStorage.setItem('dq_approved_designers', JSON.stringify(approved));
+              checkDesignerApproval();
+            }
+          } catch(e) {}
+
+          // 2. Sync Real Jobs from Supabase Jobs Table
+          try {
+            const fetchJobsFn = db && (typeof db.fetchJobs === 'function' ? db.fetchJobs : (typeof db.getJobs === 'function' ? db.getJobs : null));
+            if (fetchJobsFn) {
+              const rawJobs = await fetchJobsFn.call(db);
+              if (Array.isArray(rawJobs)) {
+                let deletedJobs = [];
+                try { deletedJobs = JSON.parse(localStorage.getItem('dq_deleted_jobs') || '[]'); } catch(e) {}
+                const deletedNormSet = new Set(deletedJobs.map(d => (window.DQStore && window.DQStore.normalizeJobId) ? window.DQStore.normalizeJobId(d) : d.toString().trim().toUpperCase()));
+
+                const cleanedJobs = [];
+                rawJobs.forEach(sj => {
+                  const rawId = (sj.id || sj.jobId || '').toString().trim();
+                  if (!rawId) return;
+                  const normId = (window.DQStore && window.DQStore.normalizeJobId) ? window.DQStore.normalizeJobId(rawId) : rawId.toUpperCase();
+                  const rowService = (sj.service || '').toString().toLowerCase();
+
+                  // Skip internal non-order or demo rows
+                  if (rowService.startsWith('designer_') || normId.includes('DES-') || normId.includes('APPR-') || normId.includes('REV-')) {
+                    return;
+                  }
+                  if (deletedNormSet.has(normId)) return;
+
+                  const isComp = (sj.status || '').toLowerCase().includes('completed') || (sj.status || '').toLowerCase().includes('delivered');
+                  const rawImgUrl = sj.referenceImage || sj.referenceimage || sj.image || sj.reference_image || sj.refImage || sj.sampleImage || sj.reference || '';
+                  cleanedJobs.push({
+                    id: normId,
+                    service: sj.service || 'Graphic Design',
+                    project: sj.project || sj.projectName || 'Design Brief',
+                    phone: sj.phone || sj.whatsapp || '',
+                    whatsapp: sj.whatsapp || sj.phone || '',
+                    brief: sj.brief || '',
+                    ratio: sj.ratio || '1:1',
+                    time: sj.time || 'Active',
+                    status: sj.status || 'Pending',
+                    completed: isComp,
+                    acceptedBy: Array.isArray(sj.acceptedBy) ? sj.acceptedBy : [],
+                    referenceImage: rawImgUrl,
+                    referenceimage: rawImgUrl,
+                    image: rawImgUrl
+                  });
+                });
+
+                const finalJobs = (window.DQStore && window.DQStore.deduplicateJobs)
+                  ? window.DQStore.deduplicateJobs(cleanedJobs)
+                  : cleanedJobs;
+
+                localStorage.setItem('dq_live_jobs', JSON.stringify(finalJobs));
+                if (window.DQStore && window.DQStore.saveJobs) {
+                  window.DQStore.saveJobs(finalJobs);
+                }
+                loadLiveJobs();
+              }
+            }
+          } catch(e) {
+            console.error('Supabase job sync error:', e);
+          }
+        }
+
+        document.getElementById('recheck-approval-btn').addEventListener('click', async () => {
+          const btn = document.getElementById('recheck-approval-btn');
+          btn.disabled = true;
+          btn.innerHTML = '<i data-lucide="refresh-cw" class="w-4 h-4 animate-spin"></i><span>Checking Live Status...</span>';
+          lucide.createIcons();
+
+          try {
+            await syncFromSupabase();
+          } catch(e) {}
+
+          btn.disabled = false;
+          btn.innerHTML = '<i data-lucide="refresh-cw" class="w-4 h-4"></i><span>Check Approval Status</span>';
+          lucide.createIcons();
+
+          const approved = checkDesignerApproval();
+          if (approved) {
+            alert('Congratulations! Your designer application is APPROVED. Full workstation access is active!');
+            loadLiveJobs();
+          } else {
+            alert('Your application is currently Under Review by the Quality Team. Once approved in the Admin Dashboard, your workstation briefs will unlock automatically.');
+          }
+        });
+
+        // Authoritative DP & Signature Recovery
+        async function fetchAndPopulateDpAndSignature() {
+          try {
+            const currentUser = getCurrentDesigner();
+            if (!currentUser) return;
+            const cleanPhone = (currentUser.phone || currentUser.identifier || '').toString().replace(/\D/g, '').slice(-10);
+            const cleanEmail = (currentUser.email || (currentUser.identifier && currentUser.identifier.includes('@') ? currentUser.identifier : '')).toString().trim().toLowerCase();
+            const queryKey = cleanPhone || cleanEmail || currentUser.identifier;
+
+            if (queryKey) {
+              const res = await fetch('/api/get-login-history');
+              if (res.ok) {
+                const logs = await res.json();
+                if (Array.isArray(logs)) {
+                  // Recovery user_dp
+                  const dpLog = logs.find(l => (l.phone === queryKey || l.phone === cleanPhone || l.phone === cleanEmail) && l.role === 'user_dp');
+                  if (dpLog && dpLog.status) {
+                    currentUser.avatar = dpLog.status;
+                    currentUser.avatarUrl = dpLog.status;
+                    localStorage.setItem('dq_current_user', JSON.stringify(currentUser));
+
+                    const dpMap = JSON.parse(localStorage.getItem('dq_user_dp_map') || '{}');
+                    if (cleanPhone) dpMap[cleanPhone] = dpLog.status;
+                    if (cleanEmail) dpMap[cleanEmail] = dpLog.status;
+                    if (currentUser.identifier) dpMap[currentUser.identifier] = dpLog.status;
+                    localStorage.setItem('dq_user_dp_map', JSON.stringify(dpMap));
+                  }
+
+                  // Recovery signature
+                  const sigLog = logs.find(l => (l.phone === queryKey || l.phone === cleanPhone || l.phone === cleanEmail) && l.role === 'signed_agreement');
+                  if (sigLog && sigLog.status) {
+                    const service = window.DQAgreementService;
+                    if (service) {
+                      service.saveSignedAgreement(queryKey, {
+                        creatorName: sigLog.name || currentUser.name || 'Creator',
+                        whatsapp: queryKey,
+                        date: new Date(sigLog.timestamp || sigLog.created_at || Date.now()).toLocaleDateString('en-IN'),
+                        signatureDataUrl: sigLog.status,
+                        designerId: queryKey
+                      });
+                    }
+                  }
+                }
+              }
+            }
+          } catch (e) {
+            console.warn('Error fetching and populating DP & signature:', e);
+          }
+          checkDesignerApproval();
+        }
+
+        // Initial execution
+        if (checkDesignerApproval()) {
+          switchView('live-jobs');
+          loadLiveJobs();
+        } else {
+          switchView('pending-approval');
+        }
+
+        fetchAndPopulateDpAndSignature().then(() => {
+          syncFromSupabase().then(() => {
+            if (checkDesignerApproval()) {
+              if (currentActiveView === 'live-jobs' || currentActiveView === 'pending-approval') {
+                switchView('live-jobs');
+              }
+              loadLiveJobs();
+            }
+          });
+        });
+
+        // Realtime Supabase Watchdogs & Job Listeners
+        function initSupabaseRealtime() {
+          const db = window.DQSupabase || window.DQFirebase;
+          if (!db) {
+            setTimeout(initSupabaseRealtime, 200);
+            return;
+          }
+
+          const user = JSON.parse(localStorage.getItem('dq_current_user') || 'null');
+          if (user && user.role === 'designer') {
+            const myPhone = get10DigitPhone(user.phone || user.identifier);
+            // Watch for immediate revocation / deletion by Admin
+            if (typeof db.watchDesignerSession === 'function') {
+              db.watchDesignerSession(myPhone, () => {
+                localStorage.removeItem('dq_current_user');
+                alert('Access Revoked: Your designer account has been deleted by the administrator.');
+                window.location.href = 'login.html';
+              });
+            }
+          }
+
+          // Live instant jobs sync
+          if (typeof db.subscribeJobs === 'function') {
+            db.subscribeJobs(() => {
+              if (checkDesignerApproval()) {
+                loadLiveJobs();
+              }
+            });
+          }
+        }
+
+        initSupabaseRealtime();
+        if (window.DQSoundService) {
+          window.DQSoundService.initJobSoundWatcher('Designer Workstation');
+        }
+
+        // Auto poll every 45 seconds & verify session (pauses when tab hidden)
+        setInterval(() => {
+          if (typeof document !== 'undefined' && document.hidden) return;
+          if (!verifyDesignerActiveSession()) return;
+          const approved = checkDesignerApproval();
+          if (approved) {
+            loadLiveJobs();
+          }
+          syncFromSupabase();
+        }, 45000);
+
+        // Instant Supabase custom event sync
+        window.addEventListener('dq_jobs_updated', () => {
+          if (!verifyDesignerActiveSession()) return;
+          if (checkDesignerApproval()) {
+            loadLiveJobs();
+          }
+        });
+        window.addEventListener('dq_designers_updated', () => {
+          if (!verifyDesignerActiveSession()) return;
+          checkDesignerApproval();
+        });
+
+        window.addEventListener('storage', (e) => {
+          if (e.key === 'dq_session_revoke_signal' || e.key === 'dq_deleted_designers') {
+            verifyDesignerActiveSession();
+            return;
+          }
+          if (e.key === 'dq_live_jobs' || e.key === 'dq_approved_designers' || e.key === 'dq_registered_designers' || e.key === 'dq_current_user') {
+            if (!verifyDesignerActiveSession()) return;
+            if (checkDesignerApproval()) {
+              if (currentActiveView === 'pending-approval') {
+                switchView('live-jobs');
+              }
+              loadLiveJobs();
+            } else {
+              switchView('pending-approval');
+            }
+          }
+        });
+
+        // Reference Image Lightbox Modal Handlers
+        window.openReferenceImageModal = function(imgOrId, jobId) {
+          const modal = document.getElementById('reference-image-modal');
+          const img = document.getElementById('ref-modal-img');
+          const title = document.getElementById('ref-modal-title');
+          const downloadBtn = document.getElementById('ref-modal-download');
+          if (!modal || !img) return;
+
+          let rawImg = '';
+          if (imgOrId && typeof imgOrId === 'string' && (imgOrId.startsWith('http') || imgOrId.startsWith('data:'))) {
+            rawImg = imgOrId;
+          } else if (window._dq_job_images && window._dq_job_images[imgOrId]) {
+            rawImg = window._dq_job_images[imgOrId];
+          } else if (window._dq_job_images && jobId && window._dq_job_images[jobId]) {
+            rawImg = window._dq_job_images[jobId];
+          } else if (imgOrId) {
+            try { rawImg = decodeURIComponent(imgOrId); } catch(e) { rawImg = imgOrId; }
+          }
+
+          img.src = rawImg;
+          if (title) title.textContent = `Client Reference Image (#${jobId || imgOrId || 'DQ-JOB'})`;
+          if (downloadBtn) {
+            downloadBtn.href = rawImg;
+            downloadBtn.download = `Reference-${jobId || imgOrId || 'DesignQuixo'}.png`;
+          }
+          modal.classList.remove('hidden');
+          if (window.lucide) lucide.createIcons();
+        };
+
+        window.closeReferenceImageModal = function() {
+          const modal = document.getElementById('reference-image-modal');
+          if (modal) modal.classList.add('hidden');
+        };
+
+        // ================= CREATOR AGREEMENT & E-SIGNATURE ENGINE =================
+        let signatureCanvas = null;
+        let signatureCtx = null;
+        let isDrawingSignature = false;
+        let hasDrawnSignature = false;
+        let signatureInkColor = '#1e40af';
+        let lastSigX = 0;
+        let lastSigY = 0;
+
+        function initDesignerSignatureCanvas() {
+          const canvas = document.getElementById('designer-signature-canvas');
+          if (!canvas) return;
+          signatureCanvas = canvas;
+          signatureCtx = canvas.getContext('2d');
+          
+          // Handle CSS pixel to Canvas coordinate scaling
+          const rect = canvas.getBoundingClientRect();
+          const dpr = window.devicePixelRatio || 1;
+          const displayWidth = rect.width > 0 ? rect.width : 650;
+          const displayHeight = rect.height > 0 ? rect.height : 176;
+          
+          canvas.width = displayWidth * dpr;
+          canvas.height = displayHeight * dpr;
+          
+          signatureCtx.scale(dpr, dpr);
+          signatureCtx.lineCap = 'round';
+          signatureCtx.lineJoin = 'round';
+          signatureCtx.lineWidth = 2.5;
+          signatureCtx.strokeStyle = signatureInkColor;
+
+          const getPos = (e) => {
+            const cRect = canvas.getBoundingClientRect();
+            const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+            const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+            return {
+              x: clientX - cRect.left,
+              y: clientY - cRect.top
+            };
+          };
+
+          const startDraw = (e) => {
+            e.preventDefault();
+            isDrawingSignature = true;
+            const pos = getPos(e);
+            lastSigX = pos.x;
+            lastSigY = pos.y;
+            const hint = document.getElementById('sig-placeholder-hint');
+            if (hint) hint.classList.add('hidden');
+          };
+
+          const draw = (e) => {
+            if (!isDrawingSignature) return;
+            e.preventDefault();
+            const pos = getPos(e);
+            signatureCtx.beginPath();
+            signatureCtx.strokeStyle = signatureInkColor;
+            signatureCtx.moveTo(lastSigX, lastSigY);
+            signatureCtx.lineTo(pos.x, pos.y);
+            signatureCtx.stroke();
+            lastSigX = pos.x;
+            lastSigY = pos.y;
+            hasDrawnSignature = true;
+          };
+
+          const endDraw = (e) => {
+            if (isDrawingSignature) {
+              isDrawingSignature = false;
+            }
+          };
+
+          canvas.onmousedown = startDraw;
+          canvas.onmousemove = draw;
+          canvas.onmouseup = endDraw;
+          canvas.onmouseleave = endDraw;
+
+          canvas.ontouchstart = startDraw;
+          canvas.ontouchmove = draw;
+          canvas.ontouchend = endDraw;
+          canvas.ontouchcancel = endDraw;
+        }
+
+        window.setSignatureInkColor = function(color) {
+          signatureInkColor = color;
+          if (signatureCtx) {
+            signatureCtx.strokeStyle = color;
+          }
+        };
+
+        window.clearSignatureCanvas = function() {
+          if (!signatureCanvas || !signatureCtx) return;
+          const dpr = window.devicePixelRatio || 1;
+          signatureCtx.clearRect(0, 0, signatureCanvas.width / dpr, signatureCanvas.height / dpr);
+          hasDrawnSignature = false;
+          const hint = document.getElementById('sig-placeholder-hint');
+          if (hint) hint.classList.remove('hidden');
+        };
+
+        window.typeCalligraphicSignature = function() {
+          if (!signatureCanvas || !signatureCtx) return;
+          const user = JSON.parse(localStorage.getItem('dq_current_user') || '{}');
+          const defaultName = document.getElementById('esign-creator-name')?.value || user.name || 'Creator';
+          
+          const entered = prompt('Enter your full legal name to generate your calligraphic digital signature:', defaultName);
+          if (!entered || !entered.trim()) return;
+
+          const dpr = window.devicePixelRatio || 1;
+          const w = signatureCanvas.width / dpr;
+          const h = signatureCanvas.height / dpr;
+
+          signatureCtx.clearRect(0, 0, w, h);
+          
+          // Draw elegant cursive signature
+          signatureCtx.save();
+          signatureCtx.font = 'italic 600 36px "Brush Script MT", "Brush Script Std", "Dancing Script", "Caveat", cursive, sans-serif';
+          signatureCtx.fillStyle = signatureInkColor;
+          signatureCtx.textAlign = 'center';
+          signatureCtx.textBaseline = 'middle';
+          
+          signatureCtx.fillText(entered.trim(), w / 2, (h / 2) - 6);
+          
+          // Dynamic flourish underline
+          signatureCtx.beginPath();
+          signatureCtx.strokeStyle = signatureInkColor;
+          signatureCtx.lineWidth = 2;
+          const textWidth = signatureCtx.measureText(entered.trim()).width;
+          const startX = Math.max(20, (w / 2) - (textWidth / 2) - 10);
+          const endX = Math.min(w - 20, (w / 2) + (textWidth / 2) + 15);
+          const lineY = (h / 2) + 16;
+          
+          signatureCtx.moveTo(startX, lineY);
+          signatureCtx.quadraticCurveTo(w / 2, lineY + 6, endX, lineY - 4);
+          signatureCtx.stroke();
+          signatureCtx.restore();
+
+          hasDrawnSignature = true;
+          const hint = document.getElementById('sig-placeholder-hint');
+          if (hint) hint.classList.add('hidden');
+        };
+
+        async function renderDesignerAgreementView() {
+          const user = JSON.parse(localStorage.getItem('dq_current_user') || '{}');
+          const myPhone = get10DigitPhone(user.phone || user.identifier || '');
+          const creatorName = user.name || 'Uzef Khan';
+          const todayStr = new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+
+          // Pre-fill mandatory registration details
+          const nameInput = document.getElementById('esign-creator-name');
+          if (nameInput) nameInput.value = creatorName;
+
+          const dateInput = document.getElementById('esign-date');
+          if (dateInput) dateInput.value = todayStr;
+
+          const phoneInput = document.getElementById('esign-whatsapp');
+          if (phoneInput) phoneInput.value = myPhone ? `+91 ${myPhone}` : (user.phone || '+91 Contact');
+
+          const service = window.DQAgreementService;
+          let existingSigned = service ? service.getSignedAgreement(myPhone || user.identifier) : null;
+
+          if (!existingSigned && service) {
+            try {
+              const db = window.DQSupabase || window.DQFirebase;
+              const SUPABASE_URL = (db && db.url) ? db.url : 'https://gzbwvleuuxyidohujibj.supabase.co';
+              const SUPABASE_ANON_KEY = (db && db.key) ? db.key : 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd6Ynd2bGV1dXh5aWRvaHVqaWJqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk5MDg3ODEsImV4cCI6MjEwNTQ4NDc4MX0.qIvmq3FnjJPkKOcxnvFYS158NxF0GHKvd0PSwP7hECk';
+              const queryPhone = myPhone || user.identifier;
+              if (queryPhone) {
+                const res = await fetch('/api/get-login-history');
+                if (res.ok) {
+                  const logs = await res.json();
+                  const data = (logs || []).filter(l => l.phone === queryPhone && l.role === 'signed_agreement');
+                  if (data && data.length > 0 && data[0].status) {
+                    service.saveSignedAgreement(queryPhone, {
+                      creatorName: data[0].name || user.name || 'Creator',
+                      whatsapp: queryPhone,
+                      date: new Date(data[0].timestamp || data[0].created_at || Date.now()).toLocaleDateString('en-IN'),
+                      signatureDataUrl: data[0].status,
+                      designerId: queryPhone
+                    });
+                    existingSigned = service.getSignedAgreement(queryPhone);
+                  }
+                }
+              }
+            } catch (e) {
+              console.warn('Error fetching agreement on load:', e);
+            }
+          }
+
+          const statusPill = document.getElementById('designer-agreement-status-pill');
+          const navBadge = document.getElementById('designer-agreement-nav-badge');
+          const signedBanner = document.getElementById('agreement-signed-banner');
+          const executionCard = document.getElementById('agreement-execution-card');
+
+          if (existingSigned) {
+            if (signedBanner) signedBanner.classList.remove('hidden');
+            if (executionCard) executionCard.classList.add('hidden');
+
+            const signedName = document.getElementById('signed-card-name');
+            if (signedName) signedName.textContent = existingSigned.creatorName || creatorName;
+
+            const signedDate = document.getElementById('signed-card-date');
+            if (signedDate) signedDate.textContent = existingSigned.date || todayStr;
+
+            const signedPhone = document.getElementById('signed-card-phone');
+            if (signedPhone) signedPhone.textContent = existingSigned.whatsapp ? `+91 ${existingSigned.whatsapp}` : phoneInput.value;
+
+            const sigImg = document.getElementById('signed-card-sig-img');
+            if (sigImg && existingSigned.signatureDataUrl) {
+              sigImg.src = existingSigned.signatureDataUrl;
+            }
+
+            if (statusPill) {
+              statusPill.innerHTML = `
+                <span class="px-3.5 py-1.5 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-300 flex items-center gap-1.5 shadow-2xs">
+                  <i data-lucide="check-circle" class="w-3.5 h-3.5 text-emerald-600"></i>
+                  <span>Executed & Verified ✓</span>
+                </span>
+              `;
+            }
+
+            if (navBadge) {
+              navBadge.className = 'bg-emerald-100 text-emerald-800 text-[10px] font-extrabold px-2 py-0.5 rounded-full';
+              navBadge.textContent = 'Signed ✓';
+            }
+          } else {
+            if (signedBanner) signedBanner.classList.add('hidden');
+            if (executionCard) executionCard.classList.remove('hidden');
+
+            if (statusPill) {
+              statusPill.innerHTML = `
+                <span class="px-3.5 py-1.5 rounded-full text-xs font-bold bg-amber-50 text-amber-800 border border-amber-200 flex items-center gap-1.5 shadow-2xs">
+                  <span class="w-2 h-2 rounded-full bg-amber-500 animate-ping"></span>
+                  <span>Signature Required ✍</span>
+                </span>
+              `;
+            }
+
+            if (navBadge) {
+              navBadge.className = 'bg-amber-100 text-amber-800 text-[10px] font-extrabold px-2 py-0.5 rounded-full';
+              navBadge.textContent = 'Required ✍';
+            }
+
+            setTimeout(() => {
+              initDesignerSignatureCanvas();
+            }, 60);
+          }
+
+          if (window.lucide) lucide.createIcons();
+        }
+
+        window.enableAgreementReSigning = function() {
+          const executionCard = document.getElementById('agreement-execution-card');
+          if (executionCard) {
+            executionCard.classList.remove('hidden');
+            executionCard.scrollIntoView({ behavior: 'smooth' });
+            setTimeout(() => {
+              initDesignerSignatureCanvas();
+            }, 60);
+          }
+        };
+
+        window.downloadMyAgreementTemplate = function() {
+          const service = window.DQAgreementService;
+          if (service && service.downloadMasterTemplate) {
+            service.downloadMasterTemplate();
+          } else {
+            alert('Master Agreement PDF is being prepared.');
+          }
+        };
+
+        window.downloadMySignedAgreementPdf = async function() {
+          const user = JSON.parse(localStorage.getItem('dq_current_user') || '{}');
+          const myPhone = get10DigitPhone(user.phone || user.identifier || '');
+          const service = window.DQAgreementService;
+          if (!service) {
+            alert('PDF Service initializing, please retry.');
+            return;
+          }
+
+          const existing = service.getSignedAgreement(myPhone || user.identifier);
+          if (!existing) {
+            alert('No signed agreement found for your account. Please sign first.');
+            return;
+          }
+
+          try {
+            const pdfBytes = await service.generateSignedPdf({
+              creatorName: existing.creatorName || user.name || 'Creator',
+              whatsapp: myPhone || existing.whatsapp || '',
+              date: existing.date || new Date().toLocaleDateString('en-IN'),
+              signatureDataUrl: existing.signatureDataUrl,
+              designerId: myPhone || user.identifier
+            });
+
+            service.downloadPdf(pdfBytes, `Design_Quixo_Agreement_${(existing.creatorName || 'Creator').replace(/\s+/g, '_')}.pdf`);
+          } catch (err) {
+            console.error('Error generating PDF:', err);
+            alert('Could not generate download. Please try re-signing.');
+          }
+        };
+
+        window.submitDesignerEsignAgreement = async function() {
+          const checkbox = document.getElementById('esign-agree-checkbox');
+          if (!checkbox || !checkbox.checked) {
+            alert('Mandatory Requirement: Please check the box to confirm you agree to the Creator Agreement terms.');
+            return;
+          }
+
+          if (!hasDrawnSignature || !signatureCanvas) {
+            alert('Please draw your digital signature or use "Type Name as Signature" before submitting.');
+            return;
+          }
+
+          const user = JSON.parse(localStorage.getItem('dq_current_user') || '{}');
+          const myPhone = get10DigitPhone(user.phone || user.identifier || '');
+          const creatorName = document.getElementById('esign-creator-name')?.value || user.name || 'Creator';
+          const executionDate = document.getElementById('esign-date')?.value || new Date().toLocaleDateString('en-IN');
+          const rawWhatsapp = document.getElementById('esign-whatsapp')?.value || myPhone || '';
+          const cleanWhatsapp = get10DigitPhone(rawWhatsapp) || myPhone || rawWhatsapp;
+
+          const sigDataUrl = signatureCanvas.toDataURL('image/png');
+
+          const btn = document.getElementById('btn-submit-esign-agreement');
+          const btnText = document.getElementById('btn-esign-text');
+          if (btn) btn.disabled = true;
+          if (btnText) btnText.textContent = 'Generating Stamped PDF...';
+
+          try {
+            const service = window.DQAgreementService;
+            if (!service) {
+              throw new Error('AgreementService is initializing.');
+            }
+
+            // 1. Generate Stamped PDF bytes
+            const pdfBytes = await service.generateSignedPdf({
+              creatorName,
+              whatsapp: cleanWhatsapp,
+              date: executionDate,
+              signatureDataUrl: sigDataUrl,
+              designerId: myPhone || user.identifier
+            });
+
+            // 2. Save Signed Agreement to persistent storage & ledger
+            service.saveSignedAgreement(myPhone || user.identifier, {
+              creatorName,
+              whatsapp: cleanWhatsapp,
+              date: executionDate,
+              signatureDataUrl: sigDataUrl,
+              designerId: myPhone || user.identifier
+            }, pdfBytes);
+
+            // Save signature log to Supabase login_history
+            try {
+              await fetch('/api/save-login-history', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                  id: 'log-' + Date.now() + '-' + Math.random().toString(36).substring(2, 7),
+                  phone: cleanWhatsapp || myPhone || user.identifier || '',
+                  name: creatorName,
+                  role: 'signed_agreement',
+                  status: sigDataUrl,
+                  timestamp: new Date().toISOString()
+                })
+              });
+            } catch(e) {
+              console.warn('Dashboard signature save warning:', e);
+            }
+
+            // 3. Trigger immediate download for the designer
+            service.downloadPdf(pdfBytes, `Design_Quixo_Agreement_${creatorName.replace(/\s+/g, '_')}.pdf`);
+
+            alert('Success! Your Creator Agreement has been executed with your digital e-signature and the signed PDF has been downloaded.');
+
+            // 4. Refresh view
+            renderDesignerAgreementView();
+
+          } catch (err) {
+            console.error('Error executing e-signature:', err);
+            alert('An error occurred while stamping the PDF: ' + err.message);
+          } finally {
+            if (btn) btn.disabled = false;
+            if (btnText) btnText.textContent = 'Sign & Generate Stamped Agreement PDF';
+            if (window.lucide) lucide.createIcons();
+          }
+        };
+      </script>
+
+      <!-- ================= JOB ACCEPTANCE MODAL ================= -->
+      <div id="job-accept-modal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-xs flex items-center justify-center p-4">
+        <div class="relative bg-white rounded-3xl max-w-lg w-full p-6 sm:p-7 space-y-5 shadow-2xl">
+          
+          <!-- STEP 1: REVIEW & ACCEPT -->
+          <div id="job-accept-step-1" class="space-y-4">
+            <div class="flex items-center justify-between pb-3 border-b border-slate-200">
+              <div class="flex items-center gap-2">
+                <div class="w-8 h-8 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
+                  <i data-lucide="check-circle" class="w-5 h-5"></i>
+                </div>
+                <div>
+                  <h3 class="font-bold text-slate-900 text-base font-['Space_Grotesk']">Accept Client Job</h3>
+                  <p class="text-[11px] text-slate-500">Confirm claiming this work in your workstation</p>
+                </div>
+              </div>
+              <button onclick="closeAcceptJobModal()" class="p-1.5 rounded-xl hover:bg-slate-100 text-slate-400 hover:text-slate-700 transition-colors cursor-pointer">
+                <i data-lucide="x" class="w-5 h-5"></i>
+              </button>
+            </div>
+
+            <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-2.5 text-xs">
+              <div class="flex items-center justify-between">
+                <span class="text-slate-500 font-semibold">Job ID:</span>
+                <span id="accept-modal-job-id" class="font-mono font-bold text-blue-600 bg-white px-2 py-0.5 rounded border border-slate-200">#DQ-JOB</span>
+              </div>
+              <div class="flex items-center justify-between">
+                <span class="text-slate-500 font-semibold">Project:</span>
+                <span id="accept-modal-project" class="font-bold text-slate-900">Design Project</span>
+              </div>
+              <div class="flex items-center justify-between">
+                <span class="text-slate-500 font-semibold">Service:</span>
+                <span id="accept-modal-service" class="font-medium text-slate-800">Graphic Design</span>
+              </div>
+              <div class="flex items-center justify-between">
+                <span class="text-slate-500 font-semibold">Aspect Ratio:</span>
+                <span id="accept-modal-ratio" class="font-mono font-bold text-slate-800 bg-white px-2 py-0.5 rounded border border-slate-200">1:1</span>
+              </div>
+              <div class="flex items-center justify-between pt-2 border-t border-slate-200">
+                <span class="text-slate-700 font-bold">Designer 60% Payout:</span>
+                <span id="accept-modal-payout" class="text-sm font-extrabold text-emerald-700 font-mono">+₹239/-</span>
+              </div>
+            </div>
+
+            <div class="p-3.5 rounded-xl bg-blue-50/70 border border-blue-100 text-[11px] text-slate-600 space-y-1">
+              <p class="font-bold text-blue-950 flex items-center gap-1">
+                <i data-lucide="info" class="w-3.5 h-3.5 text-blue-600"></i> Workstation Terms:
+              </p>
+              <p>• Payout is strictly 60% upon client final approval and layered source file delivery (PSD/AI/EPS/CDR/Figma).</p>
+              <p>• Slot is held for you in My Accepted Jobs.</p>
+            </div>
+
+            <div class="flex items-center gap-3 pt-2">
+              <button type="button" onclick="closeAcceptJobModal()" class="w-1/3 py-2.5 rounded-xl border border-slate-200 text-slate-600 font-bold text-xs hover:bg-slate-50 transition-colors cursor-pointer">
+                Cancel
+              </button>
+              <button type="button" id="btn-confirm-accept-job" onclick="confirmAcceptJobBrief()" class="flex-1 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-xs transition-colors cursor-pointer">
+                <i data-lucide="check-circle" class="w-4 h-4"></i>
+                <span>Confirm & Accept Job</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- STEP 2: DISCUSS WITH ADMIN TO CONTINUE WORK -->
+          <div id="job-accept-step-2" class="hidden space-y-5 text-center py-2">
+            <div class="w-14 h-14 rounded-2xl bg-emerald-50 text-emerald-600 border border-emerald-200 flex items-center justify-center mx-auto shadow-xs">
+              <i data-lucide="check" class="w-7 h-7 stroke-[3]"></i>
+            </div>
+
+            <div class="space-y-1.5">
+              <h3 class="text-xl font-bold text-slate-900 font-['Space_Grotesk']">Job Accepted Successfully!</h3>
+              <p class="text-xs font-bold text-blue-600 bg-blue-50 py-1 px-3 rounded-full inline-block border border-blue-100">
+                Discuss with Admin to continue work
+              </p>
+            </div>
+
+            <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 text-xs text-slate-600 text-left space-y-2 leading-relaxed">
+              <p>Your claim has been recorded and notified to the Operations Desk (<span class="font-mono text-slate-800">designquixo@gmail.com</span>).</p>
+              <p>Please contact the Operations Desk on WhatsApp to discuss project details, get raw client assets, and coordinate draft submission.</p>
+            </div>
+
+            <div class="space-y-2.5 pt-1">
+              <a id="btn-accept-whatsapp-discuss" href="#" target="_blank" class="w-full py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-xs transition-colors">
+                <i data-lucide="message-circle" class="w-4 h-4"></i>
+                <span>Discuss with Admin on WhatsApp</span>
+              </a>
+              <button type="button" onclick="closeAcceptModalAndGoMyJobs()" class="w-full py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs flex items-center justify-center gap-2 transition-colors cursor-pointer">
+                <i data-lucide="check-square" class="w-3.5 h-3.5"></i>
+                <span>View in My Accepted Jobs</span>
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ================= CHANGE REGISTERED EMAIL MODAL ================= -->
+      <div id="change-email-modal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-xs flex items-center justify-center p-4">
+        <div class="relative bg-white rounded-3xl max-w-md w-full p-6 space-y-5 shadow-2xl">
+          <div class="flex items-center justify-between pb-3 border-b border-slate-200">
+            <div class="flex items-center gap-2">
+              <div class="w-8 h-8 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
+                <i data-lucide="mail" class="w-4 h-4"></i>
+              </div>
+              <div>
+                <h3 class="font-bold text-slate-900 text-sm font-['Space_Grotesk']">Change Registered Email</h3>
+                <p class="text-[10px] text-slate-500">OTP verification required for email update</p>
+              </div>
+            </div>
+            <button onclick="closeChangeEmailModal()" class="p-1.5 rounded-xl hover:bg-slate-100 text-slate-400 hover:text-slate-700 transition-colors cursor-pointer">
+              <i data-lucide="x" class="w-4 h-4"></i>
+            </button>
+          </div>
+
+          <div id="change-email-alert" class="hidden p-3 rounded-xl text-xs font-medium"></div>
+
+          <!-- Step 1: Input New Email -->
+          <div id="change-email-step-1" class="space-y-4 text-xs">
+            <div>
+              <label class="block text-slate-600 font-bold mb-1">Current Registered Email</label>
+              <input type="text" id="change-email-current" readonly class="w-full px-3.5 py-2.5 rounded-xl bg-slate-100 border border-slate-200 text-slate-500 font-mono text-xs cursor-not-allowed" />
+            </div>
+
+            <div>
+              <label class="block text-slate-800 font-bold mb-1">New Email Address <span class="text-rose-500">*</span></label>
+              <input type="email" id="change-email-new-input" placeholder="e.g. yourname@example.com" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-300 focus:bg-white focus:border-blue-600 focus:outline-hidden text-slate-900 font-medium text-xs transition-colors" />
+            </div>
+
+            <button type="button" id="btn-send-email-change-otp" onclick="sendEmailChangeOtp()" class="w-full py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-xs transition-colors cursor-pointer">
+              <i data-lucide="send" class="w-3.5 h-3.5"></i>
+              <span>Send 6-Digit Verification OTP</span>
+            </button>
+          </div>
+
+          <!-- Step 2: Verify OTP -->
+          <div id="change-email-step-2" class="hidden space-y-4 text-xs">
+            <p class="text-slate-600 text-xs">
+              We sent a 6-digit verification code to <strong id="change-email-target-disp" class="text-slate-900 font-mono"></strong>. Please check your inbox and spam folder.
+            </p>
+
+            <div>
+              <label class="block text-slate-800 font-bold mb-1">Enter 6-Digit Email OTP <span class="text-rose-500">*</span></label>
+              <input type="text" id="change-email-otp-input" maxlength="6" placeholder="123456" class="w-full px-4 py-3 rounded-xl bg-slate-50 border border-slate-300 focus:bg-white focus:border-blue-600 focus:outline-hidden text-center text-lg font-mono font-bold tracking-widest text-slate-900 transition-colors" />
+            </div>
+
+            <div class="flex items-center gap-2">
+              <button type="button" onclick="sendEmailChangeOtp()" class="text-[11px] text-blue-600 hover:underline font-bold">Resend Code</button>
+            </div>
+
+            <div class="flex items-center gap-3 pt-1">
+              <button type="button" onclick="backToEmailStep1()" class="w-1/3 py-2.5 rounded-xl border border-slate-200 text-slate-600 font-bold text-xs hover:bg-slate-50 transition-colors cursor-pointer">
+                Back
+              </button>
+              <button type="button" id="btn-verify-email-change-otp" onclick="verifyEmailChangeOtp()" class="flex-1 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-xs transition-colors cursor-pointer">
+                <i data-lucide="check" class="w-4 h-4"></i>
+                <span>Verify & Update Email</span>
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ================= CHANGE PASSWORD MODAL ================= -->
+      <div id="change-password-modal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-xs flex items-center justify-center p-4">
+        <div class="relative bg-white rounded-3xl max-w-md w-full p-6 space-y-5 shadow-2xl">
+          <div class="flex items-center justify-between pb-3 border-b border-slate-200">
+            <div class="flex items-center gap-2">
+              <div class="w-8 h-8 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
+                <i data-lucide="key-round" class="w-4 h-4"></i>
+              </div>
+              <div>
+                <h3 class="font-bold text-slate-900 text-sm font-['Space_Grotesk']">Change Password</h3>
+                <p class="text-[10px] text-slate-500">Update your workstation security password</p>
+              </div>
+            </div>
+            <button onclick="closeChangePasswordModal()" class="p-1.5 rounded-xl hover:bg-slate-100 text-slate-400 hover:text-slate-700 transition-colors cursor-pointer">
+              <i data-lucide="x" class="w-4 h-4"></i>
+            </button>
+          </div>
+
+          <div id="change-pass-alert" class="hidden p-3 rounded-xl text-xs font-medium"></div>
+
+          <form id="change-password-form" onsubmit="submitChangePassword(event)" class="space-y-4 text-xs">
+            <div>
+              <label class="block text-slate-800 font-bold mb-1">New Password <span class="text-rose-500">*</span></label>
+              <input type="password" id="change-pass-new" required minlength="4" placeholder="Enter at least 4 characters" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-300 focus:bg-white focus:border-blue-600 focus:outline-hidden text-slate-900 font-medium text-xs transition-colors" />
+            </div>
+
+            <div>
+              <label class="block text-slate-800 font-bold mb-1">Confirm New Password <span class="text-rose-500">*</span></label>
+              <input type="password" id="change-pass-confirm" required minlength="4" placeholder="Re-enter new password" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-300 focus:bg-white focus:border-blue-600 focus:outline-hidden text-slate-900 font-medium text-xs transition-colors" />
+            </div>
+
+            <div class="p-3 rounded-xl bg-amber-50 border border-amber-200 text-[11px] text-amber-900">
+              <strong>Security Notice:</strong> Saving a new password will immediately invalidate any previous passwords and update your account credentials.
+            </div>
+
+            <div class="flex items-center gap-3 pt-1">
+              <button type="button" onclick="closeChangePasswordModal()" class="w-1/3 py-2.5 rounded-xl border border-slate-200 text-slate-600 font-bold text-xs hover:bg-slate-50 transition-colors cursor-pointer">
+                Cancel
+              </button>
+              <button type="submit" id="btn-submit-change-pass" class="flex-1 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-xs transition-colors cursor-pointer">
+                <i data-lucide="shield-check" class="w-4 h-4"></i>
+                <span>Update Password</span>
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Client Reference Image Lightbox Modal -->
+      <div id="reference-image-modal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-xs flex items-center justify-center p-4">
+        <div class="relative bg-white rounded-3xl max-w-2xl w-full p-6 space-y-4 max-h-[90vh] flex flex-col shadow-2xl">
+          <div class="flex items-center justify-between pb-3 border-b border-slate-200 shrink-0">
+            <div class="flex items-center gap-2">
+              <i data-lucide="image" class="w-5 h-5 text-blue-600"></i>
+              <h3 id="ref-modal-title" class="font-bold text-slate-900 text-sm">Client Reference Image (#DQ-JOB)</h3>
+            </div>
+            <button onclick="closeReferenceImageModal()" class="p-1.5 rounded-xl hover:bg-slate-100 text-slate-400 hover:text-slate-700 transition-colors cursor-pointer">
+              <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+          </div>
+          <div class="flex-1 overflow-auto rounded-2xl bg-slate-100 border border-slate-200 flex items-center justify-center p-2 min-h-[250px]">
+            <img id="ref-modal-img" src="" alt="Client Reference" class="max-w-full max-h-[60vh] object-contain rounded-xl shadow-xs" />
+          </div>
+          <div class="flex items-center justify-between pt-2 shrink-0 text-xs">
+            <span class="text-slate-500">Uploaded by client with design brief.</span>
+            <a id="ref-modal-download" href="#" download="client-reference-design.png" class="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold flex items-center gap-1.5 transition-colors shadow-xs">
+              <i data-lucide="download" class="w-3.5 h-3.5"></i>
+              <span>Download Image</span>
+            </a>
+          </div>
+        </div>
+      </div>
+      <!-- Global Cookie Banner & Compliance -->
+      <script src="cookie-banner.js"></script>
+    </body>
+  </html>

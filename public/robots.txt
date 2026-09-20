@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /admin-dashboard.html
+Disallow: /designer-dashboard.html
+
+Sitemap: https://designquixo.in/sitemap.xml

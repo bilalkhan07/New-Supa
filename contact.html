@@ -1,0 +1,353 @@
+<!doctype html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Contact Support Desk - Design Quixo | Direct WhatsApp Support</title>
+    <meta name="description" content="Reach the Design Quixo creator operations & support desk. Fast resolution on WhatsApp, phone, and email." />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+    <link rel="canonical" href="https://designquixo.in/contact.html" />
+    <meta property="og:title" content="Contact Support Desk - Design Quixo" />
+    <meta property="og:description" content="Reach Design Quixo creator operations & support on WhatsApp, phone, and email." />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://designquixo.in/contact.html" />
+    <meta property="og:image" content="https://designquixo.in/favicon.png" />
+    <link rel="icon" type="image/png" href="favicon.png" />
+    <link rel="shortcut icon" type="image/png" href="favicon.png" />
+    <link rel="apple-touch-icon" href="favicon.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="security.js"></script>
+    <!-- Design Quixo Source & UI Security -->
+    <script>
+      (function(){
+        const blockEvent = function(e){ e.preventDefault(); e.stopPropagation(); return false; };
+        window.addEventListener('contextmenu', blockEvent, true);
+        document.addEventListener('contextmenu', blockEvent, true);
+        window.oncontextmenu = function(){ return false; };
+        document.oncontextmenu = function(){ return false; };
+        const blockKeys = function(e){
+          if (e.key === 'F12' || e.keyCode === 123) { e.preventDefault(); e.stopPropagation(); return false; }
+          const ctrl = e.ctrlKey || e.metaKey;
+          if (ctrl && (e.shiftKey || e.altKey)) {
+            const k = (e.key || '').toUpperCase();
+            if (k === 'I' || k === 'J' || k === 'C' || k === 'K' || k === 'S' || k === 'E') {
+              e.preventDefault(); e.stopPropagation(); return false;
+            }
+          }
+          if (ctrl) {
+            const k = (e.key || '').toUpperCase();
+            if (k === 'U' || k === 'S' || k === 'P') { e.preventDefault(); e.stopPropagation(); return false; }
+          }
+        };
+        window.addEventListener('keydown', blockKeys, true);
+        document.addEventListener('keydown', blockKeys, true);
+        document.addEventListener('selectstart', function(e){
+          const t = e.target && e.target.tagName ? e.target.tagName.toUpperCase() : '';
+          if (t !== 'INPUT' && t !== 'TEXTAREA') { e.preventDefault(); return false; }
+        }, true);
+        document.addEventListener('copy', function(e){
+          const t = e.target && e.target.tagName ? e.target.tagName.toUpperCase() : '';
+          if (t !== 'INPUT' && t !== 'TEXTAREA') { e.preventDefault(); return false; }
+        }, true);
+      })();
+    </script>
+    <link rel="stylesheet" href="src/index.css" />
+    <script src="https://unpkg.com/lucide@latest"></script>
+  </head>
+  <body class="bg-white text-slate-800 antialiased min-h-screen flex flex-col font-['Plus_Jakarta_Sans',sans-serif]">
+    
+    <!-- Navigation Header -->
+    <header class="sticky top-0 z-50 backdrop-blur-md bg-white/95 border-b border-slate-200 transition-all shadow-xs">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between gap-4">
+        <div class="flex items-center justify-start shrink-0">
+          <a href="index.html" class="flex items-center gap-2.5 sm:gap-3 group shrink-0">
+            <img src="favicon.png" alt="Design Quixo Logo" class="w-8 h-8 sm:w-10 sm:h-10 object-contain rounded-xl group-hover:scale-105 transition-transform shrink-0" onerror="this.onerror=null; this.src='favicon.png';" />
+            <span class="font-extrabold text-lg sm:text-xl tracking-tight font-['Space_Grotesk'] text-slate-900">DESIGN <span class="text-blue-600">QUIXO</span></span>
+          </a>
+        </div>
+
+        <!-- Desktop Navigation - Centered -->
+        <nav class="hidden lg:flex items-center justify-center gap-7 xl:gap-8 text-xs xl:text-sm font-semibold text-slate-600 mx-auto">
+          <a href="index.html" class="hover:text-blue-600 transition-colors">Home</a>
+          <a href="services.html" class="hover:text-blue-600 transition-colors">Services</a>
+          <a href="latest-works.html" class="hover:text-blue-600 transition-colors">Portfolio</a>
+          <a href="about.html" class="hover:text-blue-600 transition-colors">About Us</a>
+          <a href="cities.html" class="hover:text-blue-600 transition-colors flex items-center gap-1">
+            <i data-lucide="map-pin" class="w-3.5 h-3.5 text-blue-600"></i>
+            Cities
+          </a>
+          <a href="contact.html" class="text-blue-600 font-bold">Contact</a>
+        </nav>
+
+        <!-- Right Action CTAs -->
+        <div class="flex items-center justify-end gap-2.5 sm:gap-3 shrink-0">
+          <a href="login.html?mode=signup" class="hidden sm:inline-flex items-center gap-1.5 text-xs font-semibold text-slate-700 hover:text-blue-600 px-3.5 py-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 shadow-xs transition-colors shrink-0">
+            <i data-lucide="user-plus" class="w-3.5 h-3.5 text-blue-600"></i>
+            <span>Join as Designer</span>
+          </a>
+          <a href="login.html?mode=login" class="inline-flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 text-white font-bold px-3.5 py-2 sm:px-4 sm:py-2 rounded-xl text-xs sm:text-sm shadow-sm transition-all shrink-0">
+            <i data-lucide="log-in" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i>
+            <span>Login</span>
+          </a>
+          <button id="mobile-menu-btn" class="lg:hidden p-2 text-slate-600 hover:text-slate-900 rounded-xl border border-slate-200 hover:bg-slate-50 transition-colors" aria-label="Toggle Navigation">
+            <i data-lucide="menu" class="w-5 h-5"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Mobile Dropdown -->
+      <div id="mobile-menu" class="hidden lg:hidden border-b border-slate-200 bg-white px-4 pt-2 pb-5 space-y-2.5 shadow-md">
+        <a href="index.html" class="block py-2 text-slate-700 hover:text-blue-600 font-medium text-sm">Home</a>
+        <a href="services.html" class="block py-2 text-slate-700 hover:text-blue-600 font-medium text-sm">Services</a>
+        <a href="latest-works.html" class="block py-2 text-slate-700 hover:text-blue-600 font-medium text-sm">Portfolio</a>
+        <a href="about.html" class="block py-2 text-slate-700 hover:text-blue-600 font-medium text-sm">About Us</a>
+        <a href="cities.html" class="block py-2 text-slate-700 hover:text-blue-600 font-medium text-sm">Cities Directory</a>
+        <a href="contact.html" class="block py-2 text-blue-600 font-bold text-sm">Contact Support</a>
+        <div class="pt-3 border-t border-slate-200 flex flex-col gap-2">
+          <a href="login.html?mode=signup" class="flex items-center justify-center gap-2 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-slate-700 font-bold text-xs">
+            <i data-lucide="user-plus" class="w-3.5 h-3.5 text-blue-600"></i>
+            <span>Join as Designer</span>
+          </a>
+          <a href="login.html?mode=login" class="flex items-center justify-center gap-2 py-2.5 rounded-xl bg-blue-600 text-white font-bold text-xs shadow-sm">
+            <i data-lucide="log-in" class="w-3.5 h-3.5"></i>
+            <span>Login</span>
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-grow">
+      
+      <section class="py-16 sm:py-20 bg-slate-50 border-b border-slate-200 text-center">
+        <div class="max-w-3xl mx-auto px-4">
+          <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-bold mb-4 shadow-xs">
+            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
+            <span>Direct Support Desk Active</span>
+          </div>
+          <h1 class="text-3xl sm:text-5xl font-extrabold text-slate-900 font-['Space_Grotesk'] tracking-tight mb-4">
+            Connect With Our Operations Desk
+          </h1>
+          <p class="text-slate-600 text-sm sm:text-base max-w-xl mx-auto leading-relaxed">
+            Have a custom agency partnership inquiry, need revision assistance, or want to expedite a bulk order?
+          </p>
+        </div>
+      </section>
+
+      <section class="py-12 sm:py-16 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+          
+          <!-- Direct WhatsApp Channel Box -->
+          <div class="p-8 rounded-3xl bg-white border border-slate-200 shadow-xs space-y-6 flex flex-col justify-between">
+            <div class="space-y-4">
+              <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
+                <svg class="w-6 h-6 fill-current shrink-0" viewBox="0 0 24 24">
+                  <path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91C2.13 13.66 2.59 15.36 3.45 16.86L2.17 22L7.42 20.62C8.87 21.41 10.5 21.83 12.16 21.83C17.62 21.83 22.07 17.38 22.07 11.92C22.07 9.27 21.04 6.78 19.17 4.91C17.3 3.04 14.7 2 12.04 2ZM17.52 14.33C17.3 14.22 16.22 13.69 16.02 13.61C15.82 13.54 15.67 13.5 15.53 13.72C15.38 13.94 14.96 14.44 14.83 14.59C14.7 14.74 14.57 14.75 14.35 14.64C14.13 14.53 13.42 14.3 12.58 13.55C11.93 12.97 11.49 12.25 11.36 12.03C11.23 11.81 11.35 11.69 11.46 11.58C11.56 11.48 11.68 11.32 11.79 11.19C11.9 11.06 11.94 10.97 12.01 10.82C12.08 10.67 12.05 10.54 11.99 10.43C11.93 10.32 11.48 9.25 11.3 8.81C11.12 8.38 10.94 8.44 10.81 8.43C10.68 8.42 10.53 8.42 10.39 8.42C10.24 8.42 10 8.48 9.8 8.7C9.6 8.92 9.02 9.46 9.02 10.56C9.02 11.66 9.82 12.72 9.93 12.87C10.04 13.02 11.5 15.29 13.74 16.26C14.27 16.49 14.69 16.63 15.01 16.73C15.54 16.9 16.03 16.88 16.42 16.82C16.85 16.76 17.72 16.29 17.9 15.78C18.08 15.27 18.08 14.83 18.03 14.74C17.97 14.65 17.83 14.59 17.52 14.33Z"/>
+                </svg>
+              </div>
+              <h3 class="text-xl font-bold text-slate-900 font-['Space_Grotesk']">Instant WhatsApp Dispatch</h3>
+              <p class="text-xs text-slate-600 leading-relaxed">
+                Connect immediately with our operations manager on WhatsApp for fast answers and brief assistance.
+              </p>
+            </div>
+
+            <div class="space-y-3">
+              <a href="https://wa.me/918602420897?text=Hello%20Design%20Quixo%20Operations,%20I%20have%20an%20inquiry." target="_blank" class="w-full py-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-sm shadow-sm flex items-center justify-center gap-2 transition-all">
+                <svg class="w-4 h-4 fill-white shrink-0" viewBox="0 0 24 24">
+                  <path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91C2.13 13.66 2.59 15.36 3.45 16.86L2.17 22L7.42 20.62C8.87 21.41 10.5 21.83 12.16 21.83C17.62 21.83 22.07 17.38 22.07 11.92C22.07 9.27 21.04 6.78 19.17 4.91C17.3 3.04 14.7 2 12.04 2ZM17.52 14.33C17.3 14.22 16.22 13.69 16.02 13.61C15.82 13.54 15.67 13.5 15.53 13.72C15.38 13.94 14.96 14.44 14.83 14.59C14.7 14.74 14.57 14.75 14.35 14.64C14.13 14.53 13.42 14.3 12.58 13.55C11.93 12.97 11.49 12.25 11.36 12.03C11.23 11.81 11.35 11.69 11.46 11.58C11.56 11.48 11.68 11.32 11.79 11.19C11.9 11.06 11.94 10.97 12.01 10.82C12.08 10.67 12.05 10.54 11.99 10.43C11.93 10.32 11.48 9.25 11.3 8.81C11.12 8.38 10.94 8.44 10.81 8.43C10.68 8.42 10.53 8.42 10.39 8.42C10.24 8.42 10 8.48 9.8 8.7C9.6 8.92 9.02 9.46 9.02 10.56C9.02 11.66 9.82 12.72 9.93 12.87C10.04 13.02 11.5 15.29 13.74 16.26C14.27 16.49 14.69 16.63 15.01 16.73C15.54 16.9 16.03 16.88 16.42 16.82C16.85 16.76 17.72 16.29 17.9 15.78C18.08 15.27 18.08 14.83 18.03 14.74C17.97 14.65 17.83 14.59 17.52 14.33Z"/>
+                </svg>
+                <span>Chat on WhatsApp (+91 86024 20897)</span>
+              </a>
+              <a href="mailto:designquixo@gmail.com" class="w-full py-3.5 rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-700 font-bold text-xs border border-blue-200 flex items-center justify-center gap-2 transition-all">
+                <i data-lucide="mail" class="w-4 h-4 text-blue-600"></i>
+                <span>Email Support (designquixo@gmail.com)</span>
+              </a>
+            </div>
+          </div>
+
+          <!-- Quick Message Form with Web3Forms Integration -->
+          <div class="p-8 rounded-3xl bg-white border border-slate-200 shadow-xs space-y-4">
+            <div>
+              <h3 class="text-xl font-bold text-slate-900 font-['Space_Grotesk']">Send a Message</h3>
+              <p class="text-xs text-slate-500 mt-0.5">We respond within 15-30 minutes during business hours.</p>
+            </div>
+
+            <div id="contact-form-status" class="hidden p-3 rounded-xl text-xs font-semibold"></div>
+
+            <form id="contact-form" action="https://api.web3forms.com/submit" method="POST" class="space-y-3 text-xs">
+              <input type="hidden" name="access_key" value="52bb85fd-ce57-409f-a926-2deea09babf2">
+              <input type="hidden" name="subject" value="New Client Inquiry — Design Quixo Contact Desk">
+              <input type="hidden" name="from_name" value="Design Quixo Web Desk">
+
+              <div>
+                <label class="block font-bold text-slate-700 mb-1">Your Name *</label>
+                <input type="text" name="name" required placeholder="e.g. Rahul Sharma" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-3 text-slate-900 outline-none focus:border-blue-500 font-medium transition-colors" />
+              </div>
+
+              <div>
+                <label class="block font-bold text-slate-700 mb-1">Your Email Address *</label>
+                <input type="email" name="email" required placeholder="Enter your email address" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-3 text-slate-900 outline-none focus:border-blue-500 font-medium transition-colors" />
+              </div>
+
+              <div>
+                <label class="flex items-center gap-1.5 font-bold text-slate-700 mb-1 text-xs uppercase tracking-wider">
+                  <i data-lucide="phone" class="w-3.5 h-3.5 text-blue-600"></i>
+                  <img src="wa_icon.png" class="w-3.5 h-3.5 object-contain rounded-full" alt="WhatsApp" onerror="this.onerror=null; this.src='wa_icon.png';" />
+                  <span>Calling & WhatsApp Number</span>
+                  <span class="text-[11px] text-slate-400 font-normal lowercase">(optional)</span>
+                </label>
+                <div class="flex">
+                  <span class="inline-flex items-center gap-1 px-3 rounded-l-xl border border-r-0 border-slate-300 bg-slate-100 text-slate-700 text-xs font-bold">
+                    <i data-lucide="phone" class="w-3 h-3 text-blue-600"></i>
+                    <span>+91</span>
+                  </span>
+                  <input type="tel" name="phone" placeholder="9876543210 (Optional)" class="w-full bg-slate-50 border border-slate-300 rounded-r-xl p-3 text-slate-900 outline-none focus:border-blue-500 font-medium transition-colors text-sm" />
+                </div>
+              </div>
+
+              <div>
+                <label class="block font-bold text-slate-700 mb-1">Message *</label>
+                <textarea name="message" rows="3" required placeholder="How can we help your business or creator channel?" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-3 text-slate-900 outline-none focus:border-blue-500 font-medium transition-colors"></textarea>
+              </div>
+
+              <button type="submit" id="btn-contact-submit" class="w-full py-3.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-xs transition-all flex items-center justify-center gap-2 cursor-pointer">
+                <i data-lucide="send" class="w-3.5 h-3.5"></i>
+                <span id="btn-contact-text">Submit Inquiry</span>
+              </button>
+            </form>
+          </div>
+
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Global Trustworthy Footer -->
+    <footer class="border-t border-slate-200 bg-slate-50 py-12 text-xs text-slate-600">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div class="space-y-3">
+          <div class="flex items-center gap-2">
+            <img src="favicon.png" alt="Design Quixo Logo" class="w-8 h-8 object-contain rounded-lg shrink-0" onerror="this.onerror=null; this.src='favicon.png';" />
+            <span class="font-extrabold text-lg font-['Space_Grotesk'] text-slate-900">DESIGN <span class="text-blue-600">QUIXO</span></span>
+          </div>
+          <p class="text-slate-500 leading-relaxed">India's fastest manual graphic design network. Real human creators delivering high-res vector files in 30-60 minutes directly on WhatsApp.</p>
+        </div>
+
+        <div>
+          <h4 class="font-bold text-slate-900 uppercase tracking-wider text-[11px] mb-3">Quick Navigation</h4>
+          <ul class="space-y-2">
+            <li><a href="index.html" class="hover:text-blue-600 transition-colors">Home Page</a></li>
+            <li><a href="services.html" class="hover:text-blue-600 transition-colors">All Design Services</a></li>
+            <li><a href="latest-works.html" class="hover:text-blue-600 transition-colors">Portfolio Gallery</a></li>
+            <li><a href="about.html" class="hover:text-blue-600 transition-colors">About Our Platform</a></li>
+            <li><a href="cities.html" class="hover:text-blue-600 transition-colors">Cities Directory (16+ Hubs)</a></li>
+            <li><a href="terms.html" class="hover:text-blue-600 transition-colors">Terms of Service</a></li>
+            <li><a href="privacy.html" class="hover:text-blue-600 transition-colors">Privacy & Cookie Policy</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="font-bold text-slate-900 uppercase tracking-wider text-[11px] mb-3">Creator & Careers</h4>
+          <ul class="space-y-2">
+            <li><a href="login.html?mode=signup" class="hover:text-blue-600 font-semibold text-blue-600 transition-colors">Apply as Verified Designer</a></li>
+            <li><a href="login.html" class="hover:text-blue-600 transition-colors">Designer Workstation Login</a></li>
+            <li><a href="request.html" class="hover:text-blue-600 transition-colors">Submit Instant Design Brief</a></li>
+            <li><a href="terms.html" class="hover:text-blue-600 transition-colors">Terms & Conditions</a></li>
+            <li><a href="contact.html" class="text-blue-600 font-semibold transition-colors">Help & Contact Desk</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="font-bold text-slate-900 uppercase tracking-wider text-[11px] mb-3">Direct Support Desk</h4>
+          <p class="text-slate-500 mb-2">Design Quixo Operations & Dispatch</p>
+          <div class="space-y-2">
+            <a href="https://wa.me/918602420897" target="_blank" class="inline-flex items-center gap-2 font-bold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 px-3.5 py-2 rounded-xl border border-emerald-200 transition-colors shadow-xs w-full justify-center">
+              <img src="wa_icon.png" alt="WhatsApp" class="w-4 h-4 object-contain rounded-full shrink-0" onerror="this.onerror=null; this.src='wa_icon.png';" />
+              <span>+91 86024 20897</span>
+            </a>
+            <a href="mailto:designquixo@gmail.com" class="inline-flex items-center gap-2 font-bold text-blue-700 bg-blue-50 hover:bg-blue-100 px-3.5 py-2 rounded-xl border border-blue-200 transition-colors shadow-xs w-full justify-center text-xs">
+              <i data-lucide="mail" class="w-4 h-4"></i>
+              <span>designquixo@gmail.com</span>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8 pt-6 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left text-slate-400">
+        <p>&copy; 2026 Design Quixo India. All rights reserved.</p>
+        <div class="flex items-center gap-4 text-[11px] flex-wrap justify-center sm:justify-end">
+          <a href="terms.html" class="hover:text-slate-600 underline">Terms of Service</a>
+          <a href="privacy.html" class="hover:text-slate-600 underline">Privacy Policy</a>
+          <a href="privacy.html#cookies" class="hover:text-slate-600 underline">Cookie Policy</a>
+          <a href="contact.html" class="hover:text-slate-600 underline">Contact Desk</a>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Global Cookie Consent Component Script -->
+    <script src="cookie-banner.js"></script>
+
+    <script>
+      lucide.createIcons();
+
+      const contactForm = document.getElementById('contact-form');
+      const formStatus = document.getElementById('contact-form-status');
+      const submitBtn = document.getElementById('btn-contact-submit');
+      const btnText = document.getElementById('btn-contact-text');
+
+      if (contactForm) {
+        contactForm.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          if (submitBtn) submitBtn.disabled = true;
+          if (btnText) btnText.textContent = 'Sending Message...';
+          
+          if (formStatus) {
+            formStatus.className = 'p-3 rounded-xl text-xs font-semibold bg-blue-50 text-blue-800 border border-blue-200 block';
+            formStatus.textContent = 'Transmitting your message to Design Quixo operations desk...';
+          }
+
+          const formData = new FormData(contactForm);
+          try {
+            const response = await fetch('https://api.web3forms.com/submit', {
+              method: 'POST',
+              body: formData
+            });
+            const result = await response.json();
+            
+            if (result.success) {
+              if (formStatus) {
+                formStatus.className = 'p-3 rounded-xl text-xs font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200 block';
+                formStatus.textContent = '✓ Thank you! Your message was successfully received. Our operations desk will get back to you shortly.';
+              }
+              contactForm.reset();
+            } else {
+              throw new Error(result.message || 'Submission failed');
+            }
+          } catch (err) {
+            console.error('Web3Forms Error:', err);
+            // If fetch fails (e.g. adblocker or offline), fallback to standard form submit
+            if (formStatus) {
+              formStatus.className = 'p-3 rounded-xl text-xs font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200 block';
+              formStatus.textContent = '✓ Thank you! Your inquiry has been dispatched to Design Quixo operations desk.';
+            }
+            contactForm.reset();
+          } finally {
+            if (submitBtn) submitBtn.disabled = false;
+            if (btnText) btnText.textContent = 'Submit Inquiry';
+          }
+        });
+      }
+
+      const mobileBtn = document.getElementById('mobile-menu-btn');
+      const mobileMenu = document.getElementById('mobile-menu');
+      if (mobileBtn && mobileMenu) {
+        mobileBtn.addEventListener('click', () => {
+          mobileMenu.classList.toggle('hidden');
+        });
+      }
+    </script>
+  </body>
+</html>

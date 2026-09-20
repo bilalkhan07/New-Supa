@@ -1,0 +1,35 @@
+{
+  "entities": {
+    "UserAuthProfile": {
+      "title": "UserAuthProfile",
+      "description": "Authenticated phone user profile record for OTP verification",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique user identifier"
+        },
+        "phone": {
+          "type": "string",
+          "description": "Verified Indian phone number with country code"
+        },
+        "role": {
+          "type": "string",
+          "description": "Role of the user (client, designer, admin)"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp when the auth profile was verified"
+        }
+      },
+      "required": ["id", "phone", "role"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "UserAuthProfile",
+      "description": "Authenticated user verification record"
+    }
+  }
+}

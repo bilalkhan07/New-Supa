@@ -1,0 +1,312 @@
+{
+  "cities": [
+    {
+      "key": "indore",
+      "name": "Indore",
+      "state": "Madhya Pradesh",
+      "landmarks": "Vijay Nagar, Palasia, Rajwada, Bhawarkua, Chappan Dukan, Super Corridor"
+    },
+    {
+      "key": "bhopal",
+      "name": "Bhopal",
+      "state": "Madhya Pradesh",
+      "landmarks": "MP Nagar, Arera Colony, DB Mall, New Market, Kolar, TT Nagar"
+    },
+    {
+      "key": "mumbai",
+      "name": "Mumbai",
+      "state": "Maharashtra",
+      "landmarks": "BKC, Bandra, Andheri, Lower Parel, Powai, Dadar, Thane"
+    },
+    {
+      "key": "delhi",
+      "name": "Delhi",
+      "state": "Delhi NCR",
+      "landmarks": "Connaught Place, South Extension, Nehru Place, Lajpat Nagar, Karol Bagh"
+    },
+    {
+      "key": "delhi-ncr",
+      "name": "Delhi NCR",
+      "state": "Delhi NCR",
+      "landmarks": "Cyber City Gurugram, Sector 62 Noida, Connaught Place, Greater Noida"
+    },
+    {
+      "key": "bangalore",
+      "name": "Bangalore",
+      "state": "Karnataka",
+      "landmarks": "Koramangala, Indiranagar, HSR Layout, Whitefield, Electronic City, MG Road"
+    },
+    {
+      "key": "hyderabad",
+      "name": "Hyderabad",
+      "state": "Telangana",
+      "landmarks": "HITEC City, Madhapur, Gachibowli, Jubilee Hills, Banjara Hills, Kondapur"
+    },
+    {
+      "key": "pune",
+      "name": "Pune",
+      "state": "Maharashtra",
+      "landmarks": "Koregaon Park, Baner, Hinjawadi IT Park, Viman Nagar, Kothrud, Magarpatta"
+    },
+    {
+      "key": "ahmedabad",
+      "name": "Ahmedabad",
+      "state": "Gujarat",
+      "landmarks": "SG Highway, Prahlad Nagar, Bodakdev, Satellite, Ashram Road, Maninagar"
+    },
+    {
+      "key": "jaipur",
+      "name": "Jaipur",
+      "state": "Rajasthan",
+      "landmarks": "C-Scheme, Malviya Nagar, Mansarovar, Vaishali Nagar, Tonk Road, MI Road"
+    },
+    {
+      "key": "chennai",
+      "name": "Chennai",
+      "state": "Tamil Nadu",
+      "landmarks": "OMR IT Corridor, T. Nagar, Anna Nagar, Adyar, Velachery, Guindy"
+    },
+    {
+      "key": "kolkata",
+      "name": "Kolkata",
+      "state": "West Bengal",
+      "landmarks": "Salt Lake Sector V, New Town, Park Street, Ballygunge, Howrah, Bidhannagar"
+    },
+    {
+      "key": "lucknow",
+      "name": "Lucknow",
+      "state": "Uttar Pradesh",
+      "landmarks": "Hazratganj, Gomti Nagar, Alambagh, Indira Nagar, Mahanagar, Vibhuti Khand"
+    },
+    {
+      "key": "surat",
+      "name": "Surat",
+      "state": "Gujarat",
+      "landmarks": "VIP Road Vesu, Ring Road Textile Market, Adajan, Piplod, Varachha, Ghod Dod Road"
+    },
+    {
+      "key": "chandigarh",
+      "name": "Chandigarh",
+      "state": "Chandigarh",
+      "landmarks": "Sector 17, Sector 35, Mohali Phase 7, Industrial Area, Panchkula, IT Park"
+    },
+    {
+      "key": "nagpur",
+      "name": "Nagpur",
+      "state": "Maharashtra",
+      "landmarks": "Ramdaspeth, Sitabuldi, Wardha Road, Dharampeth, Sadar, IT Park MIHAN"
+    },
+    {
+      "key": "patna",
+      "name": "Patna",
+      "state": "Bihar",
+      "landmarks": "Gandhi Maidan, Boring Road, Fraser Road, Kankarbagh, Bailey Road, Patliputra"
+    },
+    {
+      "key": "kochi",
+      "name": "Kochi",
+      "state": "Kerala",
+      "landmarks": "Kakkanad Infopark, MG Road, Marine Drive, Edappally, Kaloor, Fort Kochi"
+    }
+  ],
+  "services": [
+    {
+      "key": "graphic-designer",
+      "id": "graphic-design",
+      "name": "Graphic Designer",
+      "singular": "Graphic Designer",
+      "serviceName": "Graphic Design",
+      "h1Title": "Best Graphic Designer in",
+      "pageTitle": "Best Graphic Designer in {City} - 30-Min Fast Human Graphic Design | Design Quixo",
+      "metaDesc": "Looking for the best graphic designer in {City}? Hire verified human graphic designers in {City} with 30-60 minute WhatsApp delivery. Serving {Landmarks} & all local businesses.",
+      "tagline": "Top-Rated Human Graphic Designers in {City} • 30-Min Delivery",
+      "intro": "Get professional, print-ready, and digital graphics crafted manually from scratch by top verified graphic designers in {City}. High-converting visuals with full master AI, PSD, SVG source files.",
+      "keywords": [
+        "graphic designer in {city}",
+        "best graphic designer {city}",
+        "freelance graphic designer in {city}",
+        "graphic design services in {city}",
+        "fast graphic designer {city}"
+      ],
+      "price": "₹359",
+      "sla": "30-45 mins",
+      "icon": "palette"
+    },
+    {
+      "key": "logo-designer",
+      "id": "logo-design",
+      "name": "Logo Designer",
+      "singular": "Logo Designer",
+      "serviceName": "Brand Logo Design",
+      "h1Title": "Best Logo Designer in",
+      "pageTitle": "Best Logo Designer in {City} - Custom Brand Logos in 1-2 Hours | Design Quixo",
+      "metaDesc": "Looking for the best logo designer in {City}? Get unique, memorable brand logo designs with full commercial copyright and master vector files in under 2 hours in {City}.",
+      "tagline": "Top Brand Logo Designers in {City} • 100% Original Vector Marks",
+      "intro": "Transform your business brand with iconic, custom-crafted logo designs in {City}. Includes 3 bespoke concepts, scalable vector master formats (AI, EPS, SVG, PDF), typography guide, and commercial copyright transfer.",
+      "keywords": [
+        "logo designer in {city}",
+        "best logo designer {city}",
+        "custom logo design {city}",
+        "company logo designer in {city}",
+        "brand identity designer {city}"
+      ],
+      "price": "₹499",
+      "sla": "1-2 hours",
+      "icon": "award"
+    },
+    {
+      "key": "youtube-thumbnail-designer",
+      "id": "youtube-thumbnail",
+      "name": "YouTube Thumbnail Designer",
+      "singular": "YouTube Thumbnail Designer",
+      "serviceName": "YouTube Thumbnails",
+      "h1Title": "Best YouTube Thumbnail Designer in",
+      "pageTitle": "Best YouTube Thumbnail Designer in {City} - High CTR Thumbnails in 30 Mins | Design Quixo",
+      "metaDesc": "Hire the best YouTube thumbnail designer in {City}. High-CTR clickable thumbnails with crisp cutouts, rim lighting, 3D typography & layered PSDs delivered in 30 mins.",
+      "tagline": "High-CTR YouTube Thumbnail Artists in {City} • 30-Min Fast Delivery",
+      "intro": "Skyrocket your YouTube video views and click-through rates (CTR) with high-impact thumbnails designed in {City}. Custom subject cutouts, rim glows, vibrant color grading, and layered PSD files in 30-45 minutes.",
+      "keywords": [
+        "youtube thumbnail designer in {city}",
+        "best youtube thumbnail designer {city}",
+        "youtube thumbnail maker in {city}",
+        "youtube graphic designer {city}",
+        "gaming thumbnail designer {city}"
+      ],
+      "price": "₹359",
+      "sla": "30-45 mins",
+      "icon": "youtube"
+    },
+    {
+      "key": "social-media-designer",
+      "id": "social-media",
+      "name": "Social Media Post Designer",
+      "singular": "Social Media Post Designer",
+      "serviceName": "Social Media Posts & Ads",
+      "h1Title": "Best Social Media Post Designer in",
+      "pageTitle": "Best Social Media Post Designer in {City} - Instagram Feeds & Ad Creatives | Design Quixo",
+      "metaDesc": "Find the best social media post designer in {City}. High-converting Instagram feeds, carousel slide decks, promotional banners & festival creatives delivered in 30 mins.",
+      "tagline": "Top Social Media & Ad Creative Designers in {City} • 30-Min Delivery",
+      "intro": "Boost your social engagement and ad ROI across Instagram, Facebook, and LinkedIn in {City}. Eye-catching feed creatives, carousel slides, promotional banners, and festival posts crafted to perfection.",
+      "keywords": [
+        "social media designer in {city}",
+        "best social media post designer {city}",
+        "instagram post designer in {city}",
+        "facebook ad creative designer {city}",
+        "social media agency {city}"
+      ],
+      "price": "₹399",
+      "sla": "30-45 mins",
+      "icon": "share-2"
+    },
+    {
+      "key": "visiting-card-designer",
+      "id": "visiting-card",
+      "name": "Visiting Card Designer",
+      "singular": "Visiting Card Designer",
+      "serviceName": "Visiting & Business Cards",
+      "h1Title": "Best Visiting Card Designer in",
+      "pageTitle": "Best Visiting Card Designer in {City} - Luxury Business Cards in 30 Mins | Design Quixo",
+      "metaDesc": "Looking for the best visiting card designer in {City}? Luxury double-sided business card designs with CMYK print-ready files, bleed margins & QR code integration in 30 mins.",
+      "tagline": "Luxury Visiting Card & Business Card Designers in {City} • Print-Ready CMYK",
+      "intro": "Make an unforgettable executive impression with luxury business card layouts in {City}. Double-sided designs with CMYK 300 DPI print-ready vectors, bleed marks, typography pairing, and dynamic QR codes.",
+      "keywords": [
+        "visiting card designer in {city}",
+        "best visiting card designer {city}",
+        "business card design in {city}",
+        "luxury business card maker {city}",
+        "visiting card printing {city}"
+      ],
+      "price": "₹359",
+      "sla": "30-45 mins",
+      "icon": "credit-card"
+    },
+    {
+      "key": "flyer-poster-designer",
+      "id": "flyer-design",
+      "name": "Flyer & Poster Designer",
+      "singular": "Flyer & Poster Designer",
+      "serviceName": "Flyers, Posters & Menus",
+      "h1Title": "Best Flyer & Poster Designer in",
+      "pageTitle": "Best Flyer & Poster Designer in {City} - Event Posters & Menus in 45 Mins | Design Quixo",
+      "metaDesc": "Hire the best flyer and poster designer in {City}. High-resolution event flyers, restaurant menus, corporate handouts & promotional standees in 45 mins with print-ready files.",
+      "tagline": "Top Flyer, Poster & Restaurant Menu Designers in {City} • 45-Min SLA",
+      "intro": "Drive footfalls, event attendance, and sales across {City} with stunning promotional flyers, event posters, and restaurant menus. Ready-to-print CMYK files with 3mm bleed margin and editable master files.",
+      "keywords": [
+        "flyer designer in {city}",
+        "best poster designer {city}",
+        "restaurant menu designer in {city}",
+        "pamphlet design in {city}",
+        "event poster design {city}"
+      ],
+      "price": "₹449",
+      "sla": "45-60 mins",
+      "icon": "file-text"
+    },
+    {
+      "key": "vector-art-specialist",
+      "id": "vector-art",
+      "name": "Vector Art & Tracing Specialist",
+      "singular": "Vector Art Specialist",
+      "serviceName": "Vector Art & Tracing",
+      "h1Title": "Best Vector Art & Tracing Specialist in",
+      "pageTitle": "Best Vector Art & Tracing Specialist in {City} - HD Vector Redraw in 45 Mins | Design Quixo",
+      "metaDesc": "Find the best vector art and tracing specialist in {City}. Convert blurry low-res logos, sketches or raster images into infinite-resolution AI, EPS, and SVG vector files.",
+      "tagline": "Precision Vector Art & Raster-to-Vector Specialists in {City} • Infinite Resolution",
+      "intro": "Eliminate pixelation with flawless manual vector tracing in {City}. Convert any low-res logo, sketch, or illustration into clean, infinite-resolution AI, EPS, SVG, and PDF master vectors.",
+      "keywords": [
+        "vector art in {city}",
+        "best vector tracing specialist {city}",
+        "logo vectorization {city}",
+        "raster to vector conversion {city}",
+        "svg redraw service {city}"
+      ],
+      "price": "₹599",
+      "sla": "45-60 mins",
+      "icon": "pen-tool"
+    },
+    {
+      "key": "packaging-label-designer",
+      "id": "packaging-design",
+      "name": "Packaging & Label Designer",
+      "singular": "Packaging & Label Designer",
+      "serviceName": "Product Labels & Packaging",
+      "h1Title": "Best Packaging & Label Designer in",
+      "pageTitle": "Best Packaging & Label Designer in {City} - Product Boxes & Pouches | Design Quixo",
+      "metaDesc": "Looking for the best packaging and label designer in {City}? Die-cut accurate product boxes, pouch wraps, bottle labels & barcodes designed with 100% compliance in {City}.",
+      "tagline": "Retail Packaging & Product Label Designers in {City} • Die-Cut Accurate",
+      "intro": "Make your retail products stand out on store shelves in {City}. Custom dieline creation for mailer boxes, pouches, cosmetic bottles, and food labels with barcode and regulatory compliance.",
+      "keywords": [
+        "packaging designer in {city}",
+        "best product label designer {city}",
+        "pouch design in {city}",
+        "box packaging design {city}",
+        "label designer {city}"
+      ],
+      "price": "₹699",
+      "sla": "1.5-2 hours",
+      "icon": "package"
+    },
+    {
+      "key": "brochure-catalog-designer",
+      "id": "brochure-design",
+      "name": "Brochure & Catalog Designer",
+      "singular": "Brochure & Catalog Designer",
+      "serviceName": "Brochures & Catalogs",
+      "h1Title": "Best Brochure & Catalog Designer in",
+      "pageTitle": "Best Brochure & Catalog Designer in {City} - Corporate Decks & Catalogs | Design Quixo",
+      "metaDesc": "Hire the best brochure and catalog designer in {City}. Bi-fold, tri-fold & multi-page corporate marketing decks, product catalogs with print-ready CMYK master files.",
+      "tagline": "Corporate Brochure & Product Catalog Designers in {City} • Multi-Page Master Layouts",
+      "intro": "Showcase your complete product lineup and corporate profile in {City} with high-impact brochures and catalogs. Structured grid layouts, typography hierarchies, and print-ready master files.",
+      "keywords": [
+        "brochure designer in {city}",
+        "best catalog designer {city}",
+        "tri-fold brochure design in {city}",
+        "corporate profile designer {city}",
+        "catalog design {city}"
+      ],
+      "price": "₹599",
+      "sla": "1-2 hours",
+      "icon": "book-open"
+    }
+  ]
+}
