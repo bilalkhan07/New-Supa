@@ -168,15 +168,24 @@ export interface DQDesigner {
 export function extractImageUrl(field: any): string {
   if (!field) return '';
   if (typeof field === 'string') {
-    const trimmed = field.trim();
+    let trimmed = field.trim();
     if (trimmed === 'null' || trimmed === 'undefined' || trimmed === '[object Object]') return '';
+    if (trimmed.toLowerCase().startsWith('data:image')) {
+      trimmed = trimmed.replace(/[\r\n\s]+/g, '');
+    }
     return trimmed;
   }
   if (typeof field === 'object') {
-    if (field.url && typeof field.url === 'string') return field.url.trim();
-    if (field.data && typeof field.data === 'string') return field.data.trim();
-    if (field.src && typeof field.src === 'string') return field.src.trim();
-    if (field.base64 && typeof field.base64 === 'string') return field.base64.trim();
+    let raw = '';
+    if (field.url && typeof field.url === 'string') raw = field.url.trim();
+    else if (field.data && typeof field.data === 'string') raw = field.data.trim();
+    else if (field.src && typeof field.src === 'string') raw = field.src.trim();
+    else if (field.base64 && typeof field.base64 === 'string') raw = field.base64.trim();
+    
+    if (raw.toLowerCase().startsWith('data:image')) {
+      raw = raw.replace(/[\r\n\s]+/g, '');
+    }
+    return raw;
   }
   return '';
 }
@@ -783,9 +792,14 @@ export const DQSupabase = {
 
             const descStr = (sj.description || sj.brief || sj.details || '').toString();
             if (!refImg && descStr.includes('Ref Image:')) {
-              const match = descStr.match(/Ref Image:\s*([^\s|]+)/i);
-              if (match && match[1]) {
-                refImg = extractImageUrl(match[1]);
+              const mStart = descStr.match(/Ref Image:\s*\[START\]([\s\S]*?)\[END\]/i);
+              if (mStart && mStart[1]) {
+                refImg = extractImageUrl(mStart[1].trim());
+              } else {
+                const match = descStr.match(/Ref Image:\s*([^\s|]+)/i) || descStr.match(/Ref Image:\s*([^\r\n|]+)/i);
+                if (match && match[1]) {
+                  refImg = extractImageUrl(match[1]);
+                }
               }
             }
 
@@ -797,7 +811,7 @@ export const DQSupabase = {
 
             let cleanBrief = sj.brief || sj.details || descStr;
             if (cleanBrief && typeof cleanBrief === 'string' && cleanBrief.includes('Ref Image:')) {
-              cleanBrief = cleanBrief.split(' | Ref Image:')[0].replace(/Ref Image:[^\s|]+/gi, '').trim();
+              cleanBrief = cleanBrief.split(' | Ref Image:')[0].replace(/Ref Image:\s*\[START\][\s\S]*?\[END\]/gi, '').replace(/Ref Image:[^\s|]+/gi, '').trim();
             }
 
             let ratioVal = sj.ratio || localJob?.ratio || '';
