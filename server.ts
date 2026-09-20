@@ -2128,29 +2128,47 @@ async function startServer() {
               const refImg = job.referenceImage || job.referenceimage || job.image || '';
               const briefVal = job.brief || job.details || job.description || '';
 
-              // Exact Supabase jobs table columns: id, title, client, budget, deadline, category, status, description, assigned_to, designer, created_at
+              // Exact Supabase jobs table columns mapping BOTH schema types to remain 100% robust
               const row = {
                 id: cleanId,
                 title: projectVal,
+                project: projectVal,
                 client: `${clientNameVal} (${clientPhoneVal})`,
+                clientname: clientNameVal,
+                clientphone: clientPhoneVal,
+                phone: clientPhoneVal,
+                whatsapp: clientPhoneVal,
                 budget: priceVal,
+                price: priceVal,
                 deadline: job.urgency || job.deadline || job.time || 'ASAP',
+                time: job.urgency || job.deadline || job.time || 'ASAP',
                 category: serviceVal,
+                service: serviceVal,
                 status: job.status || 'Pending',
                 description: [
                   briefVal,
                   refImg ? `Ref Image: ${refImg}` : '',
                   job.ratio ? `Ratio: ${job.ratio}` : ''
                 ].filter(Boolean).join(' | '),
+                brief: briefVal,
+                details: briefVal,
+                ratio: job.ratio || 'Square (1:1)',
+                referenceimage: refImg,
+                referenceImage: refImg,
+                image: refImg,
                 assigned_to: job.assignedTo || job.designerEmail || '',
-                designer: job.designerName || (Array.isArray(job.acceptedBy) ? job.acceptedBy.join(', ') : (job.acceptedBy || job.acceptedby || '')) || '',
-                created_at: job.createdAt || job.createdat || new Date().toISOString()
+                designer: job.designerName || (Array.isArray(job.acceptedBy) ? job.acceptedBy.join(', ') : (job.acceptedBy || job.acceptedby || '')),
+                created_at: job.createdAt || job.createdat || new Date().toISOString(),
+                createdat: job.createdAt || job.createdat || new Date().toISOString()
               };
 
               try {
-                await serverSupabase.from('jobs').upsert(row, { onConflict: 'id' });
+                const { error: saveErr } = await serverSupabase.from('jobs').upsert(row, { onConflict: 'id' });
+                if (saveErr) {
+                  console.warn('[Supabase /api/save-job error]:', saveErr.message || saveErr);
+                }
               } catch (saveErr) {
-                console.warn('[Supabase /api/save-job error]:', saveErr);
+                console.warn('[Supabase /api/save-job exception]:', saveErr);
               }
 
               // Instant Push Broadcast to all registered Chrome browser devices (5x alert sound + vibration)
@@ -2204,10 +2222,22 @@ async function startServer() {
               cachedJobsData = null; // bust cache
 
               const updatePayload: any = {};
-              if (status) updatePayload.status = status;
-              if (Array.isArray(acceptedBy) && acceptedBy.length > 0) {
-                updatePayload.designer = designerName || acceptedBy.join(', ');
+              if (status) {
+                updatePayload.status = status;
+                const isCompleted = status.toLowerCase().includes('completed') || status.toLowerCase().includes('delivered');
+                updatePayload.completed = isCompleted;
+                if (isCompleted) {
+                  const nowStr = completedAt || new Date().toISOString();
+                  updatePayload.completedat = nowStr;
+                  updatePayload.completedAt = nowStr;
+                }
+              }
+              if (Array.isArray(acceptedBy)) {
+                const desText = designerName || acceptedBy.join(', ');
+                updatePayload.designer = desText;
                 updatePayload.assigned_to = acceptedBy[0];
+                updatePayload.acceptedBy = acceptedBy;
+                updatePayload.acceptedby = acceptedBy;
               } else if (typeof acceptedBy === 'string' && acceptedBy) {
                 updatePayload.designer = designerName || acceptedBy;
                 updatePayload.assigned_to = acceptedBy;
@@ -2215,13 +2245,22 @@ async function startServer() {
                 updatePayload.designer = designerName;
               }
 
+              if (referenceImage) {
+                updatePayload.referenceimage = referenceImage;
+                updatePayload.referenceImage = referenceImage;
+                updatePayload.image = referenceImage;
+              }
+
               try {
-                await serverSupabase
+                const { error: supErr } = await serverSupabase
                   .from('jobs')
                   .update(updatePayload)
                   .or(`id.eq.${cleanId},id.eq.${bareId},id.eq.${rawId}`);
+                if (supErr) {
+                  console.warn('[Supabase /api/update-job-status error]:', supErr.message || supErr);
+                }
               } catch (supErr: any) {
-                console.warn('[Supabase /api/update-job-status error]:', supErr?.message);
+                console.warn('[Supabase /api/update-job-status exception]:', supErr?.message || supErr);
               }
 
               setNoCacheHeaders(res);
