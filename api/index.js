@@ -17,6 +17,8 @@ import deleteDesigner from '../server/api-handlers/delete-designer.js';
 import deleteJob from '../server/api-handlers/delete-job.js';
 import getReviews from '../server/api-handlers/get-reviews.js';
 import getLoginHistory from '../server/api-handlers/get-login-history.js';
+import saveLoginHistory from '../server/api-handlers/save-login-history.js';
+import updateDesignerStatus from '../server/api-handlers/update-designer-status.js';
 
 const routes = {
   'email-otp-send': emailOtpSend,
@@ -37,7 +39,9 @@ const routes = {
   'delete-designer': deleteDesigner,
   'delete-job': deleteJob,
   'get-reviews': getReviews,
-  'get-login-history': getLoginHistory
+  'get-login-history': getLoginHistory,
+  'save-login-history': saveLoginHistory,
+  'update-designer-status': updateDesignerStatus
 };
 
 export default async function handler(req, res) {
