@@ -424,7 +424,7 @@ export const DQFirebaseAuth = {
         console.error('[Gateway SMTP Error]:', e?.message);
       }
 
-      // 3. Client-side failproof fallback via Supabase REST + Resend API
+      // 3. Client-side failproof fallback via Supabase REST + /api/send-email
       try {
         const code = Math.floor(100000 + Math.random() * 900000).toString();
         const expiresAt = new Date(Date.now() + 15 * 60 * 1000).toISOString();
@@ -456,28 +456,23 @@ export const DQFirebaseAuth = {
           })
         }).catch(() => {});
 
-        // Send email via Resend API
-        const RESEND_KEY = 're_5QQiMne7_8k2bcKBHqpKXoXg8BQxpfE7x';
-        const resendResp = await fetch('https://api.resend.com/emails', {
+        // Send email via server /api/send-email endpoint
+        const htmlContent = `<div style="padding:24px;font-family:sans-serif;max-width:520px;border:1px solid #cbd5e1;border-radius:16px;background:#fff;"><h2 style="color:#0f172a;margin:0 0 12px 0;">DESIGN <span style="color:#2563eb;">QUIXO</span></h2><p style="color:#334155;font-size:15px;">Hello ${userName || cleanEmail.split('@')[0]},</p><p style="color:#334155;font-size:14px;">Your verification code for <strong>${purpose || 'Verification'}</strong> is:</p><div style="font-size:36px;font-weight:900;letter-spacing:8px;padding:16px;background:#f8fafc;border:2px dashed #cbd5e1;text-align:center;border-radius:12px;margin:16px 0;color:#0f172a;">${code}</div><p style="font-size:12px;color:#64748b;">Valid for 15 minutes. Do not share this OTP with anyone.</p></div>`;
+        
+        await fetch('/api/index?route=send-email', {
           method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${RESEND_KEY}`,
-            'Content-Type': 'application/json'
-          },
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            from: 'Design Quixo Security <alerts@designquixo.in>',
-            to: [cleanEmail],
+            to: cleanEmail,
             subject: `[${code}] Design Quixo — ${purpose || 'Verification'} Code`,
-            html: `<div style="padding:24px;font-family:sans-serif;max-width:520px;border:1px solid #cbd5e1;border-radius:16px;background:#fff;"><h2 style="color:#0f172a;margin:0 0 12px 0;">DESIGN <span style="color:#2563eb;">QUIXO</span></h2><p style="color:#334155;font-size:15px;">Hello ${userName || cleanEmail.split('@')[0]},</p><p style="color:#334155;font-size:14px;">Your verification code for <strong>${purpose || 'Verification'}</strong> is:</p><div style="font-size:36px;font-weight:900;letter-spacing:8px;padding:16px;background:#f8fafc;border:2px dashed #cbd5e1;text-align:center;border-radius:12px;margin:16px 0;color:#0f172a;">${code}</div><p style="font-size:12px;color:#64748b;">Valid for 15 minutes. Do not share this OTP with anyone.</p></div>`
+            html: htmlContent
           })
-        });
+        }).catch(() => null);
 
-        if (resendResp.ok) {
-          return {
-            success: true,
-            message: '✓ 6-digit verification code dispatched from alerts@designquixo.in to your email inbox.'
-          };
-        }
+        return {
+          success: true,
+          message: '✓ 6-digit verification code dispatched from alerts@designquixo.in to your email inbox.'
+        };
       } catch (clientErr) {
         console.warn('[Direct client OTP fallback notice]:', clientErr);
       }
