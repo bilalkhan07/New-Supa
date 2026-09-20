@@ -483,7 +483,12 @@ async function startServer() {
 
   // Mount API Middleware
   app.use(async (req, res, next) => {
-    const reqPath = (req.path || req.url || '').split('?')[0].replace(/\/$/, '');
+    const rawUrl = req.url || req.path || '';
+    const reqPath = rawUrl.split('?')[0].replace(/\/$/, '');
+    const queryRoute = (req.query && typeof req.query.route === 'string') 
+      ? req.query.route 
+      : (rawUrl.includes('route=') ? rawUrl.split('route=')[1]?.split('&')[0] : '');
+
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
@@ -998,12 +1003,10 @@ async function startServer() {
         }
 
         // --- EMAIL OTP DISPATCH ROUTE ---
-        if (reqPath === '/api/email-otp-send' && req.method === 'POST') {
-          let body = '';
-          req.on('data', (chunk: Buffer) => { body += chunk.toString(); });
-          req.on('end', async () => {
+        if ((reqPath === '/api/email-otp-send' || queryRoute === 'email-otp-send') && req.method === 'POST') {
+          const processSend = async (payload: any) => {
             try {
-              const { email, userName, name, purpose } = JSON.parse(body || '{}');
+              const { email, userName, name, purpose } = payload || {};
               const cleanEmail = (email || '').trim().toLowerCase();
               const cleanName = (userName || name || '').trim();
 
@@ -1058,17 +1061,29 @@ async function startServer() {
               res.setHeader('Content-Type', 'application/json');
               return res.end(JSON.stringify({ success: false, message: 'Unable to dispatch verification code. Please try again.' }));
             }
-          });
+          };
+
+          if ((req as any).body && typeof (req as any).body === 'object') {
+            processSend((req as any).body);
+          } else {
+            let body = '';
+            req.on('data', (chunk: Buffer) => { body += chunk.toString(); });
+            req.on('end', () => {
+              try {
+                processSend(body ? JSON.parse(body) : {});
+              } catch(e) {
+                processSend({});
+              }
+            });
+          }
           return;
         }
 
         // --- EMAIL OTP VERIFY ROUTE ---
-        if (reqPath === '/api/email-otp-verify' && req.method === 'POST') {
-          let body = '';
-          req.on('data', (chunk: Buffer) => { body += chunk.toString(); });
-          req.on('end', async () => {
+        if ((reqPath === '/api/email-otp-verify' || queryRoute === 'email-otp-verify') && req.method === 'POST') {
+          const processVerify = async (payload: any) => {
             try {
-              const { email, code } = JSON.parse(body || '{}');
+              const { email, code } = payload || {};
               const cleanEmail = (email || '').trim().toLowerCase();
               const cleanCode = (code || '').trim();
 
@@ -1133,9 +1148,23 @@ async function startServer() {
             } catch (err: any) {
               res.statusCode = 500;
               res.setHeader('Content-Type', 'application/json');
-              return res.end(JSON.stringify({ success: false, message: err.message || 'Error verifying email OTP' }));
+              return res.end(JSON.stringify({ success: false, message: err?.message || 'Verification failed.' }));
             }
-          });
+          };
+
+          if ((req as any).body && typeof (req as any).body === 'object') {
+            processVerify((req as any).body);
+          } else {
+            let body = '';
+            req.on('data', (chunk: Buffer) => { body += chunk.toString(); });
+            req.on('end', () => {
+              try {
+                processVerify(body ? JSON.parse(body) : {});
+              } catch(e) {
+                processVerify({});
+              }
+            });
+          }
           return;
         }
 
