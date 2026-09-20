@@ -2048,13 +2048,16 @@
             approved = JSON.parse(localStorage.getItem('dq_approved_designers') || '[]');
           } catch(e) {}
 
-          const currentKey = JSON.stringify(registered.map(d => ({
-            id: d.id || '',
-            p: get10DigitPhone(d.phone || d.identifier),
-            e: (d.email || (d.identifier && d.identifier.includes('@') ? d.identifier : '')).toLowerCase(),
-            s: d.status,
-            n: d.name
-          })));
+          const currentKey = JSON.stringify(registered.map(d => {
+            const rEmail = d.email || (d.identifier && typeof d.identifier === 'string' && d.identifier.includes('@') ? d.identifier : '') || '';
+            return {
+              id: d.id || '',
+              p: get10DigitPhone(d.phone || d.identifier || ''),
+              e: (rEmail || '').toString().trim().toLowerCase(),
+              s: d.status || 'Pending',
+              n: d.name || 'Designer'
+            };
+          }));
 
           if (!force && currentKey === _lastRenderedDesignersKey && tbody.children.length > 0) {
             return; // Skip re-rendering if data hasn't changed to eliminate flickering
@@ -2082,15 +2085,17 @@
 
           let pendingCount = 0;
           tbody.innerHTML = registered.map((d, index) => {
-            const cleanPhone = get10DigitPhone(d.phone || d.identifier);
-            const designerEmail = (d.email || (d.identifier && d.identifier.includes('@') ? d.identifier : '')).toLowerCase().trim();
-            const designerKey = designerEmail || cleanPhone || d.identifier || d.id || 'designer';
+            const cleanPhone = get10DigitPhone(d.phone || d.identifier || '');
+            const rEmail = d.email || (d.identifier && typeof d.identifier === 'string' && d.identifier.includes('@') ? d.identifier : '') || '';
+            const designerEmail = (rEmail || '').toString().trim().toLowerCase();
+            const designerKey = designerEmail || cleanPhone || (d.identifier || d.id || 'designer').toString();
             const safeKey = designerKey.replace(/'/g, "\\'");
             const safeName = (d.name || 'Designer').replace(/'/g, "\\'");
-            const isAppr = d.status === 'Approved' || approved.some(a => 
-              (designerEmail && a.email && a.email.toLowerCase() === designerEmail) ||
-              (cleanPhone && get10DigitPhone(a.identifier || a.phone) === cleanPhone)
-            );
+            const isAppr = d.status === 'Approved' || d.isapproved === true || d.isApproved === true || approved.some(a => {
+              const aEmail = (a.email || (a.identifier && typeof a.identifier === 'string' && a.identifier.includes('@') ? a.identifier : '')).toString().trim().toLowerCase();
+              const aPhone = get10DigitPhone(a.phone || a.identifier || '');
+              return (designerEmail && aEmail && aEmail === designerEmail) || (cleanPhone && aPhone && aPhone === cleanPhone);
+            });
             if (!isAppr) pendingCount++;
 
             const waMsg = encodeURIComponent(`Hello ${d.name || 'Designer'}! I am contacting you from Design Quixo Operations regarding your Designer Profile & Clearance.`);
@@ -3007,9 +3012,9 @@
                 let deletedList = [];
                 try { deletedList = JSON.parse(localStorage.getItem('dq_deleted_designers') || '[]'); } catch(e) {}
                 let rawList = data.map(d => {
-                  const email = d.email || (d.identifier && d.identifier.includes('@') ? d.identifier : d.id && d.id.includes('@') ? d.id : '');
+                  const email = d.email || (d.identifier && typeof d.identifier === 'string' && d.identifier.includes('@') ? d.identifier : '') || (d.id && typeof d.id === 'string' && d.id.includes('@') ? d.id : '');
                   const cleanEmail = (email || '').toString().trim().toLowerCase();
-                  const phone = get10DigitPhone(d.phone || d.id || d.identifier);
+                  const phone = get10DigitPhone(d.phone || d.id || d.identifier || '');
                   const skillsVal = (Array.isArray(d.skills) && d.skills.length ? d.skills.join(', ') : (d.specialization || d.skills || d.exp || d.experience || (Array.isArray(d.software) && d.software.length ? d.software.join(', ') : d.software) || 'Graphic Design')).toString().trim();
                   const portfolioVal = (d.portfolio || d.portfolioUrl || d.portfoliolink || '').toString().trim();
                   return {
@@ -3017,7 +3022,7 @@
                     name: d.name || 'Designer',
                     phone: phone,
                     email: cleanEmail,
-                    identifier: cleanEmail || phone,
+                    identifier: cleanEmail || phone || (d.id || '').toString(),
                     skills: skillsVal,
                     experience: d.experience || skillsVal,
                     software: Array.isArray(d.software) ? d.software : (skillsVal ? skillsVal.split(',').map(s => s.trim()).filter(Boolean) : []),
