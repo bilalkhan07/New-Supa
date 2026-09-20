@@ -2021,13 +2021,22 @@ async function startServer() {
               let refImg = j.referenceimage || j.referenceImage || j.image || '';
               const descStr = (j.description || j.brief || j.details || '').toString();
               if (!refImg && descStr.includes('Ref Image:')) {
-                const match = descStr.match(/Ref Image:\s*([^\s|]+)/i);
-                if (match && match[1]) refImg = match[1];
+                const mStart = descStr.match(/Ref Image:\s*\[START\]([\s\S]*?)\[END\]/i);
+                if (mStart && mStart[1]) {
+                  refImg = mStart[1].trim();
+                } else {
+                  const match = descStr.match(/Ref Image:\s*([^\s|]+)/i) || descStr.match(/Ref Image:\s*([^\r\n|]+)/i);
+                  if (match && match[1]) refImg = match[1].trim();
+                }
+              }
+
+              if (refImg && typeof refImg === 'string' && refImg.toLowerCase().startsWith('data:image')) {
+                refImg = refImg.replace(/[\r\n\s]+/g, '');
               }
 
               let cleanBrief = j.brief || j.details || descStr;
               if (cleanBrief && typeof cleanBrief === 'string' && cleanBrief.includes('Ref Image:')) {
-                cleanBrief = cleanBrief.split(' | Ref Image:')[0].replace(/Ref Image:[^\s|]+/gi, '').trim();
+                cleanBrief = cleanBrief.split(' | Ref Image:')[0].replace(/Ref Image:\s*\[START\][\s\S]*?\[END\]/gi, '').replace(/Ref Image:[^\s|]+/gi, '').trim();
               }
 
               let ratioStr = j.ratio || '';
@@ -2128,38 +2137,25 @@ async function startServer() {
               const refImg = job.referenceImage || job.referenceimage || job.image || '';
               const briefVal = job.brief || job.details || job.description || '';
 
-              // Exact Supabase jobs table columns mapping BOTH schema types to remain 100% robust
+              // Exact Supabase jobs table columns mapping.
+              // Note: The database 'jobs' table has ONLY 11 valid columns: id, title, client, budget, deadline, category, status, description, assigned_to, designer, created_at.
+              // Any extra columns will cause PostgREST to fail with column schema cache errors.
               const row = {
                 id: cleanId,
                 title: projectVal,
-                project: projectVal,
                 client: `${clientNameVal} (${clientPhoneVal})`,
-                clientname: clientNameVal,
-                clientphone: clientPhoneVal,
-                phone: clientPhoneVal,
-                whatsapp: clientPhoneVal,
                 budget: priceVal,
-                price: priceVal,
                 deadline: job.urgency || job.deadline || job.time || 'ASAP',
-                time: job.urgency || job.deadline || job.time || 'ASAP',
                 category: serviceVal,
-                service: serviceVal,
                 status: job.status || 'Pending',
                 description: [
                   briefVal,
                   refImg ? `Ref Image: ${refImg}` : '',
                   job.ratio ? `Ratio: ${job.ratio}` : ''
                 ].filter(Boolean).join(' | '),
-                brief: briefVal,
-                details: briefVal,
-                ratio: job.ratio || 'Square (1:1)',
-                referenceimage: refImg,
-                referenceImage: refImg,
-                image: refImg,
                 assigned_to: job.assignedTo || job.designerEmail || '',
                 designer: job.designerName || (Array.isArray(job.acceptedBy) ? job.acceptedBy.join(', ') : (job.acceptedBy || job.acceptedby || '')),
-                created_at: job.createdAt || job.createdat || new Date().toISOString(),
-                createdat: job.createdAt || job.createdat || new Date().toISOString()
+                created_at: job.createdAt || job.createdat || new Date().toISOString()
               };
 
               try {
@@ -2251,10 +2247,15 @@ async function startServer() {
                 updatePayload.image = referenceImage;
               }
 
+              const prunedUpdatePayload: any = {};
+              if (updatePayload.status) prunedUpdatePayload.status = updatePayload.status;
+              if (updatePayload.assigned_to) prunedUpdatePayload.assigned_to = updatePayload.assigned_to;
+              if (updatePayload.designer) prunedUpdatePayload.designer = updatePayload.designer;
+
               try {
                 const { error: supErr } = await serverSupabase
                   .from('jobs')
-                  .update(updatePayload)
+                  .update(prunedUpdatePayload)
                   .or(`id.eq.${cleanId},id.eq.${bareId},id.eq.${rawId}`);
                 if (supErr) {
                   console.warn('[Supabase /api/update-job-status error]:', supErr.message || supErr);
