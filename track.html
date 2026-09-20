@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Track Your Design Job - Real-Time Status | Design Quixo</title>
+    <meta name="description" content="Track your Design Quixo graphic design job in real time. Check designer assignment, drafting progress, and vector file delivery SLA." />
+    <link rel="icon" type="image/png" href="favicon.png" />
+    <link rel="shortcut icon" type="image/png" href="favicon.png" />
+    <link rel="apple-touch-icon" href="favicon.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="security.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="store.js"></script>
+  </head>
+  <body class="bg-slate-50 text-slate-900 font-['Plus_Jakarta_Sans',sans-serif] antialiased min-h-screen flex flex-col selection:bg-blue-600 selection:text-white">
+    
+    <!-- Header Navigation -->
+    <header class="sticky top-0 z-50 backdrop-blur-md bg-white/95 border-b border-slate-200 transition-all shadow-xs">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between gap-4">
+        <div class="flex items-center justify-start shrink-0">
+          <a href="index.html" class="flex items-center gap-2.5 sm:gap-3 group shrink-0">
+            <img src="favicon.png" alt="Design Quixo Logo" class="w-8 h-8 sm:w-10 sm:h-10 object-contain rounded-xl group-hover:scale-105 transition-transform shrink-0" onerror="this.onerror=null; this.src='favicon.png';" />
+            <span class="font-extrabold text-lg sm:text-xl tracking-tight font-['Space_Grotesk'] text-slate-900">DESIGN <span class="text-blue-600">QUIXO</span></span>
+          </a>
+        </div>
+
+        <!-- Desktop Navigation - Centered -->
+        <nav class="hidden lg:flex items-center justify-center gap-7 xl:gap-8 text-xs xl:text-sm font-semibold text-slate-600 mx-auto">
+          <a href="index.html" class="hover:text-blue-600 transition-colors">Home</a>
+          <a href="services.html" class="hover:text-blue-600 transition-colors">Services</a>
+          <a href="latest-works.html" class="hover:text-blue-600 transition-colors">Portfolio</a>
+          <a href="about.html" class="hover:text-blue-600 transition-colors">About Us</a>
+          <a href="cities.html" class="hover:text-blue-600 transition-colors flex items-center gap-1">
+            <i data-lucide="map-pin" class="w-3.5 h-3.5 text-blue-600"></i>
+            Cities
+          </a>
+          <a href="contact.html" class="hover:text-blue-600 transition-colors">Contact</a>
+        </nav>
+
+        <!-- Right Action CTAs -->
+        <div class="flex items-center justify-end gap-2.5 sm:gap-3 shrink-0">
+          <a href="login.html?mode=signup" class="hidden sm:inline-flex items-center gap-1.5 text-xs font-semibold text-slate-700 hover:text-blue-600 px-3.5 py-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 shadow-xs transition-colors shrink-0">
+            <i data-lucide="user-plus" class="w-3.5 h-3.5 text-blue-600"></i>
+            <span>Join as Designer</span>
+          </a>
+          <a href="login.html?mode=login" class="inline-flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 text-white font-bold px-3.5 py-2 sm:px-4 sm:py-2 rounded-xl text-xs sm:text-sm shadow-sm transition-all shrink-0">
+            <i data-lucide="log-in" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i>
+            <span>Login</span>
+          </a>
+          <button id="mobile-menu-btn" class="lg:hidden p-2 text-slate-600 hover:text-slate-900 rounded-xl border border-slate-200 hover:bg-slate-50 transition-colors" aria-label="Toggle Navigation">
+            <i data-lucide="menu" class="w-5 h-5"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Mobile Dropdown -->
+      <div id="mobile-menu" class="hidden lg:hidden border-b border-slate-200 bg-white px-4 pt-2 pb-5 space-y-2.5 shadow-md">
+        <a href="index.html" class="block py-2 text-slate-700 hover:text-blue-600 font-medium text-sm">Home</a>
+        <a href="services.html" class="block py-2 text-slate-700 hover:text-blue-600 font-medium text-sm">Services</a>
+        <a href="latest-works.html" class="block py-2 text-slate-700 hover:text-blue-600 font-medium text-sm">Portfolio Showcase</a>
+        <a href="about.html" class="block py-2 text-slate-700 hover:text-blue-600 font-medium text-sm">About Us</a>
+        <a href="cities.html" class="block py-2 text-slate-700 hover:text-blue-600 font-medium text-sm">Cities Directory</a>
+        <a href="contact.html" class="block py-2 text-slate-700 hover:text-blue-600 font-medium text-sm">Contact Support</a>
+        <div class="pt-3 border-t border-slate-200 flex flex-col gap-2">
+          <a href="login.html?mode=signup" class="flex items-center justify-center gap-2 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-slate-700 font-bold text-xs">
+            <i data-lucide="user-plus" class="w-3.5 h-3.5 text-blue-600"></i>
+            <span>Join as Designer (Apply)</span>
+          </a>
+          <a href="login.html?mode=login" class="flex items-center justify-center gap-2 py-2.5 rounded-xl bg-blue-600 text-white font-bold text-xs shadow-sm">
+            <i data-lucide="log-in" class="w-3.5 h-3.5"></i>
+            <span>Login</span>
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Tracker View -->
+    <main class="flex-grow py-12 sm:py-16 px-4 sm:px-6 lg:px-8">
+      <div class="max-w-3xl mx-auto space-y-8">
+        
+        <!-- Search Header Card -->
+        <div class="bg-white rounded-3xl p-6 sm:p-10 border border-slate-200 shadow-sm text-center space-y-6">
+          <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 border border-blue-200 text-blue-800 text-xs font-bold">
+            <i data-lucide="activity" class="w-3.5 h-3.5 text-blue-600"></i>
+            <span>Live Dispatch Status Tracker</span>
+          </div>
+
+          <div>
+            <h1 class="text-2xl sm:text-4xl font-extrabold font-['Space_Grotesk'] text-slate-900 tracking-tight">
+              Track Your Design Order
+            </h1>
+            <p class="text-xs sm:text-sm text-slate-500 max-w-md mx-auto mt-2 leading-relaxed">
+              Enter your Job Reference ID (e.g. <span class="font-mono font-bold text-blue-600">DQ-9402</span>) to view current creator progress and WhatsApp delivery timeline.
+            </p>
+          </div>
+
+          <!-- Search Input Form -->
+          <form id="track-job-form" class="max-w-md mx-auto flex flex-col sm:flex-row gap-2.5">
+            <div class="relative flex-grow">
+              <input 
+                type="text" 
+                id="job-id-input" 
+                placeholder="Enter Job ID (e.g. DQ-9402)" 
+                required 
+                class="w-full bg-slate-50 border border-slate-300 focus:border-blue-600 focus:bg-white rounded-xl px-4 py-3.5 text-sm font-mono font-bold text-slate-900 outline-none uppercase placeholder:normal-case placeholder:font-normal transition-all"
+              />
+            </div>
+            <button 
+              type="submit" 
+              class="px-6 py-3.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-sm shadow-sm transition-all flex items-center justify-center gap-2 shrink-0 hover:scale-[1.02] active:scale-[0.98]">
+              <i data-lucide="search" class="w-4 h-4"></i>
+              <span>Track Job</span>
+            </button>
+          </form>
+
+          <!-- Helper text -->
+          <div class="pt-2 border-t border-slate-100 flex items-center justify-center gap-2 text-xs text-slate-400">
+            <span class="text-[11px]">Enter your Job Reference ID above to track progress.</span>
+          </div>
+        </div>
+
+        <!-- Result Container: Active Job Status -->
+        <div id="tracker-result-card" class="hidden bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-sm space-y-8 animate-fadeIn">
+          
+          <!-- Job Info Header -->
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-slate-100">
+            <div>
+              <div class="flex items-center gap-2 mb-1.5 flex-wrap">
+                <span id="result-job-id" class="font-mono font-bold text-sm bg-blue-50 text-blue-600 border border-blue-200 px-3 py-1 rounded-lg">#DQ-ORDER</span>
+                <span id="result-status-badge" class="text-xs font-bold px-3 py-1 rounded-full bg-amber-50 text-amber-800 border border-amber-200 flex items-center gap-1.5">
+                  <span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
+                  <span id="result-status-text">Drafting in Progress</span>
+                </span>
+              </div>
+              <h2 id="result-project-name" class="text-xl sm:text-2xl font-bold font-['Space_Grotesk'] text-slate-900">
+                Design Project
+              </h2>
+              <p id="result-service-name" class="text-xs text-slate-500 mt-0.5">Social Media Posts • Square (1:1)</p>
+            </div>
+
+            <div class="text-left sm:text-right">
+              <span class="text-[10px] text-slate-400 uppercase font-bold tracking-wider block">Service Price</span>
+              <span id="result-price-text" class="text-lg font-bold font-['Space_Grotesk'] text-slate-900">₹399/-</span>
+              <span class="text-[10px] text-emerald-600 font-semibold block">100% Vector SLA</span>
+            </div>
+          </div>
+
+          <!-- Progress Stepper Timeline -->
+          <div class="space-y-6">
+            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 font-mono">Live Stage Progression</h3>
+            
+            <div class="relative pl-6 sm:pl-8 space-y-6 before:absolute before:left-2.5 sm:before:left-3 before:top-2 before:bottom-2 before:w-0.5 before:bg-slate-200" id="timeline-container">
+              
+              <!-- Step 1 -->
+              <div class="relative flex items-start gap-4 timeline-step" id="step-1-node">
+                <div class="absolute -left-6 sm:-left-8 w-6 h-6 rounded-full bg-emerald-500 text-white flex items-center justify-center font-bold text-xs ring-4 ring-white shadow-xs">
+                  <i data-lucide="check" class="w-3.5 h-3.5"></i>
+                </div>
+                <div>
+                  <h4 class="font-bold text-sm text-slate-900">Step 1: Brief Received & Registered</h4>
+                  <p class="text-xs text-slate-500 mt-0.5">Your design requirements and reference inputs were received and matched on our dispatch network.</p>
+                </div>
+              </div>
+
+              <!-- Step 2 -->
+              <div class="relative flex items-start gap-4 timeline-step" id="step-2-node">
+                <div class="absolute -left-6 sm:-left-8 w-6 h-6 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold text-xs ring-4 ring-white shadow-xs" id="step-2-icon">
+                  <i data-lucide="user-check" class="w-3.5 h-3.5"></i>
+                </div>
+                <div>
+                  <h4 class="font-bold text-sm text-slate-900" id="step-2-title">Step 2: Verified Designer Assigned</h4>
+                  <p class="text-xs text-slate-500 mt-0.5" id="step-2-desc">Matched to our verified human graphic design pool. Custom vector workspace and canvas initiated.</p>
+                </div>
+              </div>
+
+              <!-- Step 3 -->
+              <div class="relative flex items-start gap-4 timeline-step" id="step-3-node">
+                <div class="absolute -left-6 sm:-left-8 w-6 h-6 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center font-bold text-xs ring-4 ring-white shadow-xs" id="step-3-icon">
+                  <i data-lucide="pen-tool" class="w-3.5 h-3.5"></i>
+                </div>
+                <div>
+                  <h4 class="font-bold text-sm text-slate-700" id="step-3-title">Step 3: Manual Drafting & Zero-AI QA</h4>
+                  <p class="text-xs text-slate-500 mt-0.5" id="step-3-desc">Layered source artwork crafting in Figma/Illustrator with pixel-perfect alignment.</p>
+                </div>
+              </div>
+
+              <!-- Step 4 -->
+              <div class="relative flex items-start gap-4 timeline-step" id="step-4-node">
+                <div class="absolute -left-6 sm:-left-8 w-6 h-6 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center font-bold text-xs ring-4 ring-white shadow-xs" id="step-4-icon">
+                  <i data-lucide="send" class="w-3.5 h-3.5"></i>
+                </div>
+                <div>
+                  <h4 class="font-bold text-sm text-slate-700" id="step-4-title">Step 4: Vector Export & WhatsApp Delivery</h4>
+                  <p class="text-xs text-slate-500 mt-0.5" id="step-4-desc">High-resolution PNG, PDF, and layered master files sent directly to your registered WhatsApp.</p>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Brief Summary Box -->
+          <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200 text-xs space-y-2">
+            <span class="text-[10px] text-slate-400 uppercase font-bold tracking-wider block">Your Brief Content:</span>
+            <p id="result-brief-text" class="text-slate-800 leading-relaxed font-medium whitespace-pre-line">
+              No brief details recorded.
+            </p>
+          </div>
+
+          <!-- WhatsApp Direct Action -->
+          <div class="pt-2">
+            <a id="result-wa-btn" href="#" target="_blank" class="w-full py-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm shadow-sm transition-all flex items-center justify-center gap-2.5">
+              <img src="wa_icon.png" alt="WhatsApp" class="w-5 h-5 object-contain rounded-full shrink-0" onerror="this.onerror=null; this.src='wa_icon.png';" />
+              <span id="result-wa-btn-text">Chat with Support on WhatsApp Regarding This Job</span>
+            </a>
+          </div>
+
+        </div>
+
+        <!-- Not Found State -->
+        <div id="tracker-not-found" class="hidden bg-white rounded-3xl p-8 border border-slate-200 shadow-sm text-center space-y-4">
+          <div class="w-14 h-14 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center mx-auto border border-amber-200">
+            <i data-lucide="help-circle" class="w-7 h-7"></i>
+          </div>
+          <h3 class="text-lg font-bold text-slate-900 font-['Space_Grotesk']">Job ID Not Found</h3>
+          <p class="text-xs text-slate-500 max-w-md mx-auto leading-relaxed">
+            We couldn't find a record for this Job ID. Please check the spelling or reach out to our WhatsApp support desk for instant manual tracking.
+          </p>
+          <a href="https://wa.me/918602420897?text=Hello%20Design%20Quixo%20Support,%20I%20want%20to%20track%20my%20design%20job." target="_blank" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-slate-900 text-white text-xs font-bold hover:bg-black transition-all">
+            <img src="wa_icon.png" alt="WhatsApp" class="w-4 h-4 object-contain rounded-full shrink-0" onerror="this.onerror=null; this.src='wa_icon.png';" />
+            <span>Ask Support Desk on WhatsApp</span>
+          </a>
+        </div>
+
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 py-10 text-xs text-slate-500">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div class="flex items-center gap-2">
+          <img src="favicon.png" alt="Design Quixo Logo" class="w-6 h-6 object-contain rounded-lg shrink-0" onerror="this.onerror=null; this.src='favicon.png';" />
+          <span class="font-extrabold text-sm font-['Space_Grotesk'] text-slate-900">DESIGN <span class="text-blue-600">QUIXO</span></span>
+        </div>
+        <div class="flex items-center gap-4 text-xs flex-wrap justify-center sm:justify-start">
+          <a href="mailto:designquixo@gmail.com" class="text-blue-600 font-semibold hover:underline flex items-center gap-1">
+            <i data-lucide="mail" class="w-3.5 h-3.5"></i>
+            <span>designquixo@gmail.com</span>
+          </a>
+          <a href="terms.html" class="hover:text-blue-600 underline">Terms of Service</a>
+          <a href="privacy.html" class="hover:text-blue-600 underline">Privacy Policy</a>
+          <a href="privacy.html#cookies" class="hover:text-blue-600 underline">Cookie Policy</a>
+          <a href="contact.html" class="hover:text-blue-600 underline">Contact Desk</a>
+          <a href="login.html?mode=signup" class="hover:text-blue-600 underline">Join as Designer</a>
+        </div>
+        <p>&copy; 2026 Design Quixo India. Real Human Graphic Design Network.</p>
+      </div>
+    </footer>
+
+    <!-- Global Cookie Consent Component Script -->
+    <script src="cookie-banner.js"></script>
+
+    <script>
+      lucide.createIcons();
+
+      const mobileBtn = document.getElementById('mobile-menu-btn');
+      const mobileMenu = document.getElementById('mobile-menu');
+      if (mobileBtn && mobileMenu) {
+        mobileBtn.addEventListener('click', () => {
+          mobileMenu.classList.toggle('hidden');
+        });
+      }
+
+      function searchSampleJob(jobId) {
+        document.getElementById('job-id-input').value = jobId;
+        performJobLookup(jobId);
+      }
+
+      async function performJobLookup(jobId, shouldScroll = true) {
+        if (!jobId) return;
+        const normId = (window.DQStore && window.DQStore.normalizeJobId) ? window.DQStore.normalizeJobId(jobId) : jobId.toString().trim().toUpperCase();
+        const bareId = normId.replace(/^DQ-/, '');
+        const resultCard = document.getElementById('tracker-result-card');
+        const notFoundCard = document.getElementById('tracker-not-found');
+
+        // Check if deleted
+        let deletedJobs = [];
+        try { deletedJobs = JSON.parse(localStorage.getItem('dq_deleted_jobs') || '[]'); } catch(e) {}
+        const isDeleted = deletedJobs.some(d => {
+          const dNorm = (window.DQStore && window.DQStore.normalizeJobId) ? window.DQStore.normalizeJobId(d) : d.toString().trim().toUpperCase();
+          return dNorm === normId || d === normId || d === bareId;
+        });
+        if (isDeleted) {
+          resultCard.classList.add('hidden');
+          notFoundCard.classList.remove('hidden');
+          lucide.createIcons();
+          if (shouldScroll) {
+            notFoundCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+          return;
+        }
+
+        let job = (window.DQStore && window.DQStore.getJobById) ? window.DQStore.getJobById(normId) : null;
+
+        // If not in memory store, check localStorage directly
+        if (!job) {
+          try {
+            const jobs = JSON.parse(localStorage.getItem('dq_live_jobs') || '[]');
+            job = jobs.find(j => {
+              const jNorm = (window.DQStore && window.DQStore.normalizeJobId) ? window.DQStore.normalizeJobId(j.id) : (j.id || '').toString().trim().toUpperCase();
+              return jNorm === normId;
+            });
+          } catch(e) {}
+        }
+
+        // If not in local storage, check live from Supabase
+        if (!job) {
+          try {
+            const db = window.DQSupabase || window.DQFirebase;
+            if (db && typeof db.getJobs === 'function') {
+              const jobs = await db.getJobs();
+              if (Array.isArray(jobs)) {
+                const found = jobs.find(j => {
+                  const jNorm = (window.DQStore && window.DQStore.normalizeJobId) ? window.DQStore.normalizeJobId(j.id) : (j.id || '').toString().trim().toUpperCase();
+                  return jNorm === normId;
+                });
+                if (found) {
+                  const isComp = (found.status || '').toLowerCase().includes('completed') || (found.status || '').toLowerCase().includes('delivered');
+                  const rawImgUrl = found.referenceImage || found.referenceimage || found.image || found.reference_image || found.refImage || found.sampleImage || found.reference || '';
+                  job = {
+                    id: normId,
+                    service: found.service || 'Graphic Design',
+                    project: found.project || found.projectName || 'Design Brief',
+                    phone: found.phone || found.whatsapp || '',
+                    whatsapp: found.whatsapp || found.phone || '',
+                    brief: found.brief || '',
+                    ratio: found.ratio || '1:1',
+                    time: found.time || 'Active',
+                    status: found.status || 'Pending',
+                    completed: isComp,
+                    price: (window.DQStore && window.DQStore.getJobPrice) ? window.DQStore.getJobPrice(found) : (found.price || 399),
+                    acceptedBy: Array.isArray(found.acceptedBy) ? found.acceptedBy : [],
+                    referenceImage: rawImgUrl,
+                    referenceimage: rawImgUrl,
+                    image: rawImgUrl
+                  };
+                  try {
+                    let localJobs = JSON.parse(localStorage.getItem('dq_live_jobs') || '[]');
+                    if (!localJobs.some(x => {
+                      const xNorm = (window.DQStore && window.DQStore.normalizeJobId) ? window.DQStore.normalizeJobId(x.id) : (x.id || '').toString().trim().toUpperCase();
+                      return xNorm === normId;
+                    })) {
+                      localJobs.unshift(job);
+                      if (window.DQStore && window.DQStore.deduplicateJobs) {
+                        localJobs = window.DQStore.deduplicateJobs(localJobs);
+                      }
+                      localStorage.setItem('dq_live_jobs', JSON.stringify(localJobs));
+                    }
+                  } catch(e) {}
+                }
+              }
+            }
+          } catch(err) {}
+        }
+
+        if (!job) {
+          resultCard.classList.add('hidden');
+          notFoundCard.classList.remove('hidden');
+          lucide.createIcons();
+          if (shouldScroll) {
+            notFoundCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+          return;
+        }
+
+        notFoundCard.classList.add('hidden');
+        resultCard.classList.remove('hidden');
+
+        // Populate details
+        document.getElementById('result-job-id').textContent = `#${job.id || 'DQ-JOB'}`;
+        document.getElementById('result-project-name').textContent = job.project || 'Graphic Design Project';
+        document.getElementById('result-service-name').textContent = `${job.service || 'Design Service'} • Ratio: ${job.ratio || '1:1'}`;
+        document.getElementById('result-price-text').textContent = `₹${job.price || 399}/-`;
+        document.getElementById('result-brief-text').textContent = job.brief || 'Custom instructions provided to creator.';
+
+        const rawStatus = (job.status || '').trim();
+        const isCompletedFlag = job.completed === true || 
+                                rawStatus === 'Completed & Vector Delivered' || 
+                                rawStatus.toLowerCase().includes('completed') || 
+                                rawStatus.toLowerCase().includes('delivered');
+
+        const displayStatus = isCompletedFlag 
+          ? 'Completed & Vector Delivered' 
+          : (rawStatus || 'Drafting in Progress');
+
+        document.getElementById('result-status-text').textContent = displayStatus;
+
+        // Reset Timeline nodes
+        const s2Icon = document.getElementById('step-2-icon');
+        const s3Icon = document.getElementById('step-3-icon');
+        const s4Icon = document.getElementById('step-4-icon');
+        const s3Title = document.getElementById('step-3-title');
+        const s4Title = document.getElementById('step-4-title');
+        const statusBadge = document.getElementById('result-status-badge');
+
+        const isDrafting = !isCompletedFlag && (displayStatus.toLowerCase().includes('draft') || displayStatus.toLowerCase().includes('progress') || displayStatus.toLowerCase().includes('revision'));
+        const isAssigned = isCompletedFlag || isDrafting || (Array.isArray(job.acceptedBy) && job.acceptedBy.length > 0);
+
+        if (isCompletedFlag) {
+          // All 4 Steps Completed
+          s2Icon.className = 'absolute -left-6 sm:-left-8 w-6 h-6 rounded-full bg-emerald-500 text-white flex items-center justify-center font-bold text-xs ring-4 ring-white shadow-xs';
+          s2Icon.innerHTML = '<i data-lucide="check" class="w-3.5 h-3.5"></i>';
+
+          s3Icon.className = 'absolute -left-6 sm:-left-8 w-6 h-6 rounded-full bg-emerald-500 text-white flex items-center justify-center font-bold text-xs ring-4 ring-white shadow-xs';
+          s3Icon.innerHTML = '<i data-lucide="check" class="w-3.5 h-3.5"></i>';
+          s3Title.className = 'font-bold text-sm text-slate-900';
+
+          s4Icon.className = 'absolute -left-6 sm:-left-8 w-6 h-6 rounded-full bg-emerald-500 text-white flex items-center justify-center font-bold text-xs ring-4 ring-white shadow-xs';
+          s4Icon.innerHTML = '<i data-lucide="check-circle" class="w-3.5 h-3.5"></i>';
+          s4Title.className = 'font-bold text-sm text-emerald-700';
+
+          statusBadge.className = 'text-xs font-bold px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300 flex items-center gap-1.5 shadow-2xs';
+        } else if (isDrafting) {
+          s2Icon.className = 'absolute -left-6 sm:-left-8 w-6 h-6 rounded-full bg-emerald-500 text-white flex items-center justify-center font-bold text-xs ring-4 ring-white shadow-xs';
+          s2Icon.innerHTML = '<i data-lucide="check" class="w-3.5 h-3.5"></i>';
+
+          s3Icon.className = 'absolute -left-6 sm:-left-8 w-6 h-6 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold text-xs ring-4 ring-white shadow-xs animate-pulse';
+          s3Icon.innerHTML = '<i data-lucide="pen-tool" class="w-3.5 h-3.5"></i>';
+          s3Title.className = 'font-bold text-sm text-blue-700';
+
+          s4Icon.className = 'absolute -left-6 sm:-left-8 w-6 h-6 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center font-bold text-xs ring-4 ring-white shadow-xs';
+          s4Icon.innerHTML = '<i data-lucide="send" class="w-3.5 h-3.5"></i>';
+          s4Title.className = 'font-bold text-sm text-slate-700';
+
+          statusBadge.className = 'text-xs font-bold px-3 py-1 rounded-full bg-amber-50 text-amber-800 border border-amber-200 flex items-center gap-1.5';
+        } else if (isAssigned) {
+          s2Icon.className = 'absolute -left-6 sm:-left-8 w-6 h-6 rounded-full bg-emerald-500 text-white flex items-center justify-center font-bold text-xs ring-4 ring-white shadow-xs';
+          s2Icon.innerHTML = '<i data-lucide="check" class="w-3.5 h-3.5"></i>';
+
+          s3Icon.className = 'absolute -left-6 sm:-left-8 w-6 h-6 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center font-bold text-xs ring-4 ring-white shadow-xs';
+          s3Icon.innerHTML = '<i data-lucide="pen-tool" class="w-3.5 h-3.5"></i>';
+          s3Title.className = 'font-bold text-sm text-slate-700';
+
+          s4Icon.className = 'absolute -left-6 sm:-left-8 w-6 h-6 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center font-bold text-xs ring-4 ring-white shadow-xs';
+          s4Icon.innerHTML = '<i data-lucide="send" class="w-3.5 h-3.5"></i>';
+          s4Title.className = 'font-bold text-sm text-slate-700';
+
+          statusBadge.className = 'text-xs font-bold px-3 py-1 rounded-full bg-blue-50 text-blue-800 border border-blue-200 flex items-center gap-1.5';
+        }
+
+        // WhatsApp CTA
+        const waMsg = encodeURIComponent(`Hello Design Quixo Operations, I am inquiring about my Job #${job.id || 'DQ-JOB'} for "${job.project || 'Project'}". Current Status: ${displayStatus}.`);
+        document.getElementById('result-wa-btn').href = `https://wa.me/918602420897?text=${waMsg}`;
+
+        lucide.createIcons();
+
+        // Auto-scroll directly to result card so user doesn't get stuck at the search input
+        if (shouldScroll) {
+          setTimeout(() => {
+            resultCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }, 50);
+        }
+      }
+
+      document.getElementById('track-job-form').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const val = document.getElementById('job-id-input').value;
+        if (val) performJobLookup(val);
+      });
+
+      // Check URL parameters ONLY for initial load e.g. track.html?id=DQ-XXXXXX
+      window.addEventListener('DOMContentLoaded', () => {
+        const params = new URLSearchParams(window.location.search);
+        const jobId = params.get('id');
+        if (jobId) {
+          document.getElementById('job-id-input').value = jobId.trim().toUpperCase();
+          performJobLookup(jobId.trim().toUpperCase());
+        }
+        // If no ID provided, do NOT auto-populate and do NOT auto-load any job!
+      });
+    </script>
+  </body>
+</html>
