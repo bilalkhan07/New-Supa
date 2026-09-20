@@ -329,7 +329,14 @@
                 });
                 if (found) {
                   const isComp = (found.status || '').toLowerCase().includes('completed') || (found.status || '').toLowerCase().includes('delivered');
-                  const rawImgUrl = found.referenceImage || found.referenceimage || found.image || found.reference_image || found.refImage || found.sampleImage || found.reference || '';
+                  let rawImgUrl = found.referenceImage || found.referenceimage || found.image || found.reference_image || found.refImage || found.sampleImage || found.reference || '';
+                  if (!rawImgUrl) {
+                    const descSearch = (found.description || found.details || found.brief || '').toString();
+                    if (descSearch.includes('Ref Image:')) {
+                      const m = descSearch.match(/Ref Image:\s*([^\s|]+)/i);
+                      if (m && m[1]) rawImgUrl = m[1];
+                    }
+                  }
                   job = {
                     id: normId,
                     service: found.service || 'Graphic Design',
