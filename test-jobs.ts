@@ -7,13 +7,15 @@ const supabase = createSupa(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 async function run() {
   console.log('Fetching last 5 jobs from Supabase...');
-  const { data, error } = await supabase.from('jobs').select('*').order('created_at', { ascending: false }).limit(5);
+  const { data, error } = await supabase.from('jobs').select('*').order('created_at', { ascending: false }).limit(15);
   if (error) {
     console.error('Fetch Jobs Error:', error);
   } else {
     console.log(`Successfully fetched ${data?.length || 0} jobs.`);
     if (data && data.length > 0) {
-      console.log('Sample Job Columns & Values:');
+      console.log('Fetched Job Keys:');
+      console.log(Object.keys(data[0]));
+      console.log('Full First Job Object:');
       console.log(JSON.stringify(data[0], null, 2));
     }
   }
