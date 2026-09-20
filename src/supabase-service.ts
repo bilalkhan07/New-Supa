@@ -427,23 +427,38 @@ export const DQSupabase = {
       }
     } catch (e) {}
 
-    // 2. Prepare exact payload to match Supabase jobs schema columns strictly
+    // 2. Prepare exact payload to match Supabase jobs schema columns strictly (supporting both designs)
     const supabaseJobRow = {
       id: cleanId,
       title: normalizedJob.project || normalizedJob.service || 'Design Request',
+      project: normalizedJob.project || normalizedJob.service || 'Design Request',
       client: `${normalizedJob.clientName || 'Client'} (${normalizedJob.phone || normalizedJob.whatsapp || 'N/A'})`,
+      clientname: normalizedJob.clientName || 'Client',
+      clientphone: normalizedJob.phone || normalizedJob.whatsapp || '',
+      phone: normalizedJob.phone || normalizedJob.whatsapp || '',
+      whatsapp: normalizedJob.whatsapp || normalizedJob.phone || '',
       budget: Number(normalizedJob.price || normalizedJob.budget) || 399,
+      price: Number(normalizedJob.price || normalizedJob.budget) || 399,
       deadline: normalizedJob.time || normalizedJob.urgency || 'ASAP',
+      time: normalizedJob.time || normalizedJob.urgency || 'ASAP',
       category: normalizedJob.service || 'Graphic Design',
+      service: normalizedJob.service || 'Graphic Design',
       status: normalizedJob.status || 'Pending',
       description: [
         normalizedJob.brief || normalizedJob.details || '',
         refImg ? `Ref Image: ${refImg}` : '',
         normalizedJob.ratio ? `Ratio: ${normalizedJob.ratio}` : ''
       ].filter(Boolean).join(' | '),
+      brief: normalizedJob.brief || '',
+      details: normalizedJob.brief || '',
+      ratio: normalizedJob.ratio || 'Square (1:1)',
+      referenceimage: refImg,
+      referenceImage: refImg,
+      image: refImg,
       assigned_to: normalizedJob.assignedTo || '',
       designer: normalizedJob.designerName || (Array.isArray(normalizedJob.acceptedBy) ? normalizedJob.acceptedBy.join(', ') : '') || '',
-      created_at: normalizedJob.createdAt || nowIso
+      created_at: normalizedJob.createdAt || nowIso,
+      createdat: normalizedJob.createdAt || nowIso
     };
 
     try {
@@ -1286,9 +1301,9 @@ export const DQSupabase = {
 
         const rawList = data
           .map((d: any) => {
-            const email = d.email || (d.identifier && d.identifier.includes('@') ? d.identifier : d.id && d.id.includes('@') ? d.id : '');
+            const email = d.email || (d.identifier && typeof d.identifier === 'string' && d.identifier.includes('@') ? d.identifier : '') || (d.id && typeof d.id === 'string' && d.id.includes('@') ? d.id : '');
             const cleanEmail = (email || '').toString().trim().toLowerCase();
-            const phone = clean10Phone(d.phone || d.id || d.identifier);
+            const phone = clean10Phone(d.phone || d.id || d.identifier || '');
             let avatar = d.avatar || d.avatarUrl || d.avatar_url || d.photo || d.dpUrl || '';
             if (!avatar) {
               try {
@@ -1304,7 +1319,7 @@ export const DQSupabase = {
               name: d.name || 'Designer',
               phone: phone,
               email: cleanEmail,
-              identifier: cleanEmail || phone,
+              identifier: cleanEmail || phone || (d.id || '').toString(),
               skills: skillsVal,
               experience: d.experience || skillsVal,
               software: Array.isArray(d.software) ? d.software : (skillsVal ? skillsVal.split(',').map((s: string) => s.trim()).filter(Boolean) : ['Photoshop', 'Illustrator']),
