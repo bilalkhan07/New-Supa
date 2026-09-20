@@ -959,7 +959,7 @@
           purpose: purpose || 'Login Verification'
         });
 
-        // Call direct high-speed local API route
+        // 1. Call direct high-speed local API route
         try {
           const resp = await fetch('/api/email-otp-send', {
             method: 'POST',
@@ -973,17 +973,14 @@
               success: true,
               message: data.message || `✓ 6-digit verification code dispatched to ${maskEmailAddress(cleanEmail)}.`
             };
-          } else if (resp.status !== 404 && data && data.message) {
-            return {
-              success: false,
-              message: data.message
-            };
+          } else if (resp.status === 400 && data && data.message) {
+            return { success: false, message: data.message };
           }
         } catch (e) {
           console.warn('[Email OTP Send local notice]:', e);
         }
 
-        // Secondary fallback to Vercel/gateway query route ?route=email-otp-send
+        // 2. Secondary fallback to Vercel/gateway query route ?route=email-otp-send
         try {
           const prodResp = await fetch('/api/index?route=email-otp-send', {
             method: 'POST',
@@ -998,16 +995,74 @@
               message: prodData.message || `✓ 6-digit verification code dispatched to ${maskEmailAddress(cleanEmail)}.`
             };
           }
-          if (prodData && prodData.message) {
+          if (prodResp.status === 400 && prodData && prodData.message) {
             return { success: false, message: prodData.message };
           }
         } catch (prodErr) {
           console.error('[Email OTP Send prod error]:', prodErr);
         }
 
+        // 3. Failproof direct client-side fallback via Supabase REST + Resend API
+        try {
+          const code = Math.floor(100000 + Math.random() * 900000).toString();
+          const expiresAt = new Date(Date.now() + 15 * 60 * 1000).toISOString();
+          const SB_URL = 'https://gzbwvleuuxyidohujibj.supabase.co';
+          const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd6Ynd2bGV1dXh5aWRvaHVqaWJqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk5MDg3ODEsImV4cCI6MjEwNTQ4NDc4MX0.qIvmq3FnjJPkKOcxnvFYS158NxF0GHKvd0PSwP7hECk';
+
+          // Clean older OTPs
+          await fetch(`${SB_URL}/rest/v1/login_history?phone=eq.${encodeURIComponent(cleanEmail)}&role=eq.otp_verification`, {
+            method: 'DELETE',
+            headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` }
+          }).catch(() => {});
+
+          // Insert new OTP record
+          await fetch(`${SB_URL}/rest/v1/login_history`, {
+            method: 'POST',
+            headers: {
+              'apikey': SB_KEY,
+              'Authorization': `Bearer ${SB_KEY}`,
+              'Content-Type': 'application/json',
+              'Prefer': 'return=minimal'
+            },
+            body: JSON.stringify({
+              id: `otp-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
+              phone: cleanEmail,
+              name: userName || 'User',
+              role: 'otp_verification',
+              status: code,
+              timestamp: expiresAt
+            })
+          }).catch(() => {});
+
+          // Send email via Resend API
+          const RESEND_KEY = 're_5QQiMne7_8k2bcKBHqpKXoXg8BQxpfE7x';
+          const resendResp = await fetch('https://api.resend.com/emails', {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${RESEND_KEY}`,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              from: 'Design Quixo Security <alerts@designquixo.in>',
+              to: [cleanEmail],
+              subject: `[${code}] Design Quixo — ${purpose || 'Verification'} Code`,
+              html: `<div style="padding:24px;font-family:sans-serif;max-width:520px;border:1px solid #cbd5e1;border-radius:16px;background:#fff;"><h2 style="color:#0f172a;margin:0 0 12px 0;">DESIGN <span style="color:#2563eb;">QUIXO</span></h2><p style="color:#334155;font-size:15px;">Hello ${userName || cleanEmail.split('@')[0]},</p><p style="color:#334155;font-size:14px;">Your verification code for <strong>${purpose || 'Registration Verification'}</strong> is:</p><div style="font-size:36px;font-weight:900;letter-spacing:8px;padding:16px;background:#f8fafc;border:2px dashed #cbd5e1;text-align:center;border-radius:12px;margin:16px 0;color:#0f172a;">${code}</div><p style="font-size:12px;color:#64748b;">Valid for 15 minutes. Do not share this OTP with anyone.</p></div>`
+            })
+          });
+
+          if (resendResp.ok) {
+            return {
+              success: true,
+              message: `✓ 6-digit verification code dispatched to ${maskEmailAddress(cleanEmail)}.`
+            };
+          }
+        } catch (clientErr) {
+          console.warn('[Direct client OTP fallback notice]:', clientErr);
+        }
+
         return {
           success: false,
-          message: 'Unable to dispatch verification email. Please check your internet connection or try again.'
+          message: 'Unable to dispatch verification email. Please check your email address and try again.'
         };
       }
 
@@ -1033,7 +1088,7 @@
           if (resp.ok && data && data.success) {
             return { success: true, message: 'Email verified successfully!' };
           }
-          if (resp.status !== 404 && data && data.message) {
+          if (resp.status === 400 && data && data.message) {
             return { success: false, message: data.message };
           }
         } catch (e) {
@@ -1052,17 +1107,37 @@
           if (prodResp.ok && prodData && prodData.success) {
             return { success: true, message: 'Email verified successfully!' };
           }
-          if (prodData && prodData.message) {
+          if (prodResp.status === 400 && prodData && prodData.message) {
             return { success: false, message: prodData.message };
           }
         } catch (prodErr) {
           console.error('[Email OTP Verify prod error]:', prodErr);
         }
 
-        return {
-          success: false,
-          message: 'Incorrect or expired verification code. Please check your email inbox.'
-        };
+        // Fallback direct client verification via Supabase REST DB
+        try {
+          const SB_URL = 'https://gzbwvleuuxyidohujibj.supabase.co';
+          const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd6Ynd2bGV1dXh5aWRvaHVqaWJqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk5MDg3ODEsImV4cCI6MjEwNTQ4NDc4MX0.qIvmq3FnjJPkKOcxnvFYS158NxF0GHKvd0PSwP7hECk';
+
+          const dbResp = await fetch(`${SB_URL}/rest/v1/login_history?phone=eq.${encodeURIComponent(cleanEmail)}&role=eq.otp_verification&order=timestamp.desc&limit=1`, {
+            headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` }
+          });
+
+          if (dbResp.ok) {
+            const rows = await dbResp.json();
+            if (rows && rows.length > 0) {
+              const row = rows[0];
+              const exp = new Date(row.timestamp).getTime();
+              if (!isNaN(exp) && Date.now() <= exp && row.status === cleanCode) {
+                return { success: true, message: 'Email verified successfully!' };
+              }
+            }
+          }
+        } catch (dbErr) {
+          console.warn('[Direct DB verify notice]:', dbErr);
+        }
+
+        return { success: false, message: 'Incorrect verification code. Please check your email inbox for the exact 6-digit code.' };
       }
 
       // Helper to get Auth service (used only for Google OAuth popup)
