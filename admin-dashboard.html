@@ -2172,8 +2172,8 @@
                   })()}
                 </td>
                 <td class="p-4">
-                  <span class="inline-block px-2.5 py-1 rounded-lg bg-slate-100 border border-slate-200 text-slate-800 text-xs font-semibold max-w-[200px] truncate" title="${(d.skills || d.experience || (Array.isArray(d.software) && d.software.length ? d.software.join(', ') : '') || 'Graphic Design').toString().trim()}">
-                    ${(d.skills || d.experience || (Array.isArray(d.software) && d.software.length ? d.software.join(', ') : '') || 'Graphic Design').toString().trim()}
+                  <span class="inline-block px-2.5 py-1 rounded-lg bg-slate-100 border border-slate-200 text-slate-800 text-xs font-semibold max-w-[200px] truncate" title="${(Array.isArray(d.skills) && d.skills.length ? d.skills.join(', ') : (d.specialization || d.skills || d.exp || d.experience || (Array.isArray(d.software) && d.software.length ? d.software.join(', ') : d.software) || 'Graphic Design')).toString().trim()}">
+                    ${(Array.isArray(d.skills) && d.skills.length ? d.skills.join(', ') : (d.specialization || d.skills || d.exp || d.experience || (Array.isArray(d.software) && d.software.length ? d.software.join(', ') : d.software) || 'Graphic Design')).toString().trim()}
                   </span>
                 </td>
                 <td class="p-4">
@@ -3003,7 +3003,7 @@
                   const email = d.email || (d.identifier && d.identifier.includes('@') ? d.identifier : d.id && d.id.includes('@') ? d.id : '');
                   const cleanEmail = (email || '').toString().trim().toLowerCase();
                   const phone = get10DigitPhone(d.phone || d.id || d.identifier);
-                  const skillsVal = (d.skills || d.experience || (Array.isArray(d.software) && d.software.length ? d.software.join(', ') : '') || 'Graphic Design').toString().trim();
+                  const skillsVal = (Array.isArray(d.skills) && d.skills.length ? d.skills.join(', ') : (d.specialization || d.skills || d.exp || d.experience || (Array.isArray(d.software) && d.software.length ? d.software.join(', ') : d.software) || 'Graphic Design')).toString().trim();
                   const portfolioVal = (d.portfolio || d.portfolioUrl || d.portfoliolink || '').toString().trim();
                   return {
                     ...d,
