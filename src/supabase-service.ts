@@ -116,17 +116,27 @@ export interface DQJob {
   serviceId?: string;
   project?: string;
   projectName?: string;
+  title?: string;
+  clientName?: string;
+  clientphone?: string;
+  clientPhone?: string;
+  clientname?: string;
   price?: number | string;
+  budget?: number | string;
   brief?: string;
+  details?: string;
   phone?: string;
   whatsapp?: string;
   ratio?: string;
+  urgency?: string;
   referenceImage?: string;
   referenceimage?: string;
   image?: string;
   status?: string;
   time?: string;
   acceptedBy?: string[];
+  assignedTo?: string;
+  designerName?: string;
   completed?: boolean;
   completedAt?: string | null;
   createdAt?: string;
@@ -417,42 +427,42 @@ export const DQSupabase = {
       }
     } catch (e) {}
 
-    // 2. Prepare exact lowercase payload to match PostgreSQL schema columns strictly
-    const lowercasePayload = {
+    // 2. Prepare exact payload to match Supabase jobs schema columns strictly
+    const supabaseJobRow = {
       id: cleanId,
-      service: normalizedJob.service || '',
-      project: normalizedJob.project || 'Design Request',
-      price: Number(normalizedJob.price) || 399,
-      brief: normalizedJob.brief || '',
-      phone: normalizedJob.phone || '',
-      whatsapp: normalizedJob.whatsapp || '',
-      ratio: normalizedJob.ratio || 'Square (1:1)',
-      referenceimage: refImg,
+      title: normalizedJob.project || normalizedJob.service || 'Design Request',
+      client: `${normalizedJob.clientName || 'Client'} (${normalizedJob.phone || normalizedJob.whatsapp || 'N/A'})`,
+      budget: Number(normalizedJob.price || normalizedJob.budget) || 399,
+      deadline: normalizedJob.time || normalizedJob.urgency || 'ASAP',
+      category: normalizedJob.service || 'Graphic Design',
       status: normalizedJob.status || 'Pending',
-      acceptedby: normalizedJob.acceptedBy || [],
-      completed: !!normalizedJob.completed,
-      completedat: normalizedJob.completedAt || null,
-      createdat: normalizedJob.createdAt,
-      time: normalizedJob.time
+      description: [
+        normalizedJob.brief || normalizedJob.details || '',
+        refImg ? `Ref Image: ${refImg}` : '',
+        normalizedJob.ratio ? `Ratio: ${normalizedJob.ratio}` : ''
+      ].filter(Boolean).join(' | '),
+      assigned_to: normalizedJob.assignedTo || '',
+      designer: normalizedJob.designerName || (Array.isArray(normalizedJob.acceptedBy) ? normalizedJob.acceptedBy.join(', ') : '') || '',
+      created_at: normalizedJob.createdAt || nowIso
     };
 
     try {
-      // Backend server persistence (PostgreSQL authoritative storage)
+      // Backend server persistence (Authoritative storage)
       const saveRes = await fetch('/api/save-job', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(normalizedJob)
       });
       if (saveRes.ok) {
-        // Successfully saved directly to PostgreSQL!
+        // Successfully saved!
       }
     } catch (err) {
-      console.warn('Backend PostgreSQL save-job notice:', err);
+      console.warn('Backend save-job notice:', err);
     }
 
-    // Optional background sync to Supabase without blocking UI
+    // Direct background sync to Supabase without blocking UI
     try {
-      (supabase.from('jobs').upsert(lowercasePayload) as any).then(null, () => {});
+      (supabase.from('jobs').upsert(supabaseJobRow) as any).then(null, () => {});
     } catch (e) {}
 
     // 3. Asynchronously broadcast new job email alert to all registered designers
@@ -715,7 +725,17 @@ export const DQSupabase = {
         }
       } catch (err) {}
 
-      // 2. Local cache fallback if server API was temporarily unreachable
+      // 1.5 Try Direct Supabase REST query if Server API was empty or unreachable
+      if (data === null || (Array.isArray(data) && data.length === 0)) {
+        try {
+          const { data: sbJobs } = await supabase.from('jobs').select('*').neq('status', 'Deleted');
+          if (sbJobs && Array.isArray(sbJobs) && sbJobs.length > 0) {
+            data = sbJobs;
+          }
+        } catch (sbErr) {}
+      }
+
+      // 2. Local cache fallback if server API and Supabase direct query were unreachable
       if (data === null) {
         try {
           data = JSON.parse(safeStorage.getItem('dq_live_jobs') || '[]');
