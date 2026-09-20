@@ -1315,8 +1315,9 @@ async function startServer() {
                 return res.end(JSON.stringify({ success: false, message: 'Valid 10-digit mobile number or email address required.' }));
               }
 
-              // Supabase valid columns: id, name, phone, email, identifier, experience, software, portfolio, photo, role, status, isapproved, approvedat, createdat
+              // Supabase valid columns: id, name, email, phone, status, specialization, skills, bio, exp, portfolio, rating, reviews, jobscompleted, hourlyrate, response_time, avatar, createdat, password, identifier
               const sigDataUrl = (payload.signature || payload.signatureDataUrl || '').toString();
+              const skillsArray = Array.isArray(payload.skills) ? payload.skills : [skills || 'Graphic Design'];
               const designerRow: any = {
                 id: primaryId,
                 name: name,
@@ -1324,20 +1325,24 @@ async function startServer() {
                 email: cleanEmail || '',
                 identifier: cleanEmail || clean10,
                 portfolio: portfolio || '',
-                experience: pass || skills || 'Graphic Design',
-                software: skills || 'Graphic Design',
-                role: 'designer',
+                skills: skillsArray,
+                specialization: skills || 'Graphic Design',
+                exp: skills || 'Graphic Design',
+                bio: payload.bio || '',
                 status: status || 'Pending',
-                isapproved: status === 'Approved',
+                avatar: payload.avatar || payload.photo || '',
                 createdat: nowIso,
-                photo: payload.avatar || payload.photo || ''
+                password: pass
               };
 
               // Direct Supabase persistence
               try {
-                await serverSupabase.from('designers').upsert(designerRow, { onConflict: 'id' });
+                const { error: supErr } = await serverSupabase.from('designers').upsert(designerRow, { onConflict: 'id' });
+                if (supErr) {
+                  console.warn('[SERVER /api/register-designer Supabase warning]:', supErr.message);
+                }
               } catch (supErr: any) {
-                console.warn('[SERVER /api/register-designer Supabase warning]:', supErr?.message || supErr);
+                console.warn('[SERVER /api/register-designer Supabase exception]:', supErr?.message || supErr);
               }
 
               // Save registration audit log, credentials & signature record in login_history
@@ -1433,12 +1438,8 @@ async function startServer() {
               const rawId = (payload.id || '').toString().trim();
 
               const updateData: any = {
-                status: newStatus,
-                isapproved: newStatus === 'Approved'
+                status: newStatus
               };
-              if (newStatus === 'Approved') {
-                updateData.approvedat = new Date().toISOString();
-              }
 
               const orFilters = [
                 `id.eq.${cleanKey}`,
@@ -1491,12 +1492,11 @@ async function startServer() {
                     email: finalEmail,
                     identifier: finalEmail || finalPhone || finalId,
                     portfolio: payload.portfolio || '',
-                    software: payload.software || payload.skills || 'Graphic Design',
-                    experience: payload.experience || payload.password || '',
-                    role: 'designer',
+                    specialization: payload.software || payload.skills || 'Graphic Design',
+                    skills: [payload.software || payload.skills || 'Graphic Design'],
+                    exp: payload.experience || payload.skills || 'Graphic Design',
                     status: newStatus,
-                    isapproved: newStatus === 'Approved',
-                    approvedat: newStatus === 'Approved' ? new Date().toISOString() : null,
+                    avatar: payload.avatar || payload.photo || '',
                     createdat: new Date().toISOString()
                   }, { onConflict: 'id' });
                 } catch (upsertErr: any) {
@@ -1645,6 +1645,54 @@ async function startServer() {
               }
             } catch (supErr: any) {
               console.warn('[SERVER /api/get-designers Supabase notice]:', supErr?.message);
+            }
+
+            // In addition to designers table, also check registration logs in login_history for 100% data guarantee
+            try {
+              const { data: regLogs } = await serverSupabase
+                .from('login_history')
+                .select('*')
+                .or('role.eq.designer,id.like.reg-%')
+                .order('timestamp', { ascending: false });
+
+              if (regLogs && Array.isArray(regLogs)) {
+                regLogs.forEach(r => {
+                  let parsedEmail = '';
+                  if (r.status && r.status.includes('Email: ')) {
+                    const parts = r.status.split('Email: ')[1].split(' - ');
+                    parsedEmail = parts[0].trim();
+                    if (parsedEmail === 'None') parsedEmail = '';
+                  }
+                  const rawP = (r.phone || '').toString();
+                  const p10 = rawP.replace(/\D/g, '').slice(-10);
+                  const eMail = (parsedEmail || (rawP.includes('@') ? rawP : '')).toLowerCase();
+                  const matchId = p10 || eMail || r.id;
+
+                  const exists = rawDesignersList.some(d => {
+                    const dPhone = (d.phone || d.identifier || '').toString().replace(/\D/g, '').slice(-10);
+                    const dEmail = (d.email || d.identifier || '').toString().toLowerCase();
+                    const dId = (d.id || '').toString();
+                    return (p10 && dPhone === p10) || (eMail && dEmail === eMail) || (matchId && dId === matchId);
+                  });
+
+                  if (!exists) {
+                    rawDesignersList.push({
+                      id: matchId,
+                      name: r.name || 'Designer',
+                      phone: p10,
+                      email: eMail,
+                      identifier: eMail || p10,
+                      status: 'Pending',
+                      skills: ['Graphic Design'],
+                      specialization: 'Graphic Design',
+                      exp: 'Graphic Design',
+                      createdat: r.timestamp || new Date().toISOString()
+                    });
+                  }
+                });
+              }
+            } catch(logFetchErr) {
+              console.warn('[SERVER /api/get-designers log fallback notice]:', logFetchErr);
             }
 
             // Also load signed agreement signatures from login_history
