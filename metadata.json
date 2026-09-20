@@ -1,0 +1,8 @@
+{
+  "name": "Revise version dq",
+  "description": "Design Quixo Platform - India's 60-Minute Graphic Design & Creator Marketplace with real-time OTP authentication, creator payout system, and job management.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

@@ -1,0 +1,1181 @@
+<!doctype html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Request a Design - Design Quixo | 30-Min Fast Human Delivery</title>
+    <meta name="description" content="Submit your design brief in 60 seconds and match with a verified Indian graphic designer on WhatsApp." />
+    <link rel="icon" type="image/png" href="favicon.png" />
+    <link rel="shortcut icon" type="image/png" href="favicon.png" />
+    <link rel="apple-touch-icon" href="favicon.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="security.js"></script>
+    <!-- Design Quixo Source & UI Security -->
+    <script>
+      (function(){
+        const blockEvent = function(e){ e.preventDefault(); e.stopPropagation(); return false; };
+        window.addEventListener('contextmenu', blockEvent, true);
+        document.addEventListener('contextmenu', blockEvent, true);
+        window.oncontextmenu = function(){ return false; };
+        document.oncontextmenu = function(){ return false; };
+        const blockKeys = function(e){
+          if (e.key === 'F12' || e.keyCode === 123) { e.preventDefault(); e.stopPropagation(); return false; }
+          const ctrl = e.ctrlKey || e.metaKey;
+          if (ctrl && (e.shiftKey || e.altKey)) {
+            const k = (e.key || '').toUpperCase();
+            if (k === 'I' || k === 'J' || k === 'C' || k === 'K' || k === 'S' || k === 'E') {
+              e.preventDefault(); e.stopPropagation(); return false;
+            }
+          }
+          if (ctrl) {
+            const k = (e.key || '').toUpperCase();
+            if (k === 'U' || k === 'S' || k === 'P') { e.preventDefault(); e.stopPropagation(); return false; }
+          }
+        };
+        window.addEventListener('keydown', blockKeys, true);
+        document.addEventListener('keydown', blockKeys, true);
+        document.addEventListener('selectstart', function(e){
+          const t = e.target && e.target.tagName ? e.target.tagName.toUpperCase() : '';
+          if (t !== 'INPUT' && t !== 'TEXTAREA') { e.preventDefault(); return false; }
+        }, true);
+        document.addEventListener('copy', function(e){
+          const t = e.target && e.target.tagName ? e.target.tagName.toUpperCase() : '';
+          if (t !== 'INPUT' && t !== 'TEXTAREA') { e.preventDefault(); return false; }
+        }, true);
+      })();
+    </script>
+    <link rel="stylesheet" href="src/index.css" />
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="notification-sound.js"></script>
+    <script src="store.js"></script>
+    <script type="module" src="/src/supabase-service.ts"></script>
+  </head>
+  <body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col font-['Plus_Jakarta_Sans',sans-serif]">
+    
+    <!-- Minimalist Request Header -->
+    <header class="border-b border-slate-200 bg-white sticky top-0 z-40 shadow-xs">
+      <div class="max-w-4xl mx-auto px-4 h-16 flex items-center justify-between">
+        <a href="index.html" class="flex items-center gap-2.5">
+          <img src="favicon.png" alt="Design Quixo Logo" class="w-8 h-8 sm:w-9 sm:h-9 object-contain rounded-xl shrink-0" onerror="this.onerror=null; this.src='favicon.png';" />
+          <span class="font-extrabold text-lg font-['Space_Grotesk'] text-slate-900">DESIGN <span class="text-blue-600">QUIXO</span></span>
+        </a>
+        <div class="flex items-center gap-3">
+          <span class="hidden sm:inline-flex items-center gap-1.5 text-xs text-emerald-700 font-semibold bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">
+            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
+            500+ Designers / 24x7 Active
+          </span>
+          <a href="index.html" class="text-xs text-slate-500 hover:text-slate-900 font-medium">Cancel</a>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Request Container -->
+    <main class="flex-grow py-10 px-4 sm:px-6">
+      <div class="max-w-3xl mx-auto">
+        
+        <!-- Step Indicator -->
+        <div class="mb-8" id="request-stepper">
+          <div class="flex items-center justify-between text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">
+            <span id="step-label" class="text-blue-600 font-bold">Step 1 of 3: Design Brief</span>
+            <span class="text-slate-500 font-medium">Fast Turnaround: 30-60 Mins</span>
+          </div>
+          <div class="w-full h-2 bg-slate-200 rounded-full overflow-hidden">
+            <div id="progress-bar" class="h-full bg-blue-600 w-1/3 transition-all duration-300"></div>
+          </div>
+        </div>
+
+        <!-- Form Card Container -->
+        <div class="rounded-3xl bg-white border border-slate-200 p-6 sm:p-10 shadow-md relative" id="form-container">
+          
+          <form id="design-request-form" class="space-y-6">
+            
+            <!-- SECTION 1: Service & Brief Details -->
+            <!-- SECTION 1: Progressive Animated Request Form -->
+            <div id="form-section-1" class="space-y-6">
+              <div class="space-y-1">
+                <div class="flex items-center justify-between">
+                  <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 text-blue-700 text-xs font-bold">
+                    <span class="w-2 h-2 rounded-full bg-blue-600 animate-pulse"></span>
+                    Instant Designer Match
+                  </span>
+                  <!-- Progress Bar indicator -->
+                  <span id="step-progress-text" class="text-[11px] font-bold text-slate-500">Step 1 of 4</span>
+                </div>
+                <div class="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">
+                  <div id="step-progress-bar" class="bg-blue-600 h-1.5 rounded-full transition-all duration-500" style="width: 25%;"></div>
+                </div>
+                <h2 class="text-2xl sm:text-3xl font-bold text-slate-900 font-['Space_Grotesk'] pt-1">Get your design in minutes</h2>
+                <p class="text-xs text-slate-500">Answer in 3 simple clicks. Our verified creators craft your files live on WhatsApp.</p>
+              </div>
+
+              <!-- 1. Service Selector (Pre-selected) -->
+              <div id="step-container-service" class="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-2 transition-all duration-300">
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center gap-2">
+                    <span class="w-5 h-5 rounded-full bg-blue-600 text-white text-[10px] font-bold flex items-center justify-center">1</span>
+                    <label for="service-select" class="block text-xs font-bold uppercase tracking-wider text-slate-800">Selected Service</label>
+                  </div>
+                  <span id="selected-service-badge" class="text-[11px] font-bold text-blue-600 bg-blue-100/70 px-2.5 py-0.5 rounded-full">30-45 mins</span>
+                </div>
+                <select id="service-select" name="service" required class="w-full bg-white border border-slate-300 focus:border-blue-500 rounded-xl p-3 text-sm text-slate-900 font-semibold outline-none transition-colors shadow-2xs">
+                  <option value="social-media" data-price="399" data-time="30-45 mins">Social Media Creative / Post — ₹399 (30-45 mins)</option>
+                  <option value="youtube-thumbnail" data-price="359" data-time="30-45 mins">YouTube Thumbnail High-CTR — ₹359 (30-45 mins)</option>
+                  <option value="vector-art" data-price="599" data-time="45-60 mins">Vector Art & Logo Tracing — ₹599 (45-60 mins)</option>
+                  <option value="visiting-card" data-price="359" data-time="30-45 mins">Business / Visiting Card — ₹359 (30-45 mins)</option>
+                  <option value="logo-design" data-price="499" data-time="1-2 hours">Custom Vector Logo Design — ₹499 (1-2 hours)</option>
+                  <option value="flyer-design" data-price="449" data-time="1-2 hours">Promotional Flyer & Event Poster — ₹449 (1-2 hours)</option>
+                  <option value="brochure-design" data-price="599" data-time="1.5-2 hours">Corporate Brochure & Menu — ₹599 (1.5-2 hours)</option>
+                  <option value="packaging-design" data-price="699" data-time="1.5-2 hours">Product Label & Packaging — ₹699 (1.5-2 hours)</option>
+                  <option value="custom-design" data-price="499" data-time="45-60 mins">Custom Graphic Design / Bespoke Request — ₹499 (45-60 mins)</option>
+                </select>
+              </div>
+
+              <!-- 2. Your Name (Active from start) -->
+              <div id="step-container-name" class="p-4 sm:p-5 rounded-2xl bg-white border-2 border-blue-500 shadow-xs space-y-3 transition-all duration-300">
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center gap-2">
+                    <span class="w-6 h-6 rounded-full bg-blue-600 text-white text-xs font-bold flex items-center justify-center">2</span>
+                    <label for="project-name" class="block text-xs font-bold uppercase tracking-wider text-slate-800">Your Full Name or Brand Name *</label>
+                  </div>
+                  <span id="name-status-badge" class="text-[11px] font-semibold text-slate-400">Step 2 of 5</span>
+                </div>
+                <div class="relative">
+                  <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                    <i data-lucide="user" class="w-4 h-4"></i>
+                  </div>
+                  <input type="text" id="project-name" name="projectName" required placeholder="Type your full name here..." class="w-full bg-slate-50 border border-slate-300 focus:border-blue-500 focus:bg-white rounded-xl pl-10 pr-4 py-3.5 text-sm text-slate-900 placeholder-slate-400 outline-none transition-all font-semibold" autofocus />
+                </div>
+                <div class="flex items-center justify-between pt-1 gap-2">
+                  <p class="text-[11px] text-slate-400 flex items-center gap-1.5">
+                    <i data-lucide="lock" class="w-3.5 h-3.5 text-slate-400"></i>
+                    Shared strictly with your assigned designer
+                  </p>
+                  <button type="button" id="btn-name-next" onclick="proceedFromNameStep()" class="py-2.5 px-5 rounded-xl bg-blue-600 hover:bg-blue-700 active:scale-95 text-white font-bold text-xs sm:text-sm flex items-center gap-2 transition-all cursor-pointer shadow-xs shrink-0">
+                    <span>Next: Details</span>
+                    <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                  </button>
+                </div>
+              </div>
+
+              <!-- 3. Do You Have Any Content? (Hidden until name is submitted) -->
+              <div id="step-container-content" class="hidden p-4 sm:p-5 rounded-2xl bg-white border border-slate-200 shadow-xs space-y-4 transition-all duration-500 opacity-0 translate-y-3">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                  <div class="flex items-center gap-2">
+                    <span class="w-6 h-6 rounded-full bg-blue-600 text-white text-xs font-bold flex items-center justify-center shrink-0">3</span>
+                    <div>
+                      <label class="block text-xs font-bold uppercase tracking-wider text-slate-800">Do you have Text / Content ready? <span class="text-slate-400 font-normal lowercase">(optional)</span></label>
+                      <p class="text-[11px] text-slate-500">Headline, offers, discounts, or copy to write on the graphic</p>
+                    </div>
+                  </div>
+                  <!-- Yes / No pill buttons -->
+                  <div class="inline-flex rounded-xl bg-slate-100 p-1 border border-slate-200 shrink-0 gap-1 self-start sm:self-auto">
+                    <button type="button" id="content-btn-no" onclick="setContentToggle(false)" class="px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all text-slate-600 hover:text-slate-900 hover:bg-slate-200/70 cursor-pointer">
+                      No Text
+                    </button>
+                    <button type="button" id="content-btn-yes" onclick="setContentToggle(true)" class="px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all text-slate-600 hover:text-slate-900 hover:bg-slate-200/70 cursor-pointer">
+                      Yes, I have
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Content Input Box -->
+                <div id="content-container" class="hidden overflow-hidden transition-all duration-300 pt-1 space-y-3">
+                  <div>
+                    <label for="design-brief" class="block text-[11px] font-semibold text-slate-700 mb-1">Your Content / Text Instructions:</label>
+                    <textarea id="design-brief" name="brief" rows="3" placeholder="Type headline, offers, discount details, or what text should be written on the design..." class="w-full bg-slate-50 border border-slate-300 focus:border-blue-500 focus:bg-white rounded-xl p-3 text-xs sm:text-sm text-slate-900 placeholder-slate-400 outline-none transition-colors leading-relaxed"></textarea>
+                  </div>
+                  <div class="flex justify-end">
+                    <button type="button" onclick="proceedFromContentStep()" class="py-2.5 px-4 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs flex items-center gap-1.5 transition-all cursor-pointer shadow-xs">
+                      <span>Next: Reference & Files</span>
+                      <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 4. Do You Have Any Reference? (Hidden until content step answered/active) -->
+              <div id="step-container-ref" class="hidden p-4 sm:p-5 rounded-2xl bg-white border border-slate-200 shadow-xs space-y-4 transition-all duration-500 opacity-0 translate-y-3">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                  <div class="flex items-center gap-2">
+                    <span class="w-6 h-6 rounded-full bg-blue-600 text-white text-xs font-bold flex items-center justify-center shrink-0">4</span>
+                    <div>
+                      <label class="block text-xs font-bold uppercase tracking-wider text-slate-800">Do you have reference images or logo? <span class="text-slate-400 font-normal lowercase">(optional)</span></label>
+                      <p class="text-[11px] text-slate-500">Inspiration sample, rough sketch, competitor post, or logo</p>
+                    </div>
+                  </div>
+                  <!-- Yes / No pill buttons -->
+                  <div class="inline-flex rounded-xl bg-slate-100 p-1 border border-slate-200 shrink-0 gap-1 self-start sm:self-auto">
+                    <button type="button" id="ref-btn-no" onclick="setRefToggle(false)" class="px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all text-slate-600 hover:text-slate-900 hover:bg-slate-200/70 cursor-pointer">
+                      No Reference
+                    </button>
+                    <button type="button" id="ref-btn-yes" onclick="setRefToggle(true)" class="px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all text-slate-600 hover:text-slate-900 hover:bg-slate-200/70 cursor-pointer">
+                      Yes, Upload
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Animated Image Upload Dropzone -->
+                <div id="ref-image-container" class="hidden overflow-hidden transition-all duration-300 pt-1 space-y-3">
+                  <div id="image-upload-dropzone" class="border-2 border-dashed border-slate-300 hover:border-blue-500 rounded-2xl p-4 text-center cursor-pointer transition-all bg-slate-50 hover:bg-blue-50/30">
+                    <input type="file" id="job-image-input" accept="image/*" class="hidden" />
+                    <div id="dropzone-empty-state" class="flex flex-col items-center justify-center py-2 space-y-1.5">
+                      <div class="w-10 h-10 rounded-xl bg-blue-50 border border-blue-200 shadow-2xs flex items-center justify-center text-blue-600">
+                        <i data-lucide="image-plus" class="w-5 h-5"></i>
+                      </div>
+                      <p class="text-xs font-bold text-slate-700">Click or Drag & Drop Reference Image</p>
+                      <p class="text-[11px] text-slate-400">PNG, JPG, WebP supported</p>
+                    </div>
+                    
+                    <!-- Image Preview State -->
+                    <div id="dropzone-preview-state" class="hidden flex items-center justify-between p-2 bg-white rounded-xl border border-slate-200">
+                      <div class="flex items-center gap-3 overflow-hidden">
+                        <img id="image-preview-thumb" src="" alt="Reference Preview" class="w-12 h-12 rounded-lg object-cover border border-slate-200 shrink-0" />
+                        <div class="text-left truncate">
+                          <p id="image-preview-name" class="text-xs font-bold text-slate-800 truncate">reference.png</p>
+                          <p id="image-preview-size" class="text-[11px] text-slate-400">0 KB</p>
+                        </div>
+                      </div>
+                      <button type="button" id="remove-image-btn" class="p-2 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 transition-colors shrink-0" title="Remove image">
+                        <i data-lucide="trash-2" class="w-4 h-4"></i>
+                      </button>
+                    </div>
+                  </div>
+                  <div class="flex justify-end">
+                    <button type="button" onclick="proceedFromRefStep()" class="py-2.5 px-4 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs flex items-center gap-1.5 transition-all cursor-pointer shadow-xs">
+                      <span>Next: WhatsApp Delivery</span>
+                      <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 5. Calling & WhatsApp Number Input & Find Designer Button (Revealed at final step) -->
+              <div id="step-container-submit" class="hidden space-y-4 transition-all duration-500 opacity-0 translate-y-3">
+                <div class="p-4 sm:p-5 rounded-2xl bg-white border-2 border-emerald-500 shadow-xs space-y-3">
+                  <div class="flex items-center justify-between flex-wrap gap-2">
+                    <div class="flex items-center gap-2">
+                      <span class="w-6 h-6 rounded-full bg-emerald-600 text-white text-xs font-bold flex items-center justify-center">5</span>
+                      <label for="client-whatsapp" class="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-slate-800">
+                        <i data-lucide="phone" class="w-3.5 h-3.5 text-blue-600"></i>
+                        <img src="wa_icon.png" class="w-3.5 h-3.5 object-contain rounded-full" alt="WhatsApp" onerror="this.onerror=null; this.src='wa_icon.png';" />
+                        <span>Your Calling & WhatsApp Number *</span>
+                      </label>
+                    </div>
+                    <span class="text-[11px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-0.5 rounded-full flex items-center gap-1.5">
+                      <i data-lucide="phone" class="w-3 h-3 text-blue-600"></i>
+                      <img src="wa_icon.png" class="w-3 h-3 object-contain rounded-full" alt="WA" onerror="this.onerror=null; this.src='wa_icon.png';" />
+                      <span>Direct Call & WhatsApp Delivery</span>
+                    </span>
+                  </div>
+                  <div class="flex shadow-2xs rounded-xl overflow-hidden">
+                    <span class="inline-flex items-center gap-1.5 px-3.5 border border-r-0 border-slate-300 bg-slate-100 text-slate-700 text-sm font-bold">
+                      <i data-lucide="phone" class="w-3.5 h-3.5 text-blue-600"></i>
+                      <span>+91</span>
+                    </span>
+                    <input type="tel" id="client-whatsapp" name="whatsapp" required pattern="[6-9][0-9]{9}" placeholder="9876543210" class="w-full bg-slate-50 border border-slate-300 focus:border-emerald-500 focus:bg-white rounded-r-xl px-4 py-3.5 text-sm text-slate-900 placeholder-slate-400 outline-none transition-colors font-mono font-bold" />
+                  </div>
+                  <span class="text-[11px] text-slate-500 mt-1 flex items-center gap-1.5">
+                    <i data-lucide="shield-check" class="w-3.5 h-3.5 text-emerald-600 shrink-0"></i>
+                    <span>Your assigned creator will connect with you via Phone Call & WhatsApp for rapid proofs, revisions, and high-res vector file delivery.</span>
+                  </span>
+                </div>
+
+                <!-- Clean Solid Blue Submit Button -->
+                <button type="submit" id="submit-brief-btn" class="w-full py-4 px-6 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-sm sm:text-base shadow-sm transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-[0.99]">
+                  <i data-lucide="search" class="w-4 h-4"></i>
+                  <span>Find Designer Now</span>
+                  <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                </button>
+
+                <div class="flex items-center justify-center gap-4 sm:gap-6 text-[11px] text-slate-500 font-medium pt-1">
+                  <span class="flex items-center gap-1"><i data-lucide="check" class="w-3.5 h-3.5 text-emerald-600"></i> 100% Quality Guarantee</span>
+                  <span class="flex items-center gap-1"><i data-lucide="check" class="w-3.5 h-3.5 text-emerald-600"></i> Unlimited Revisions</span>
+                  <span class="flex items-center gap-1"><i data-lucide="check" class="w-3.5 h-3.5 text-emerald-600"></i> Layered Source Files</span>
+                </div>
+              </div>
+
+            </div>
+
+          </form>
+
+          <!-- SECTION 2: Live Radar Matching Simulation (5s) -->
+          <div id="searching-overlay" class="hidden py-10 text-center space-y-6">
+            <div class="relative w-28 h-28 mx-auto flex items-center justify-center">
+              <div class="absolute inset-0 rounded-full bg-blue-100 animate-radar"></div>
+              <div class="relative w-16 h-16 rounded-2xl bg-blue-600 text-white flex items-center justify-center shadow-lg shadow-blue-500/30">
+                <i data-lucide="radio" class="w-8 h-8 animate-pulse"></i>
+              </div>
+            </div>
+
+            <div class="space-y-2">
+              <h3 class="text-xl font-bold text-slate-900 font-['Space_Grotesk']">Matching Available Designers...</h3>
+              <p id="countdown-text" class="text-xs text-slate-500">Connecting with active verified creators (~5s)</p>
+            </div>
+
+            <!-- Progress Bar -->
+            <div class="w-full max-w-sm mx-auto h-2 bg-slate-100 rounded-full overflow-hidden border border-slate-200">
+              <div id="search-progress-fill" class="h-full bg-blue-600 w-0 transition-all duration-300"></div>
+            </div>
+
+            <!-- Live Status Logs -->
+            <div class="max-w-md mx-auto p-4 rounded-2xl bg-slate-50 border border-slate-200 text-left font-mono text-xs space-y-2 text-slate-600">
+              <div class="flex items-center gap-2 text-emerald-700">
+                <i data-lucide="check" class="w-3.5 h-3.5"></i>
+                <span>[1/4] Design brief logged to national intake registry</span>
+              </div>
+              <div id="log-step-2" class="flex items-center gap-2 text-slate-400">
+                <i data-lucide="loader" class="w-3.5 h-3.5"></i>
+                <span>[2/4] Broadcasting to verified creator nodes...</span>
+              </div>
+              <div id="log-step-3" class="flex items-center gap-2 text-slate-400">
+                <i data-lucide="circle" class="w-3.5 h-3.5"></i>
+                <span>[3/4] Assigning priority creator...</span>
+              </div>
+              <div id="log-step-4" class="flex items-center gap-2 text-slate-400">
+                <i data-lucide="circle" class="w-3.5 h-3.5"></i>
+                <span>[4/4] Establishing WhatsApp secure channel...</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- SECTION 3: Matched & Confirmation View -->
+          <div id="confirmation-view" class="hidden py-6 text-center space-y-6">
+            <div class="w-16 h-16 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-600 flex items-center justify-center mx-auto shadow-sm">
+              <i data-lucide="check" class="w-8 h-8"></i>
+            </div>
+
+            <div>
+              <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 font-mono text-xs font-bold mb-2">
+                MATCH CONFIRMED
+              </div>
+              <h3 class="text-2xl font-bold text-slate-900 font-['Space_Grotesk']">Design Brief Dispatched!</h3>
+              <p class="text-xs text-slate-500 max-w-md mx-auto mt-1">Your brief is now live in our workstation queue. Click below to initiate direct WhatsApp collaboration with your assigned designer.</p>
+            </div>
+
+            <!-- Job Summary Card -->
+            <div class="max-w-md mx-auto p-5 rounded-2xl bg-slate-50 border border-slate-200 text-left text-xs space-y-2.5">
+              <div class="flex justify-between items-center pb-2 border-b border-slate-200">
+                <span class="text-slate-500 font-medium">Tracking Job ID:</span>
+                <div class="flex items-center gap-2">
+                  <span id="final-job-id" class="font-mono font-bold text-blue-600 bg-blue-50 px-2.5 py-1 rounded-lg border border-blue-100 text-sm">DQ-000000</span>
+                  <button id="copy-job-id-btn" type="button" onclick="copyTrackingJobId()" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-white border border-slate-200 hover:border-blue-400 hover:bg-blue-50 text-slate-700 hover:text-blue-600 transition-all cursor-pointer font-semibold text-[11px] shadow-2xs" title="Copy Job ID">
+                    <i id="copy-job-id-icon" data-lucide="copy" class="w-3.5 h-3.5"></i>
+                    <span id="copy-job-id-text">Copy</span>
+                  </button>
+                </div>
+              </div>
+              <div class="flex justify-between pb-2 border-b border-slate-200">
+                <span class="text-slate-500">Service:</span>
+                <span id="final-service" class="font-bold text-slate-900">Graphic Design</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-slate-500">Estimated Delivery:</span>
+                <span id="final-sla" class="font-bold text-emerald-700">30–45 Mins</span>
+              </div>
+            </div>
+
+            <!-- WhatsApp Direct Button -->
+            <div class="max-w-md mx-auto space-y-3">
+              <a id="whatsapp-deep-link" href="#" target="_blank" class="w-full py-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-sm shadow-sm flex items-center justify-center gap-2 transition-all">
+                <img src="wa_icon.png" class="w-5 h-5 object-contain rounded-full shrink-0" alt="WhatsApp" onerror="this.onerror=null; this.src='wa_icon.png';" />
+                <span>Chat with Designer Now</span>
+              </a>
+
+              <a href="index.html" class="block text-xs text-slate-500 hover:text-slate-900 font-semibold">
+                &larr; Return to Homepage
+              </a>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </main>
+
+    <!-- Global Footer -->
+    <footer class="border-t border-slate-200 py-6 text-center text-xs text-slate-400 bg-white">
+      <div class="max-w-4xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left">
+        <p>&copy; 2026 Design Quixo India. 100% Manual Human Graphic Design.</p>
+        <div class="flex items-center gap-4 text-xs flex-wrap justify-center sm:justify-end">
+          <a href="mailto:designquixo@gmail.com" class="text-blue-600 font-semibold hover:underline flex items-center gap-1">
+            <i data-lucide="mail" class="w-3.5 h-3.5"></i>
+            <span>designquixo@gmail.com</span>
+          </a>
+          <a href="terms.html" class="hover:text-slate-600 underline">Terms & Conditions</a>
+          <a href="privacy.html" class="hover:text-slate-600 underline">Privacy Policy</a>
+          <a href="privacy.html#cookies" class="hover:text-slate-600 underline">Cookie Policy</a>
+          <a href="contact.html" class="hover:text-slate-600 underline">Support Desk</a>
+          <a href="login.html?mode=signup" class="hover:text-slate-600 underline">Join as Designer</a>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Global Cookie Consent Component Script -->
+    <script src="cookie-banner.js"></script>
+
+    <script>
+      lucide.createIcons();
+
+      const serviceSelect = document.getElementById('service-select');
+
+      function getAdminWhatsAppNumber() {
+        const stored = localStorage.getItem('dq_admin_whatsapp');
+        if (stored && stored.trim()) {
+          const cleaned = stored.replace(/[^0-9]/g, '');
+          if (cleaned.length === 10) return '91' + cleaned;
+          if (cleaned.length >= 11) return cleaned;
+        }
+        return '918602420897';
+      }
+
+      function loadCustomServicesAndPreselect() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const rawServiceParam = (urlParams.get('service') || urlParams.get('q') || '').toLowerCase().trim();
+        const cityParam = urlParams.get('city');
+
+        // Load services from DQStore or custom services
+        try {
+          if (window.DQStore && typeof window.DQStore.getServices === 'function') {
+            const storeServices = window.DQStore.getServices();
+            if (Array.isArray(storeServices) && storeServices.length > 0) {
+              serviceSelect.innerHTML = storeServices.map(svc => {
+                const val = svc.id || svc.slug || svc.title.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+                const priceVal = svc.price || 499;
+                const timeVal = svc.sla || '30-60 mins';
+                return `<option value="${val}" data-price="${priceVal}" data-time="${timeVal}">${svc.title} — ₹${priceVal} (${timeVal})</option>`;
+              }).join('');
+            }
+          } else {
+            const custom = JSON.parse(localStorage.getItem('dq_custom_services') || '[]');
+            if (Array.isArray(custom) && custom.length > 0) {
+              custom.forEach(svc => {
+                if (svc.status === 'Active' && !serviceSelect.querySelector(`option[value="${svc.slug}"]`)) {
+                  const opt = document.createElement('option');
+                  opt.value = svc.slug;
+                  const priceVal = svc.price || 499;
+                  opt.setAttribute('data-price', priceVal);
+                  opt.setAttribute('data-time', svc.sla || '45-60 mins');
+                  opt.textContent = `${svc.title} — ₹${priceVal} (${svc.sla || '45-60 mins'})`;
+                  serviceSelect.appendChild(opt);
+                }
+              });
+            }
+          }
+        } catch(e) {}
+
+        if (rawServiceParam) {
+          let matchedValue = '';
+          if (rawServiceParam.includes('logo')) matchedValue = 'logo-design';
+          else if (rawServiceParam.includes('thumbnail') || rawServiceParam.includes('youtube')) matchedValue = 'youtube-thumbnail';
+          else if (rawServiceParam.includes('social') || rawServiceParam.includes('instagram') || rawServiceParam.includes('post') || rawServiceParam.includes('ad')) matchedValue = 'social-media';
+          else if (rawServiceParam.includes('flyer') || rawServiceParam.includes('poster')) matchedValue = 'flyer-design';
+          else if (rawServiceParam.includes('card') || rawServiceParam.includes('visiting') || rawServiceParam.includes('business')) matchedValue = 'visiting-card';
+          else if (rawServiceParam.includes('vector') || rawServiceParam.includes('tracing')) matchedValue = 'vector-art';
+          else if (rawServiceParam.includes('brochure') || rawServiceParam.includes('catalog') || rawServiceParam.includes('menu')) matchedValue = 'brochure-design';
+          else if (rawServiceParam.includes('packaging') || rawServiceParam.includes('label')) matchedValue = 'packaging-design';
+          else if (rawServiceParam.includes('custom') || rawServiceParam.includes('bespoke') || rawServiceParam.includes('other')) matchedValue = 'custom-design';
+          else {
+            for (let opt of serviceSelect.options) {
+              if (opt.value.toLowerCase() === rawServiceParam || opt.text.toLowerCase().includes(rawServiceParam)) {
+                matchedValue = opt.value;
+                break;
+              }
+            }
+          }
+
+          if (matchedValue) {
+            serviceSelect.value = matchedValue;
+          }
+        }
+
+        if (cityParam) {
+          const briefEl = document.getElementById('design-brief');
+          if (briefEl && !briefEl.value) {
+            briefEl.placeholder = `Describe requirements for your business in ${cityParam} (headline text, color theme, mood, branding preferences)...`;
+          }
+        }
+      }
+
+      loadCustomServicesAndPreselect();
+      window.addEventListener('storage', (e) => {
+        if (e.key === 'dq_services' || e.key === 'dq_custom_services') {
+          loadCustomServicesAndPreselect();
+        }
+      });
+
+      // Progressive Form Step Controller
+      // Sequence: Step 1 (Service) -> Step 2 (Name + Click Next) -> Step 3 (Content) -> Step 4 (Reference Image) -> Step 5 (WhatsApp + Submit)
+      const nameInput = document.getElementById('project-name');
+      const stepContainerService = document.getElementById('step-container-service');
+      const stepContainerName = document.getElementById('step-container-name');
+      const stepContainerContent = document.getElementById('step-container-content');
+      const stepContainerRef = document.getElementById('step-container-ref');
+      const stepContainerSubmit = document.getElementById('step-container-submit');
+      const stepProgressText = document.getElementById('step-progress-text');
+      const stepProgressBar = document.getElementById('step-progress-bar');
+      const nameStatusBadge = document.getElementById('name-status-badge');
+
+      window._nameStepConfirmed = false;
+      window._contentStepAnswered = false;
+      window._refStepAnswered = false;
+
+      function revealStepElement(el) {
+        if (!el) return;
+        el.classList.remove('hidden');
+        // Force reflow for CSS transition
+        void el.offsetWidth;
+        el.classList.remove('opacity-0', 'translate-y-3');
+        el.classList.add('opacity-100', 'translate-y-0');
+        if (window.lucide) lucide.createIcons();
+      }
+
+      function updateStepProgress() {
+        const hasValidName = nameInput && nameInput.value.trim().length >= 2;
+        let currentStep = 1;
+        let progressPct = 20;
+
+        if (window._nameStepConfirmed && hasValidName) {
+          currentStep = 2;
+          progressPct = 40;
+
+          if (nameStatusBadge) {
+            nameStatusBadge.innerHTML = '<span class="text-emerald-600 font-bold flex items-center gap-1"><i data-lucide="check-circle" class="w-3.5 h-3.5"></i> Name set</span>';
+          }
+          if (stepContainerName) {
+            stepContainerName.classList.remove('border-blue-500');
+            stepContainerName.classList.add('border-slate-200');
+          }
+
+          if (window._contentStepAnswered) {
+            currentStep = 3;
+            progressPct = 65;
+
+            if (window._refStepAnswered) {
+              currentStep = 4;
+              progressPct = 90;
+            }
+          }
+        } else {
+          if (nameStatusBadge) {
+            nameStatusBadge.textContent = 'Step 2 of 5';
+            nameStatusBadge.className = 'text-[11px] font-semibold text-slate-400';
+          }
+          if (stepContainerName) {
+            stepContainerName.classList.add('border-blue-500');
+            stepContainerName.classList.remove('border-slate-200');
+          }
+          // If name is cleared or not confirmed, hide subsequent steps strictly
+          if (!window._nameStepConfirmed) {
+            if (stepContainerContent) {
+              stepContainerContent.classList.add('hidden', 'opacity-0', 'translate-y-3');
+              stepContainerContent.classList.remove('opacity-100', 'translate-y-0');
+            }
+            if (stepContainerRef) {
+              stepContainerRef.classList.add('hidden', 'opacity-0', 'translate-y-3');
+              stepContainerRef.classList.remove('opacity-100', 'translate-y-0');
+            }
+            if (stepContainerSubmit) {
+              stepContainerSubmit.classList.add('hidden', 'opacity-0', 'translate-y-3');
+              stepContainerSubmit.classList.remove('opacity-100', 'translate-y-0');
+            }
+          }
+        }
+
+        if (stepProgressText) stepProgressText.textContent = `Step ${currentStep} of 4`;
+        if (stepProgressBar) stepProgressBar.style.width = `${progressPct}%`;
+        if (window.lucide) lucide.createIcons();
+      }
+
+      // Explicit proceed from Name step (Ensures no automatic opening while typing)
+      window.proceedFromNameStep = function() {
+        if (!nameInput) return;
+        const val = nameInput.value.trim();
+        if (val.length < 2) {
+          nameInput.focus();
+          if (nameStatusBadge) {
+            nameStatusBadge.innerHTML = '<span class="text-rose-600 font-bold">Please enter your name to continue</span>';
+          }
+          return;
+        }
+
+        window._nameStepConfirmed = true;
+        updateStepProgress();
+        revealStepElement(stepContainerContent);
+        setTimeout(() => {
+          stepContainerContent.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }, 100);
+      };
+
+      // Explicit proceed from Content step
+      window.proceedFromContentStep = function() {
+        window._contentStepAnswered = true;
+        revealStepElement(stepContainerRef);
+        updateStepProgress();
+        setTimeout(() => {
+          stepContainerRef.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }, 100);
+      };
+
+      // Explicit proceed from Reference step
+      window.proceedFromRefStep = function() {
+        window._refStepAnswered = true;
+        revealStepElement(stepContainerSubmit);
+        updateStepProgress();
+        setTimeout(() => {
+          stepContainerSubmit.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+          const waInput = document.getElementById('client-whatsapp');
+          if (waInput) waInput.focus();
+        }, 100);
+      };
+
+      // Toggle Content Box
+      window.hasContentProvided = false;
+      window.setContentToggle = function(hasContent) {
+        window.hasContentProvided = hasContent;
+        window._contentStepAnswered = true;
+        const noBtn = document.getElementById('content-btn-no');
+        const yesBtn = document.getElementById('content-btn-yes');
+        const container = document.getElementById('content-container');
+        const briefInput = document.getElementById('design-brief');
+
+        if (hasContent) {
+          yesBtn.className = 'px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all bg-blue-600 text-white shadow-2xs cursor-pointer';
+          noBtn.className = 'px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all text-slate-600 hover:text-slate-900 hover:bg-slate-100 cursor-pointer';
+          if (container) {
+            container.classList.remove('hidden');
+            if (briefInput) briefInput.focus();
+          }
+        } else {
+          noBtn.className = 'px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all bg-slate-800 text-white shadow-2xs cursor-pointer';
+          yesBtn.className = 'px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all text-slate-600 hover:text-slate-900 hover:bg-slate-100 cursor-pointer';
+          if (container) container.classList.add('hidden');
+          if (briefInput) briefInput.value = '';
+          // If no content needed, advance to next step directly
+          revealStepElement(stepContainerRef);
+          updateStepProgress();
+          setTimeout(() => {
+            stepContainerRef.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+          }, 120);
+        }
+      };
+
+      // Toggle Reference Image Box
+      window.hasRefImageProvided = false;
+      window.setRefToggle = function(hasRef) {
+        window.hasRefImageProvided = hasRef;
+        window._refStepAnswered = true;
+        const noBtn = document.getElementById('ref-btn-no');
+        const yesBtn = document.getElementById('ref-btn-yes');
+        const container = document.getElementById('ref-image-container');
+
+        if (hasRef) {
+          yesBtn.className = 'px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all bg-blue-600 text-white shadow-2xs cursor-pointer';
+          noBtn.className = 'px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all text-slate-600 hover:text-slate-900 hover:bg-slate-100 cursor-pointer';
+          if (container) {
+            container.classList.remove('hidden');
+            if (window.lucide) lucide.createIcons();
+          }
+        } else {
+          noBtn.className = 'px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all bg-slate-800 text-white shadow-2xs cursor-pointer';
+          yesBtn.className = 'px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all text-slate-600 hover:text-slate-900 hover:bg-slate-100 cursor-pointer';
+          if (container) container.classList.add('hidden');
+          uploadedReferenceImageBase64 = '';
+          const jobImgInp = document.getElementById('job-image-input');
+          if (jobImgInp) jobImgInp.value = '';
+          const emptyState = document.getElementById('dropzone-empty-state');
+          const previewState = document.getElementById('dropzone-preview-state');
+          if (emptyState) emptyState.classList.remove('hidden');
+          if (previewState) previewState.classList.add('hidden');
+          
+          // If no reference needed, advance to final WhatsApp step directly
+          revealStepElement(stepContainerSubmit);
+          updateStepProgress();
+          setTimeout(() => {
+            stepContainerSubmit.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            const waInput = document.getElementById('client-whatsapp');
+            if (waInput) waInput.focus();
+          }, 120);
+        }
+      };
+
+      if (nameInput) {
+        // Clear warning on type, BUT DO NOT auto-reveal next step while typing
+        nameInput.addEventListener('input', () => {
+          if (nameInput.value.trim().length >= 2) {
+            if (nameStatusBadge && !window._nameStepConfirmed) {
+              nameStatusBadge.textContent = 'Click Next when done';
+              nameStatusBadge.className = 'text-[11px] font-semibold text-blue-600';
+            }
+          } else {
+            window._nameStepConfirmed = false;
+            updateStepProgress();
+          }
+        });
+
+        // Trigger on pressing enter key
+        nameInput.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter') {
+            e.preventDefault();
+            proceedFromNameStep();
+          }
+        });
+      }
+
+      // Update SLA badge when service changes
+      function updateServiceBadge() {
+        const badge = document.getElementById('selected-service-badge');
+        if (!badge || !serviceSelect) return;
+        const selOpt = serviceSelect.options[serviceSelect.selectedIndex];
+        if (selOpt) {
+          const sla = selOpt.getAttribute('data-time') || '30-45 mins';
+          const price = selOpt.getAttribute('data-price') || '399';
+          badge.textContent = `⚡ ₹${price} • ${sla}`;
+        }
+      }
+      serviceSelect.addEventListener('change', updateServiceBadge);
+      updateServiceBadge();
+
+      // Dynamic Dimension & Ratio Controller (Simplified: Size/Ratio removed from user view)
+      function updateDimensionSection() {
+        // Size and ratio are handled automatically in background now to keep UI minimal and fast
+        const container = document.getElementById('dimension-ratio-container');
+        if (container) container.innerHTML = '';
+      }
+
+      serviceSelect.addEventListener('change', updateDimensionSection);
+      updateDimensionSection();
+
+      // Reference Image Upload Handler (with compact Base64 storage)
+      let uploadedReferenceImageBase64 = '';
+      let isCompressingImage = false;
+      const imageDropzone = document.getElementById('image-upload-dropzone');
+      const jobImageInput = document.getElementById('job-image-input');
+      const dropzoneEmptyState = document.getElementById('dropzone-empty-state');
+      const dropzonePreviewState = document.getElementById('dropzone-preview-state');
+      const imagePreviewThumb = document.getElementById('image-preview-thumb');
+      const imagePreviewName = document.getElementById('image-preview-name');
+      const imagePreviewSize = document.getElementById('image-preview-size');
+      const removeImageBtn = document.getElementById('remove-image-btn');
+      const submitBtn = document.getElementById('submit-brief-btn');
+
+      if (imageDropzone && jobImageInput) {
+        imageDropzone.addEventListener('click', (e) => {
+          if (e.target.closest('#remove-image-btn')) return;
+          jobImageInput.click();
+        });
+
+        imageDropzone.addEventListener('dragover', (e) => {
+          e.preventDefault();
+          imageDropzone.classList.add('border-blue-500', 'bg-blue-50/50');
+        });
+
+        imageDropzone.addEventListener('dragleave', () => {
+          imageDropzone.classList.remove('border-blue-500', 'bg-blue-50/50');
+        });
+
+        imageDropzone.addEventListener('drop', (e) => {
+          e.preventDefault();
+          imageDropzone.classList.remove('border-blue-500', 'bg-blue-50/50');
+          if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+            handleImageFile(e.dataTransfer.files[0]);
+          }
+        });
+
+        jobImageInput.addEventListener('change', (e) => {
+          if (e.target.files && e.target.files[0]) {
+            handleImageFile(e.target.files[0]);
+          }
+        });
+
+        if (removeImageBtn) {
+          removeImageBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            uploadedReferenceImageBase64 = '';
+            jobImageInput.value = '';
+            dropzoneEmptyState.classList.remove('hidden');
+            dropzonePreviewState.classList.add('hidden');
+          });
+        }
+      }
+
+      function handleImageFile(file) {
+        if (!file.type.startsWith('image/')) {
+          alert('Please select an image file (PNG, JPG, WebP).');
+          return;
+        }
+        
+        if (submitBtn) {
+          submitBtn.disabled = true;
+          submitBtn.innerText = 'Optimizing Image...';
+          submitBtn.classList.add('opacity-70', 'cursor-not-allowed');
+        }
+        isCompressingImage = true;
+        
+        imagePreviewName.textContent = file.name;
+        imagePreviewSize.textContent = `${(file.size / 1024).toFixed(1)} KB`;
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const rawDataUrl = e.target.result;
+          
+          // Show preview immediately with raw image while compressing in background
+          imagePreviewThumb.src = rawDataUrl;
+          dropzoneEmptyState.classList.add('hidden');
+          dropzonePreviewState.classList.remove('hidden');
+          if (window.lucide) lucide.createIcons();
+
+          const img = new Image();
+          img.onload = () => {
+            try {
+              // Compress & resize image to max 800px dimension
+              const maxDim = 800;
+              let width = img.width;
+              let height = img.height;
+              if (width > maxDim || height > maxDim) {
+                if (width > height) {
+                  height = Math.round((height * maxDim) / width);
+                  width = maxDim;
+                } else {
+                  width = Math.round((width * maxDim) / height);
+                  height = maxDim;
+                }
+              }
+              const canvas = document.createElement('canvas');
+              canvas.width = width;
+              canvas.height = height;
+              const ctx = canvas.getContext('2d');
+              ctx.drawImage(img, 0, 0, width, height);
+              
+              // Use aggressive compression to keep payload small for DB (under 100kb usually)
+              const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.60);
+              
+              if (compressedDataUrl && compressedDataUrl.length > 50) {
+                uploadedReferenceImageBase64 = compressedDataUrl;
+                imagePreviewThumb.src = compressedDataUrl; // update preview to compressed version
+              } else {
+                uploadedReferenceImageBase64 = rawDataUrl; // fallback
+              }
+            } catch (err) {
+              console.warn('Canvas compression failed', err);
+              uploadedReferenceImageBase64 = rawDataUrl; // fallback to raw
+            } finally {
+              isCompressingImage = false;
+              if (submitBtn && !window._isFormSubmitting) {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i data-lucide="search" class="w-4 h-4"></i><span>Find Designer Now</span><i data-lucide="arrow-right" class="w-4 h-4"></i>';
+                submitBtn.classList.remove('opacity-70', 'cursor-not-allowed');
+                if (window.lucide) lucide.createIcons();
+              }
+            }
+          };
+          img.onerror = () => {
+            uploadedReferenceImageBase64 = rawDataUrl;
+            isCompressingImage = false;
+            if (submitBtn && !window._isFormSubmitting) {
+              submitBtn.disabled = false;
+              submitBtn.innerHTML = '<i data-lucide="search" class="w-4 h-4"></i><span>Find Designer Now</span><i data-lucide="arrow-right" class="w-4 h-4"></i>';
+              submitBtn.classList.remove('opacity-70', 'cursor-not-allowed');
+              if (window.lucide) lucide.createIcons();
+            }
+          };
+          img.src = rawDataUrl;
+        };
+        reader.readAsDataURL(file);
+      }
+
+      function generateJobId() {
+        const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+        let id = 'DQ-';
+        for (let i = 0; i < 6; i++) {
+          id += chars.charAt(Math.floor(Math.random() * chars.length));
+        }
+        return id;
+      }
+
+      window.copyTrackingJobId = function() {
+        const idText = document.getElementById('final-job-id').textContent.trim();
+        if (!idText) return;
+
+        function showCopySuccess() {
+          const btn = document.getElementById('copy-job-id-btn');
+          const txt = document.getElementById('copy-job-id-text');
+          const icon = document.getElementById('copy-job-id-icon');
+          if (btn) {
+            btn.className = 'inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-emerald-50 border border-emerald-300 text-emerald-700 font-bold text-[11px] shadow-2xs';
+            if (txt) txt.textContent = 'Copied! ✓';
+            if (icon) {
+              icon.setAttribute('data-lucide', 'check');
+              lucide.createIcons();
+            }
+            setTimeout(() => {
+              btn.className = 'inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-white border border-slate-200 hover:border-blue-400 hover:bg-blue-50 text-slate-700 hover:text-blue-600 transition-all cursor-pointer font-semibold text-[11px] shadow-2xs';
+              if (txt) txt.textContent = 'Copy';
+              if (icon) {
+                icon.setAttribute('data-lucide', 'copy');
+                lucide.createIcons();
+              }
+            }, 2500);
+          }
+        }
+
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(idText).then(showCopySuccess).catch(() => {
+            fallbackCopy(idText);
+          });
+        } else {
+          fallbackCopy(idText);
+        }
+
+        function fallbackCopy(text) {
+          const ta = document.createElement('textarea');
+          ta.value = text;
+          ta.style.position = 'fixed';
+          ta.style.opacity = '0';
+          document.body.appendChild(ta);
+          ta.select();
+          try {
+            document.execCommand('copy');
+            showCopySuccess();
+          } catch(e) {}
+          document.body.removeChild(ta);
+        }
+      };
+
+      const form = document.getElementById('design-request-form');
+      const formSection1 = document.getElementById('form-section-1');
+      const searchingOverlay = document.getElementById('searching-overlay');
+      const confirmationView = document.getElementById('confirmation-view');
+      const progressBar = document.getElementById('progress-bar');
+      const stepLabel = document.getElementById('step-label');
+
+      let isFormSubmitting = false;
+
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        if (isFormSubmitting) return;
+
+        const clientName = document.getElementById('project-name').value.trim();
+        const projectName = clientName || 'Design Project';
+        const briefInput = document.getElementById('design-brief');
+        const brief = (briefInput && briefInput.value.trim()) ? briefInput.value.trim() : 'Design requested via Quick Flow. Connect on WhatsApp for design copy.';
+        const whatsapp = document.getElementById('client-whatsapp').value.trim();
+        const selectedOption = serviceSelect.options[serviceSelect.selectedIndex];
+        const rawSelectedText = selectedOption.text;
+        const serviceName = rawSelectedText.split('—')[0].split('(')[0].trim();
+        const sla = selectedOption.getAttribute('data-time') || '30-45 mins';
+        
+        // Exact price calculation
+        let servicePrice = Number(selectedOption.getAttribute('data-price'));
+        if (!servicePrice || isNaN(servicePrice)) {
+          if (window.DQStore && window.DQStore.getJobPrice) {
+            servicePrice = window.DQStore.getJobPrice({ service: serviceName, serviceId: selectedOption.value });
+          } else {
+            servicePrice = 399;
+          }
+        }
+
+        if (!/^[6-9]\d{9}$/.test(whatsapp)) {
+          alert('Please enter a valid 10-digit Indian mobile number.');
+          return;
+        }
+
+        // Lock form to prevent accidental duplicate submission
+        isFormSubmitting = true;
+        const submitBtn = document.getElementById('submit-brief-btn');
+        if (submitBtn) {
+          submitBtn.disabled = true;
+          submitBtn.classList.add('opacity-70', 'cursor-not-allowed');
+          submitBtn.innerText = 'Creating Job Request...';
+        }
+
+        // Resolve Aspect Ratio / Dimensions strictly according to user rules
+        let calculatedRatio = 'Standard';
+        const svcVal = (selectedOption.value || '').toLowerCase();
+        if (svcVal === 'social-media') {
+          const r = document.querySelector('input[name="ratio"]:checked');
+          calculatedRatio = r ? r.value : '1:1 Square';
+        } else if (svcVal === 'packaging-design') {
+          const dimInput = document.getElementById('custom-dimensions-input');
+          calculatedRatio = dimInput && dimInput.value.trim() ? `Custom Size: ${dimInput.value.trim()}` : 'Custom Size';
+        } else if (svcVal === 'youtube-thumbnail') {
+          calculatedRatio = '16:9 Landscape';
+        } else if (svcVal === 'vector-art') {
+          calculatedRatio = 'Infinite Vector (SVG/EPS)';
+        } else if (svcVal === 'visiting-card') {
+          calculatedRatio = 'Standard 3.5" x 2"';
+        } else if (svcVal === 'logo-design') {
+          calculatedRatio = 'Universal Vector';
+        } else {
+          calculatedRatio = 'Standard Layout';
+        }
+        const ratio = calculatedRatio;
+
+        const rawJobId = generateJobId();
+        const jobId = (window.DQStore && window.DQStore.normalizeJobId) ? window.DQStore.normalizeJobId(rawJobId) : rawJobId;
+        document.getElementById('final-job-id').textContent = jobId;
+        document.getElementById('final-service').textContent = `${serviceName} (₹${servicePrice}/-)`;
+        document.getElementById('final-sla').textContent = sla;
+
+        const nowIso = new Date().toISOString();
+
+        const newJobObj = {
+          id: jobId,
+          service: serviceName,
+          serviceId: selectedOption.value,
+          project: clientName,
+          projectName: clientName,
+          clientName: clientName,
+          name: clientName,
+          price: servicePrice,
+          brief: brief,
+          phone: whatsapp,
+          whatsapp: whatsapp,
+          ratio: calculatedRatio,
+          referenceImage: uploadedReferenceImageBase64 || '',
+          image: uploadedReferenceImageBase64 || '',
+          time: 'Just now',
+          status: 'Pending',
+          acceptedBy: [],
+          completed: false,
+          createdAt: nowIso
+        };
+
+        // 1. Realtime Supabase Save (Instantly pushes to Designer and Admin Dashboards)
+        let db = window.DQSupabase || window.DQFirebase;
+        if (!db) {
+          for (let i = 0; i < 10; i++) {
+            await new Promise(r => setTimeout(r, 100));
+            db = window.DQSupabase || window.DQFirebase;
+            if (db) break;
+          }
+        }
+        if (db && typeof db.saveJob === 'function') {
+          try {
+            await db.saveJob(newJobObj);
+          } catch(err) {
+            console.warn('Supabase saveJob error:', err);
+          }
+        }
+
+        // Dispatch Chrome Push Notification Broadcast & Email Alerts to all designers/admin
+        try {
+          fetch('/api/trigger-push-notification', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              title: '🚨 NEW DESIGN ORDER ALERT',
+              body: `₹${servicePrice} • ${serviceName} | Client: ${clientName}. Tap to open workstation & claim!`,
+              jobId: jobId,
+              price: servicePrice,
+              service: serviceName,
+              autoPlay: 5
+            })
+          }).catch(err => console.warn('[request.html] Push trigger note:', err));
+
+          fetch('/api/notify-new-job', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ job: newJobObj })
+          }).catch(err => console.warn('[request.html] Email notify note:', err));
+        } catch (pushErr) {
+          console.warn('[request.html] Broadcast push dispatch error:', pushErr);
+        }
+
+        // Local storage backup & cross-tab sound alert
+        try {
+          const liveJobs = JSON.parse(localStorage.getItem('dq_live_jobs') || '[]');
+          const filtered = (window.DQStore && window.DQStore.normalizeJobId)
+            ? liveJobs.filter(j => window.DQStore.normalizeJobId(j.id) !== jobId)
+            : liveJobs.filter(j => j.id !== jobId);
+          filtered.unshift(newJobObj);
+          localStorage.setItem('dq_live_jobs', JSON.stringify(filtered));
+          localStorage.setItem('dq_new_job_alert', JSON.stringify({
+            id: jobId,
+            project: clientName || serviceName,
+            price: servicePrice,
+            service: serviceName,
+            timestamp: Date.now()
+          }));
+          window.dispatchEvent(new CustomEvent('dq_jobs_updated', { detail: filtered }));
+          if (window.DQStore && window.DQStore.saveJobs) {
+            window.DQStore.saveJobs(filtered);
+          }
+
+          // Register unacknowledged sound job so Admin / Designer dashboard alerts immediately
+          let unacked = [];
+          try { unacked = JSON.parse(localStorage.getItem('dq_unacknowledged_sound_jobs') || '[]'); } catch(e) {}
+          if (!unacked.includes(jobId)) unacked.push(jobId);
+          localStorage.setItem('dq_unacknowledged_sound_jobs', JSON.stringify(unacked));
+
+          // Instant cross-tab BroadcastChannel dispatch for 0ms sound trigger in open Admin/Designer tabs
+          if (typeof BroadcastChannel !== 'undefined') {
+            const bc = new BroadcastChannel('dq_realtime_jobs');
+            bc.postMessage({ type: 'NEW_JOB', job: newJobObj });
+          }
+          // Note: Notification sound is strictly reserved for Designers and Admin workstations, NOT the client submitting the request.
+        } catch (err) {}
+
+        // Switch to Searching Screen
+        formSection1.classList.add('hidden');
+        searchingOverlay.classList.remove('hidden');
+        stepLabel.textContent = 'Step 2 of 3: Designer Matching';
+        progressBar.style.width = '66%';
+
+        // 5-Second Animated Step Sequencing
+        const fill = document.getElementById('search-progress-fill');
+        const countdownText = document.getElementById('countdown-text');
+        let elapsed = 0;
+        const totalDuration = 5000;
+        const interval = 200;
+
+        const timer = setInterval(() => {
+          elapsed += interval;
+          const percentage = Math.min(100, (elapsed / totalDuration) * 100);
+          fill.style.width = percentage + '%';
+          const remainingSec = Math.max(0, Math.ceil((totalDuration - elapsed) / 1000));
+          countdownText.textContent = `Connecting with active verified creators (~${remainingSec}s)`;
+
+          if (elapsed >= 1500) {
+            const step2 = document.getElementById('log-step-2');
+            step2.className = 'flex items-center gap-2 text-blue-600 font-bold';
+            step2.innerHTML = '<i data-lucide="loader" class="w-3.5 h-3.5 animate-spin"></i><span>[2/4] Broadcasting to verified creator nodes...</span>';
+            lucide.createIcons();
+          }
+          if (elapsed >= 3000) {
+            const step3 = document.getElementById('log-step-3');
+            step3.className = 'flex items-center gap-2 text-emerald-700 font-bold';
+            step3.innerHTML = '<i data-lucide="check" class="w-3.5 h-3.5"></i><span>[3/4] Designer Workstation assigned!</span>';
+            lucide.createIcons();
+          }
+          if (elapsed >= 4200) {
+            const step4 = document.getElementById('log-step-4');
+            step4.className = 'flex items-center gap-2 text-blue-600';
+            step4.innerHTML = '<i data-lucide="loader" class="w-3.5 h-3.5 animate-spin"></i><span>[4/4] Establishing WhatsApp secure channel...</span>';
+            lucide.createIcons();
+          }
+
+          if (elapsed >= totalDuration) {
+            clearInterval(timer);
+
+            const adminWA = getAdminWhatsAppNumber();
+            const waMessage = encodeURIComponent(
+              `Hi Designer, I have submitted a design project on Design Quixo. Thanks for accepting!\n\n` +
+              `Job ID: #${jobId}`
+            );
+            const waUrl = `https://wa.me/${adminWA}?text=${waMessage}`;
+            document.getElementById('whatsapp-deep-link').href = waUrl;
+
+            searchingOverlay.classList.add('hidden');
+            confirmationView.classList.remove('hidden');
+            stepLabel.textContent = 'Step 3 of 3: Designer Connected';
+            progressBar.style.width = '100%';
+            lucide.createIcons();
+          }
+        }, interval);
+      });
+    </script>
+  </body>
+</html>

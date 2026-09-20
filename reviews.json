@@ -1,0 +1,68 @@
+[
+  {
+    "id": "rev-1",
+    "name": "Aman Sharma",
+    "role": "Founder, TechVibe Media",
+    "city": "Hyderabad",
+    "rating": 5,
+    "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80",
+    "review": "Bhai seriously 35 mins me layered PSD thumbnail ready karke WhatsApp pe bhej diya. CTR 4.2% se direct 11.8% ho gaya. Human designers ka touch alag hi dikhta hai!",
+    "verified": true,
+    "date": "Yesterday"
+  },
+  {
+    "id": "rev-2",
+    "name": "Pooja Verma",
+    "role": "Owner, Brew & Bean Cafe",
+    "city": "Indore",
+    "rating": 5,
+    "avatar": "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=150&auto=format&fit=crop&q=80",
+    "review": "Instant WhatsApp communication is a game changer. Maine rough pen-paper sketch share kiya tha, designer ne 40 minute me clean Instagram carousels banake de diye. 10/10!",
+    "verified": true,
+    "date": "3 days ago"
+  },
+  {
+    "id": "rev-3",
+    "name": "Rahul Kulkarni",
+    "role": "Brand Lead, Nexus Fintech",
+    "city": "Mumbai",
+    "rating": 5,
+    "avatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80",
+    "review": "Best experience for quick turnarounds. No agency drama, prompt delivery. Real human vector art files with full commercial license. Highly recommended for all businesses.",
+    "verified": true,
+    "date": "5 days ago"
+  },
+  {
+    "id": "rev-4",
+    "name": "Dr. Neha Patel",
+    "role": "Director, Veda Naturals",
+    "city": "Bangalore",
+    "rating": 5,
+    "avatar": "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&auto=format&fit=crop&q=80",
+    "review": "Packaging box dielines and product labels perfect CMYK 300 DPI me deliver huye. Printer ko direct forward kiya aur without any error print nikal aaya. Super fast service!",
+    "verified": true,
+    "date": "1 week ago"
+  },
+  {
+    "id": "rev-5",
+    "name": "Karthik Rao",
+    "role": "Growth Lead, CloudNine Tech",
+    "city": "Hyderabad",
+    "rating": 5,
+    "avatar": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80",
+    "review": "HITEC City launch ke liye 5 ad creative variations required the. Within 30 minutes designer live connect hua aur exact brand guidelines match karte hue exports ready kar diye.",
+    "verified": true,
+    "date": "4 days ago"
+  },
+  {
+    "id": "rev-6",
+    "name": "Vikramaditya Solanki",
+    "role": "Co-Founder, Capital Ventures",
+    "city": "Delhi-NCR",
+    "rating": 5,
+    "avatar": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&auto=format&fit=crop&q=80",
+    "review": "Investor pitch deck vectors and high-res infographics delivered on-demand. Turnaround time is unmatched in India.",
+    "verified": true,
+    "date": "2 weeks ago"
+  }
+]

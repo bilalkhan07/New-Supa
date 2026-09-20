@@ -1,0 +1,297 @@
+<!doctype html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>All Graphic Design Services - Design Quixo | 30-60 Min Delivery</title>
+    <meta name="description" content="Professional graphic design services starting from ₹359 crafted by verified Indian human designers in 30 to 60 minutes. Direct WhatsApp collaboration and unlimited revisions." />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+    <link rel="canonical" href="https://designquixo.in/services.html" />
+    <meta property="og:title" content="All Graphic Design Services - Design Quixo" />
+    <meta property="og:description" content="Professional manual graphic design services delivered in 30-60 minutes starting from ₹359." />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://designquixo.in/services.html" />
+    <meta property="og:image" content="https://designquixo.in/favicon.png" />
+    <link rel="icon" type="image/png" href="favicon.png" />
+    <link rel="shortcut icon" type="image/png" href="favicon.png" />
+    <link rel="apple-touch-icon" href="favicon.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="src/index.css" />
+    <script type="module" src="/src/supabase-service.ts"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="store.js"></script>
+    <script src="security.js"></script>
+  </head>
+  <body class="bg-white text-slate-800 antialiased min-h-screen flex flex-col font-['Plus_Jakarta_Sans',sans-serif]">
+    
+    <!-- Navigation Header -->
+    <header class="sticky top-0 z-50 backdrop-blur-md bg-white/95 border-b border-slate-200 transition-all shadow-xs">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between gap-4">
+        <div class="flex items-center justify-start shrink-0">
+          <a href="index.html" class="flex items-center gap-2.5 sm:gap-3 group shrink-0">
+            <img src="favicon.png" alt="Design Quixo Logo" class="w-8 h-8 sm:w-10 sm:h-10 object-contain rounded-xl group-hover:scale-105 transition-transform shrink-0" onerror="this.onerror=null; this.src='favicon.png';" />
+            <span class="font-extrabold text-lg sm:text-xl tracking-tight font-['Space_Grotesk'] text-slate-900">DESIGN <span class="text-blue-600">QUIXO</span></span>
+          </a>
+        </div>
+
+        <!-- Desktop Navigation (lg+) - Centered -->
+        <nav class="hidden lg:flex items-center justify-center gap-7 xl:gap-8 text-xs xl:text-sm font-semibold text-slate-600 mx-auto">
+          <a href="index.html" class="hover:text-blue-600 transition-colors">Home</a>
+          <a href="services.html" class="text-blue-600 font-bold">Services</a>
+          <a href="latest-works.html" class="hover:text-blue-600 transition-colors">Portfolio</a>
+          <a href="about.html" class="hover:text-blue-600 transition-colors">About Us</a>
+          <a href="cities.html" class="hover:text-blue-600 transition-colors flex items-center gap-1">
+            <i data-lucide="map-pin" class="w-3.5 h-3.5 text-blue-600"></i>
+            Cities
+          </a>
+          <a href="contact.html" class="hover:text-blue-600 transition-colors">Contact</a>
+        </nav>
+
+        <!-- Right Action CTAs -->
+        <div class="flex items-center justify-end gap-2.5 sm:gap-3 shrink-0">
+          <a href="login.html?mode=signup" class="hidden sm:inline-flex items-center gap-1.5 text-xs font-semibold text-slate-700 hover:text-blue-600 px-3.5 py-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 shadow-xs transition-colors shrink-0">
+            <i data-lucide="user-plus" class="w-3.5 h-3.5 text-blue-600"></i>
+            <span>Join as Designer</span>
+          </a>
+          <a href="login.html?mode=login" class="inline-flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 text-white font-bold px-3.5 py-2 sm:px-4 sm:py-2 rounded-xl text-xs sm:text-sm shadow-sm transition-all shrink-0">
+            <i data-lucide="log-in" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i>
+            <span>Login</span>
+          </a>
+          <!-- Mobile & Tablet Menu Toggle Button -->
+          <button id="mobile-menu-btn" class="lg:hidden p-2 text-slate-600 hover:text-slate-900 rounded-xl border border-slate-200 hover:bg-slate-50 transition-colors" aria-label="Toggle Navigation">
+            <i data-lucide="menu" class="w-5 h-5"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Mobile & Tablet Navigation Dropdown -->
+      <div id="mobile-menu" class="hidden lg:hidden border-b border-slate-200 bg-white px-4 pt-2 pb-5 space-y-2.5 shadow-md">
+        <a href="index.html" class="block py-2 text-slate-700 hover:text-blue-600 font-medium text-sm">Home</a>
+        <a href="services.html" class="block py-2 text-blue-600 font-bold text-sm">Services & Pricing</a>
+        <a href="latest-works.html" class="block py-2 text-slate-700 hover:text-blue-600 font-medium text-sm">Portfolio Showcase</a>
+        <a href="about.html" class="block py-2 text-slate-700 hover:text-blue-600 font-medium text-sm">About Us</a>
+        <a href="cities.html" class="block py-2 text-slate-700 hover:text-blue-600 font-medium text-sm">Cities Directory</a>
+        <a href="contact.html" class="block py-2 text-slate-700 hover:text-blue-600 font-medium text-sm">Contact Support</a>
+        <div class="pt-3 border-t border-slate-200 flex flex-col gap-2">
+          <a href="login.html?mode=signup" class="flex items-center justify-center gap-2 py-2.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700 font-bold text-xs">
+            <i data-lucide="user-plus" class="w-3.5 h-3.5 text-blue-600"></i>
+            <span>Join as Designer (Apply)</span>
+          </a>
+          <a href="login.html?mode=login" class="flex items-center justify-center gap-2 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-sm">
+            <i data-lucide="log-in" class="w-3.5 h-3.5"></i>
+            <span>Designer Login</span>
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Body -->
+    <main class="flex-grow">
+      
+      <!-- Services Header -->
+      <section class="py-16 sm:py-20 bg-slate-50 border-b border-slate-200 text-center relative">
+        <div class="max-w-4xl mx-auto px-4 relative z-10">
+          <div class="inline-flex items-center gap-2 px-3.5 sm:px-4 py-1.5 rounded-full bg-blue-50 border border-blue-200 text-blue-800 text-xs font-bold mb-6 shadow-xs">
+            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
+            <span>Transparent Pricing • 100% Vector Quality</span>
+          </div>
+          <h1 class="text-3xl sm:text-5xl font-extrabold text-slate-900 font-['Space_Grotesk'] tracking-tight mb-4">
+            Professional Design Services
+          </h1>
+          <p class="text-slate-600 text-sm sm:text-base max-w-2xl mx-auto leading-relaxed px-2">
+            Affordable, transparent pricing crafted by verified Indian creators. Turnaround in 30–60 minutes with layered source files and free unlimited revisions.
+          </p>
+        </div>
+      </section>
+
+      <!-- Services Grid Container -->
+      <section class="py-12 sm:py-20 max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+        
+        <div class="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6 lg:gap-8" id="services-container">
+          <!-- Populated dynamically via JS from DQStore -->
+        </div>
+
+      </section>
+
+    </main>
+
+    <!-- Global Trustworthy Footer -->
+    <footer class="border-t border-slate-200 bg-slate-50 py-12 text-xs text-slate-600">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div class="space-y-3">
+          <div class="flex items-center gap-2">
+            <img src="favicon.png" alt="Design Quixo Logo" class="w-8 h-8 object-contain rounded-lg shrink-0" onerror="this.onerror=null; this.src='favicon.png';" />
+            <span class="font-extrabold text-lg font-['Space_Grotesk'] text-slate-900">DESIGN <span class="text-blue-600">QUIXO</span></span>
+          </div>
+          <p class="text-slate-500 leading-relaxed">India's fastest manual graphic design network. Real human creators delivering high-res vector files in 30-60 minutes directly on WhatsApp.</p>
+        </div>
+
+        <div>
+          <h4 class="font-bold text-slate-900 uppercase tracking-wider text-[11px] mb-3">Quick Navigation</h4>
+          <ul class="space-y-2">
+            <li><a href="index.html" class="hover:text-blue-600 transition-colors">Home Page</a></li>
+            <li><a href="services.html" class="text-blue-600 font-semibold transition-colors">All Design Services</a></li>
+            <li><a href="latest-works.html" class="hover:text-blue-600 transition-colors">Portfolio Gallery</a></li>
+            <li><a href="track.html" class="hover:text-blue-600 transition-colors">Track Your Job</a></li>
+            <li><a href="about.html" class="hover:text-blue-600 transition-colors">About Our Platform</a></li>
+            <li><a href="cities.html" class="hover:text-blue-600 transition-colors">Cities Directory (16+ Hubs)</a></li>
+            <li><a href="terms.html" class="hover:text-blue-600 transition-colors">Terms of Service</a></li>
+            <li><a href="privacy.html" class="hover:text-blue-600 transition-colors">Privacy & Cookie Policy</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="font-bold text-slate-900 uppercase tracking-wider text-[11px] mb-3">Creator & Careers</h4>
+          <ul class="space-y-2">
+            <li><a href="login.html?mode=signup" class="hover:text-blue-600 font-semibold text-blue-600 transition-colors">Apply as Verified Designer</a></li>
+            <li><a href="login.html" class="hover:text-blue-600 transition-colors">Designer Workstation Login</a></li>
+            <li><a href="request.html" class="hover:text-blue-600 transition-colors">Submit Instant Design Brief</a></li>
+            <li><a href="terms.html" class="hover:text-blue-600 transition-colors">Terms & Conditions</a></li>
+            <li><a href="contact.html" class="hover:text-blue-600 transition-colors">Help & Contact Desk</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="font-bold text-slate-900 uppercase tracking-wider text-[11px] mb-3">Direct Support Desk</h4>
+          <p class="text-slate-500 mb-2">Design Quixo Operations & Dispatch</p>
+          <div class="space-y-2">
+            <a href="https://wa.me/918602420897" target="_blank" class="inline-flex items-center gap-2 font-bold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 px-3.5 py-2 rounded-xl border border-emerald-200 transition-colors shadow-xs w-full">
+              <img src="wa_icon.png" alt="WhatsApp" class="w-4 h-4 object-contain rounded-full shrink-0" onerror="this.onerror=null; this.src='wa_icon.png';" />
+              <span>+91 86024 20897</span>
+            </a>
+            <a href="mailto:designquixo@gmail.com" class="inline-flex items-center gap-2 font-bold text-blue-700 bg-blue-50 hover:bg-blue-100 px-3.5 py-2 rounded-xl border border-blue-200 transition-colors shadow-xs w-full text-xs">
+              <i data-lucide="mail" class="w-4 h-4 text-blue-600 shrink-0"></i>
+              <span>designquixo@gmail.com</span>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8 pt-6 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left text-slate-400">
+        <p>&copy; 2026 Design Quixo India. All rights reserved.</p>
+        <div class="flex items-center gap-4 text-[11px] flex-wrap justify-center sm:justify-end">
+          <a href="terms.html" class="hover:text-slate-600 underline">Terms of Service</a>
+          <a href="privacy.html" class="hover:text-slate-600 underline">Privacy Policy</a>
+          <a href="privacy.html#cookies" class="hover:text-slate-600 underline">Cookie Policy</a>
+          <a href="contact.html" class="hover:text-slate-600 underline">Contact Desk</a>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Global Cookie Consent Component Script -->
+    <script src="cookie-banner.js"></script>
+
+    <script>
+      // Bulletproof relative icon SVG generator for all design services
+      function getServiceBadgeIcon(s) {
+        if (window.DQStore && typeof window.DQStore.renderIconHtml === 'function') {
+          return window.DQStore.renderIconHtml(s, 'w-4 h-4 sm:w-5 sm:h-5');
+        }
+        const id = (s.id || s.category || '').toLowerCase();
+        const icon = (s.icon || '').toLowerCase();
+        
+        // 1. YouTube Thumbnails -> Authentic Red YouTube SVG
+        if (id.includes('youtube') || id.includes('thumbnail') || icon === 'youtube') {
+          return '<svg class="w-4 h-4 sm:w-5 sm:h-5 shrink-0" viewBox="0 0 24 24"><path fill="#FF0000" d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814z"/><path fill="#FFFFFF" d="M9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>';
+        }
+        // 2. Brand Logo Design -> Golden Medal / Award Ribbon
+        if (id.includes('logo') || id.includes('branding') || icon === 'award') {
+          return '<svg class="w-4 h-4 sm:w-5 sm:h-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/></svg>';
+        }
+        // 3. Visiting Cards / Business Cards -> Corporate Credit / Card
+        if (id.includes('visiting') || id.includes('card') || icon === 'credit-card') {
+          return '<svg class="w-4 h-4 sm:w-5 sm:h-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/><circle cx="6" cy="15" r="1" fill="#059669"/></svg>';
+        }
+        // 4. Product Label & Packaging -> 3D Package Box
+        if (id.includes('pack') || id.includes('label') || icon === 'package') {
+          return '<svg class="w-4 h-4 sm:w-5 sm:h-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="#EA580C" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>';
+        }
+        // 5. Social Media Posts -> Network Share
+        if (id.includes('social') || icon === 'share-2') {
+          return '<svg class="w-4 h-4 sm:w-5 sm:h-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" x2="15.42" y1="13.51" y2="17.49"/><line x1="15.41" x2="8.59" y1="6.51" y2="10.49"/></svg>';
+        }
+        // 6. Vector Art & Tracing -> Pen Tool
+        if (id.includes('vector') || icon === 'pen-tool') {
+          return '<svg class="w-4 h-4 sm:w-5 sm:h-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="#4F46E5" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19 7-7 3 3-7 7-3-3z"/><path d="m18 13-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="m2 2 7.586 7.586"/><circle cx="11" cy="11" r="2"/></svg>';
+        }
+        // 7. Custom Graphic Design -> Artist Palette
+        if (id.includes('custom') || icon === 'palette') {
+          return '<svg class="w-4 h-4 sm:w-5 sm:h-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="#9333EA" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="13.5" cy="6.5" r=".5" fill="#9333EA"/><circle cx="17.5" cy="10.5" r=".5" fill="#9333EA"/><circle cx="8.5" cy="7.5" r=".5" fill="#9333EA"/><circle cx="6.5" cy="12.5" r=".5" fill="#9333EA"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/></svg>';
+        }
+        // 8. Fallback
+        return '<svg class="w-4 h-4 sm:w-5 sm:h-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>';
+      }
+
+      // Render Services from DQStore dynamically
+      function renderServices() {
+        const container = document.getElementById('services-container');
+        if (!container || !window.DQStore) return;
+
+        const services = window.DQStore.getServices();
+        container.innerHTML = services.map(s => {
+          const price = s.price || 359;
+          const sla = s.sla || '30-45 mins';
+          const img = s.image || 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=700&auto=format&fit=crop&q=80';
+
+          return `
+            <div class="group rounded-2xl sm:rounded-3xl bg-white border border-slate-200 overflow-hidden hover:border-blue-300 hover:shadow-md transition-all flex flex-col justify-between shadow-xs">
+              <div>
+                <div class="relative h-28 sm:h-48 bg-slate-100 overflow-hidden">
+                  <img src="${img}" alt="${s.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" />
+                  <div class="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent"></div>
+                  
+                  <div class="absolute top-2 left-2 sm:top-3 sm:left-3 w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-white/95 backdrop-blur-xs border border-white/60 flex items-center justify-center shadow-sm">
+                    ${getServiceBadgeIcon(s)}
+                  </div>
+                  
+                  <span class="absolute bottom-2 right-2 sm:bottom-3 sm:right-3 text-[9px] sm:text-xs uppercase font-extrabold text-emerald-800 bg-white/95 backdrop-blur-xs px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full shadow-xs tracking-wider">
+                    ⚡ ${sla}
+                  </span>
+                </div>
+
+                <div class="p-3.5 sm:p-6 space-y-1.5 sm:space-y-2">
+                  <div class="flex items-start justify-between gap-2">
+                    <h3 class="text-sm sm:text-xl font-extrabold text-slate-950 font-['Space_Grotesk'] leading-snug tracking-tight">${s.title}</h3>
+                  </div>
+
+                  <p class="text-xs sm:text-sm font-semibold text-slate-700 leading-snug line-clamp-2 sm:line-clamp-none">${s.description}</p>
+                </div>
+              </div>
+
+              <div class="p-3.5 sm:p-6 pt-0">
+                <a href="request.html?service=${encodeURIComponent(s.id)}" class="w-full text-center py-2.5 sm:py-3 px-3 sm:px-4 rounded-xl bg-slate-100 hover:bg-blue-600 hover:text-white text-slate-800 font-bold text-xs sm:text-sm transition-all flex items-center justify-center gap-1.5 sm:gap-2">
+                  <span>Get in ₹${price}</span>
+                  <i data-lucide="arrow-right" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i>
+                </a>
+              </div>
+            </div>
+          `;
+        }).join('');
+
+        if (window.lucide && typeof window.lucide.createIcons === 'function') {
+          lucide.createIcons();
+        }
+      }
+
+      renderServices();
+      window.addEventListener('storage', (e) => {
+        if (e.key === 'dq_services') renderServices();
+      });
+      window.addEventListener('dq_services_updated', () => {
+        renderServices();
+      });
+
+      // Mobile Menu Toggle
+      const mobileBtn = document.getElementById('mobile-menu-btn');
+      const mobileMenu = document.getElementById('mobile-menu');
+      if (mobileBtn && mobileMenu) {
+        mobileBtn.addEventListener('click', () => {
+          mobileMenu.classList.toggle('hidden');
+        });
+      }
+    </script>
+  </body>
+</html>

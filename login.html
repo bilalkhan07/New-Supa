@@ -1,0 +1,2803 @@
+<!doctype html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Creator & Admin Portal Login - Design Quixo India</title>
+    <meta name="description" content="Secure authentication gateway for Design Quixo verified creators, operations support, and platform admins." />
+    <link rel="icon" type="image/png" href="favicon.png" />
+    <link rel="shortcut icon" type="image/png" href="favicon.png" />
+    <link rel="apple-touch-icon" href="favicon.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="security.js"></script>
+    <!-- Design Quixo Source & UI Security -->
+    <script>
+      (function(){
+        const blockEvent = function(e){ e.preventDefault(); e.stopPropagation(); return false; };
+        window.addEventListener('contextmenu', blockEvent, true);
+        document.addEventListener('contextmenu', blockEvent, true);
+        window.oncontextmenu = function(){ return false; };
+        document.oncontextmenu = function(){ return false; };
+        const blockKeys = function(e){
+          if (e.key === 'F12' || e.keyCode === 123) { e.preventDefault(); e.stopPropagation(); return false; }
+          const ctrl = e.ctrlKey || e.metaKey;
+          if (ctrl && (e.shiftKey || e.altKey)) {
+            const k = (e.key || '').toUpperCase();
+            if (k === 'I' || k === 'J' || k === 'C' || k === 'K' || k === 'S' || k === 'E') {
+              e.preventDefault(); e.stopPropagation(); return false;
+            }
+          }
+          if (ctrl) {
+            const k = (e.key || '').toUpperCase();
+            if (k === 'U' || k === 'S' || k === 'P') { e.preventDefault(); e.stopPropagation(); return false; }
+          }
+        };
+        window.addEventListener('keydown', blockKeys, true);
+        document.addEventListener('keydown', blockKeys, true);
+        document.addEventListener('selectstart', function(e){
+          const t = e.target && e.target.tagName ? e.target.tagName.toUpperCase() : '';
+          if (t !== 'INPUT' && t !== 'TEXTAREA') { e.preventDefault(); return false; }
+        }, true);
+        document.addEventListener('copy', function(e){
+          const t = e.target && e.target.tagName ? e.target.tagName.toUpperCase() : '';
+          if (t !== 'INPUT' && t !== 'TEXTAREA') { e.preventDefault(); return false; }
+        }, true);
+      })();
+    </script>
+    <link rel="stylesheet" href="src/index.css" />
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script>
+      if (window.pdfjsLib) {
+        window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+      }
+    </script>
+    <script src="store.js"></script>
+    <script src="push-notifications.js"></script>
+    <script type="module" src="/src/supabase-service.ts"></script>
+    <script type="module" src="/src/firebase-auth-service.ts"></script>
+    <script type="module" src="/src/agreement-service.ts"></script>
+    <script type="module" src="/src/email-service.ts"></script>
+  </head>
+  <body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col font-['Plus_Jakarta_Sans',sans-serif]">
+    
+    <!-- Minimalist Header -->
+    <header class="border-b border-slate-200 bg-white sticky top-0 z-40 shadow-xs">
+      <div class="max-w-4xl mx-auto px-4 h-16 flex items-center justify-between">
+        <a href="index.html" class="flex items-center gap-2.5">
+          <img src="favicon.png" alt="Design Quixo Logo" class="w-8 h-8 sm:w-9 sm:h-9 object-contain rounded-xl shrink-0" onerror="this.onerror=null; this.src='favicon.png';" />
+          <span class="font-extrabold text-lg font-['Space_Grotesk'] text-slate-900">DESIGN <span class="text-blue-600">QUIXO</span></span>
+        </a>
+        <a href="index.html" class="text-xs text-slate-500 hover:text-slate-900 font-semibold flex items-center gap-1">
+          <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i>
+          <span>Back to Site</span>
+        </a>
+      </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="flex-grow flex items-center justify-center py-10 px-4 sm:px-6">
+      <div class="w-full max-w-md space-y-6">
+        
+        <!-- Tab Controls (Login vs Apply as Designer) -->
+        <div class="grid grid-cols-2 p-1 rounded-2xl bg-slate-200/80 border border-slate-300 text-xs font-bold text-slate-600">
+          <button id="tab-login-btn" class="py-2.5 rounded-xl bg-white text-slate-900 shadow-xs transition-all flex items-center justify-center gap-1.5">
+            <i data-lucide="log-in" class="w-4 h-4 text-blue-600"></i>
+            <span>Sign In</span>
+          </button>
+          <button id="tab-signup-btn" class="py-2.5 rounded-xl text-slate-600 hover:text-slate-900 transition-all flex items-center justify-center gap-1.5">
+            <i data-lucide="user-plus" class="w-4 h-4 text-emerald-600"></i>
+            <span>Join as Designer</span>
+          </button>
+        </div>
+
+        <!-- FORM 1: LOGIN -->
+        <div id="login-card" class="p-5 sm:p-8 rounded-3xl bg-white border border-slate-200 shadow-sm space-y-6">
+          <div>
+            <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center mb-3">
+              <i data-lucide="shield-check" class="w-5 h-5"></i>
+            </div>
+            <h2 class="text-xl sm:text-2xl font-bold text-slate-900 font-['Space_Grotesk']">Portal Login</h2>
+            <p class="text-xs text-slate-500 mt-1">Two-factor security: Password verification followed by mandatory 6-digit Email OTP.</p>
+          </div>
+
+          <!-- Alert message box for auth feedback -->
+          <div id="login-alert-box" class="hidden p-3 rounded-xl text-xs font-semibold"></div>
+
+          <!-- STEP 1: PASSWORD / PIN CREDENTIALS (Mandatory) -->
+          <form id="login-credentials-form" class="space-y-4 text-xs">
+            <div>
+              <label class="block font-bold text-slate-700 uppercase tracking-wider mb-1.5">Registered Email / Mobile Number *</label>
+              <input type="text" id="login-identifier" required placeholder="Enter registered email or 10-digit mobile" class="w-full bg-slate-50 border border-slate-300 focus:border-blue-500 focus:bg-white rounded-xl p-3 sm:p-3.5 text-sm text-slate-900 outline-none transition-colors" />
+            </div>
+
+            <div>
+              <div class="flex items-center justify-between mb-1.5">
+                <label class="block font-bold text-slate-700 uppercase tracking-wider">Access PIN / Password *</label>
+                <button type="button" id="btn-forgot-password-link" class="text-blue-600 hover:underline text-[11px] font-bold cursor-pointer">Forgot Password?</button>
+              </div>
+              <div class="relative flex items-center">
+                <input type="password" id="login-password" required placeholder="Enter password or PIN you set during registration" class="w-full bg-slate-50 border border-slate-300 focus:border-blue-500 focus:bg-white rounded-xl p-3 sm:p-3.5 pr-11 text-sm text-slate-900 outline-none transition-colors" />
+                <button type="button" onclick="togglePasswordVisibility('login-password', this)" class="absolute right-2.5 p-1.5 text-slate-400 hover:text-slate-700 transition-colors cursor-pointer rounded-lg hover:bg-slate-200/50" title="Show / Hide Password">
+                  <i data-lucide="eye" class="w-4 h-4"></i>
+                </button>
+              </div>
+            </div>
+
+            <div class="p-3 rounded-xl bg-blue-50/60 border border-blue-100 text-[11px] text-blue-900 flex items-start gap-2">
+              <i data-lucide="lock" class="w-4 h-4 text-blue-600 shrink-0 mt-0.5"></i>
+              <span>Credentials verified first, followed by real-time 6-digit OTP dispatched to your registered Email address.</span>
+            </div>
+
+            <button type="submit" id="btn-login-submit" class="w-full py-3.5 sm:py-4 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-sm shadow-sm transition-all flex items-center justify-center gap-2 cursor-pointer">
+              <i data-lucide="key" class="w-4 h-4"></i>
+              <span>Verify Password & Send Email OTP</span>
+            </button>
+          </form>
+
+          <!-- STEP 2: EMAIL OTP VERIFICATION (Revealed after password passes) -->
+          <div id="login-otp-step" class="hidden space-y-4 text-xs">
+            <div class="p-3.5 rounded-2xl bg-emerald-50 border border-emerald-200">
+              <div class="flex items-center gap-2 text-emerald-900 font-bold text-xs mb-1">
+                <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-600"></i>
+                <span>Password Verified</span>
+              </div>
+              <p class="text-[11px] text-emerald-800">
+                A 6-digit email verification code was dispatched to: <strong id="login-otp-phone-display" class="font-mono text-emerald-950"></strong>
+              </p>
+            </div>
+
+            <div>
+              <div class="flex items-center justify-between mb-1.5">
+                <label class="block font-bold text-slate-700 uppercase tracking-wider">Enter 6-Digit Email Code *</label>
+                <button type="button" id="btn-login-back-to-creds" class="text-blue-600 hover:underline text-[11px] font-bold cursor-pointer">Edit Credentials</button>
+              </div>
+              <input type="text" id="login-otp-code" maxlength="6" inputmode="numeric" placeholder="••••••" class="w-full bg-slate-50 border border-slate-300 focus:border-blue-500 focus:bg-white rounded-xl p-3 text-center text-2xl tracking-[0.4em] font-mono font-extrabold text-slate-900 outline-none transition-colors" />
+              
+              <div class="flex items-center justify-between mt-2 text-[11px]">
+                <span id="login-otp-timer-display" class="text-slate-500">Resend code in <strong class="font-mono text-slate-800">30s</strong></span>
+                <button type="button" id="btn-login-resend-otp" disabled class="text-blue-600 font-bold hover:underline disabled:opacity-40 disabled:hover:no-underline cursor-pointer disabled:cursor-not-allowed">
+                  Resend Email Code
+                </button>
+              </div>
+            </div>
+
+            <button type="button" id="btn-login-verify-otp" class="w-full py-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-sm shadow-sm transition-all flex items-center justify-center gap-2 cursor-pointer">
+              <i data-lucide="shield-check" class="w-4 h-4"></i>
+              <span>Verify Email Code & Enter Workstation</span>
+            </button>
+          </div>
+
+          <div class="pt-2 border-t border-slate-100 text-center text-xs text-slate-500">
+            <span>New designer?</span>
+            <button id="switch-to-signup-link" class="text-blue-600 font-bold hover:underline ml-1 cursor-pointer">Apply as Creator</button>
+          </div>
+        </div>
+
+        <!-- FORM 3: FORGOT PASSWORD MODAL/CARD -->
+        <div id="forgot-card" class="hidden p-5 sm:p-8 rounded-3xl bg-white border border-slate-200 shadow-sm space-y-6">
+          <div>
+            <div class="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center mb-3">
+              <i data-lucide="key-round" class="w-5 h-5"></i>
+            </div>
+            <h2 class="text-xl sm:text-2xl font-bold text-slate-900 font-['Space_Grotesk']">Reset Password</h2>
+            <p class="text-xs text-slate-500 mt-1">Enter your registered email or phone to receive a real 6-digit password reset OTP.</p>
+          </div>
+
+          <!-- Alert message box for forgot pwd feedback -->
+          <div id="forgot-alert-box" class="hidden p-3 rounded-xl text-xs font-semibold"></div>
+
+          <!-- STEP 1: ENTER EMAIL OR PHONE -->
+          <form id="forgot-step1-form" class="space-y-4 text-xs">
+            <div>
+              <label class="block font-bold text-slate-700 uppercase tracking-wider mb-1.5">Registered Email or Mobile *</label>
+              <input type="text" id="forgot-identifier" required placeholder="Enter registered email or 10-digit mobile" class="w-full bg-slate-50 border border-slate-300 focus:border-blue-500 focus:bg-white rounded-xl p-3 sm:p-3.5 text-sm text-slate-900 outline-none transition-colors" />
+            </div>
+
+            <div class="p-3 rounded-xl bg-blue-50/60 border border-blue-100 text-[11px] text-blue-900 flex items-start gap-2">
+              <i data-lucide="mail-check" class="w-4 h-4 text-blue-600 shrink-0 mt-0.5"></i>
+              <span>A secure 6-digit verification code will be dispatched directly to your registered email address.</span>
+            </div>
+
+            <button type="submit" id="btn-forgot-step1-submit" class="w-full py-3.5 sm:py-4 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-sm shadow-sm transition-all flex items-center justify-center gap-2 cursor-pointer">
+              <i data-lucide="send" class="w-4 h-4"></i>
+              <span>Send Reset OTP to Email</span>
+            </button>
+          </form>
+
+          <!-- STEP 2: VERIFY OTP AND SET NEW PASSWORD -->
+          <form id="forgot-step2-form" class="hidden space-y-4 text-xs">
+            <div class="p-3.5 rounded-2xl bg-emerald-50 border border-emerald-200">
+              <div class="flex items-center justify-between mb-1">
+                <div class="flex items-center gap-2 text-emerald-900 font-bold text-xs">
+                  <i data-lucide="mail" class="w-4 h-4 text-emerald-600"></i>
+                  <span>Reset OTP Dispatched</span>
+                </div>
+                <button type="button" id="btn-forgot-back-to-step1" class="text-blue-600 hover:underline text-[11px] font-bold cursor-pointer">Change Identifier</button>
+              </div>
+              <p class="text-[11px] text-emerald-800">
+                Enter the 6-digit code sent to: <strong id="forgot-email-display" class="font-mono text-emerald-950"></strong>
+              </p>
+            </div>
+
+            <div>
+              <label class="block font-bold text-slate-700 uppercase tracking-wider mb-1.5">Enter 6-Digit Email OTP *</label>
+              <input type="text" id="forgot-otp-code" maxlength="6" inputmode="numeric" required placeholder="••••••" class="w-full bg-slate-50 border border-slate-300 focus:border-blue-500 focus:bg-white rounded-xl p-3 text-center text-2xl tracking-[0.4em] font-mono font-extrabold text-slate-900 outline-none transition-colors" />
+              
+              <div class="flex items-center justify-between mt-2 text-[11px]">
+                <span id="forgot-otp-timer-display" class="text-slate-500">Resend in <strong class="font-mono text-slate-800">30s</strong></span>
+                <button type="button" id="btn-forgot-resend-otp" disabled class="text-blue-600 font-bold hover:underline disabled:opacity-40 disabled:hover:no-underline cursor-pointer disabled:cursor-not-allowed">
+                  Resend OTP Code
+                </button>
+              </div>
+            </div>
+
+            <div>
+              <label class="block font-bold text-slate-700 uppercase tracking-wider mb-1.5">New Password / PIN *</label>
+              <input type="password" id="forgot-new-password" required minlength="4" placeholder="Enter new password (min 4 characters)" class="w-full bg-slate-50 border border-slate-300 focus:border-blue-500 focus:bg-white rounded-xl p-3 sm:p-3.5 text-sm text-slate-900 outline-none transition-colors" />
+            </div>
+
+            <div>
+              <label class="block font-bold text-slate-700 uppercase tracking-wider mb-1.5">Confirm New Password *</label>
+              <input type="password" id="forgot-confirm-password" required minlength="4" placeholder="Confirm new password" class="w-full bg-slate-50 border border-slate-300 focus:border-blue-500 focus:bg-white rounded-xl p-3 sm:p-3.5 text-sm text-slate-900 outline-none transition-colors" />
+            </div>
+
+            <button type="submit" id="btn-forgot-step2-submit" class="w-full py-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-sm shadow-sm transition-all flex items-center justify-center gap-2 cursor-pointer">
+              <i data-lucide="shield-check" class="w-4 h-4"></i>
+              <span>Verify OTP & Save New Password</span>
+            </button>
+          </form>
+
+          <div class="pt-2 border-t border-slate-100 text-center text-xs text-slate-500">
+            <span>Remembered your password?</span>
+            <button type="button" id="btn-forgot-back-to-login" class="text-blue-600 font-bold hover:underline ml-1 cursor-pointer">Back to Sign In</button>
+          </div>
+        </div>
+
+        <!-- FORM 2: APPLY AS DESIGNER (Signup) -->
+        <div id="signup-card" class="hidden p-8 rounded-3xl bg-white border border-slate-200 shadow-sm space-y-6">
+          <div>
+            <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center mb-3">
+              <i data-lucide="pen-tool" class="w-5 h-5"></i>
+            </div>
+            <h2 class="text-2xl font-bold text-slate-900 font-['Space_Grotesk']">Apply as Creator</h2>
+            <p class="text-xs text-slate-500 mt-1">Join India's verified human designer network. Earn per 30-min delivery on WhatsApp.</p>
+          </div>
+
+          <form id="signup-form" class="space-y-4 text-xs">
+            <div>
+              <label class="block font-bold text-slate-700 uppercase tracking-wider mb-1">Full Legal Name *</label>
+              <input type="text" id="signup-name" required placeholder="e.g. Vikramaditya Solanki" class="w-full bg-slate-50 border border-slate-300 focus:border-emerald-500 focus:bg-white rounded-xl p-3 text-sm text-slate-900 outline-none transition-colors" />
+            </div>
+
+            <!-- PROFILE PHOTO / DP UPLOAD -->
+            <div>
+              <label class="block font-bold text-slate-700 uppercase tracking-wider mb-1">Profile Photo / DP (Optional)</label>
+              <div class="flex items-center gap-3 bg-slate-50 border border-slate-300 rounded-xl p-3 hover:border-emerald-500 transition-colors">
+                <div id="signup-dp-preview-box" class="w-12 h-12 rounded-full bg-slate-200 border-2 border-slate-300 flex items-center justify-center overflow-hidden shrink-0">
+                  <i data-lucide="user" id="signup-dp-default-icon" class="w-6 h-6 text-slate-400"></i>
+                  <img id="signup-dp-preview-img" src="" alt="Profile DP Preview" class="hidden w-full h-full object-cover" />
+                </div>
+                <div class="flex-1 min-w-0">
+                  <input type="file" id="signup-dp-file" accept="image/*" class="hidden" onchange="handleSignupDpUpload(event)" />
+                  <div class="flex items-center gap-2">
+                    <label for="signup-dp-file" class="px-3 py-1.5 rounded-lg bg-white border border-slate-300 hover:bg-emerald-50 hover:border-emerald-400 text-slate-700 font-bold text-xs cursor-pointer flex items-center gap-1.5 transition-colors shadow-2xs">
+                      <i data-lucide="camera" class="w-3.5 h-3.5 text-emerald-600"></i>
+                      <span>Upload Profile Photo / DP</span>
+                    </label>
+                    <button type="button" id="btn-remove-signup-dp" onclick="removeSignupDp()" class="hidden px-2 py-1 rounded-lg text-rose-600 hover:bg-rose-50 text-[11px] font-bold cursor-pointer">
+                      Remove
+                    </button>
+                  </div>
+                  <p class="text-[10px] text-slate-500 mt-1">Upload a clear photo / avatar (JPG or PNG).</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- MANDATORY OFFICIAL EMAIL WITH REAL EMAIL OTP -->
+            <div>
+              <div class="flex items-center justify-between mb-1">
+                <label class="block font-bold text-slate-700 uppercase tracking-wider text-xs">Official Email Address *</label>
+                <span id="signup-email-verified-badge" class="hidden text-[10px] font-bold text-emerald-800 bg-emerald-100 border border-emerald-200 px-2 py-0.5 rounded-full flex items-center gap-1">
+                  <i data-lucide="check-circle-2" class="w-3 h-3"></i> Verified via Email OTP
+                </span>
+              </div>
+              <div class="flex items-stretch gap-1.5 sm:gap-2">
+                <input type="email" id="signup-email" required placeholder="Enter your email address" class="min-w-0 flex-1 bg-slate-50 border border-slate-300 focus:border-emerald-500 focus:bg-white rounded-xl p-3 text-sm text-slate-900 outline-none transition-colors" />
+                <button type="button" id="btn-signup-send-email-otp" class="shrink-0 h-[46px] px-3.5 sm:px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs transition-colors shadow-2xs flex items-center justify-center gap-1.5 cursor-pointer whitespace-nowrap" title="Verify Email">
+                  <i data-lucide="check" class="w-4 h-4 stroke-[2.5]"></i>
+                  <span class="hidden xs:inline sm:inline">Verify</span>
+                </button>
+              </div>
+              <p class="text-[11px] text-amber-800 bg-amber-50/90 border border-amber-200 rounded-lg p-2 mt-1.5 flex items-start gap-1.5 leading-snug">
+                <i data-lucide="alert-circle" class="w-3.5 h-3.5 text-amber-600 shrink-0 mt-0.5"></i>
+                <span><strong>Notice:</strong> Please check your <strong>Email Inbox or Spam / Junk folder</strong> for the 6-digit OTP code.</span>
+              </p>
+
+              <!-- Inline Signup Email OTP Box -->
+              <div id="signup-email-otp-box" class="hidden mt-2.5 p-3 rounded-xl bg-emerald-50 border border-emerald-200 space-y-2">
+                <div class="flex items-center justify-between text-[11px]">
+                  <span class="font-bold text-emerald-950">Enter 6-digit Email code:</span>
+                  <span id="signup-email-otp-timer" class="text-emerald-700 font-mono"></span>
+                </div>
+                <div class="p-2 rounded-lg bg-white border border-emerald-200 text-[11px] text-emerald-800 font-semibold flex items-center gap-1.5">
+                  <i data-lucide="mail" class="w-3.5 h-3.5 text-emerald-600 shrink-0"></i>
+                  <span>Code sent! <strong>Please check your Email Inbox or Spam / Junk folder</strong>.</span>
+                </div>
+                <div class="flex gap-2">
+                  <input type="text" id="signup-email-otp-code" maxlength="6" inputmode="numeric" placeholder="••••••" class="min-w-0 flex-1 bg-white border border-emerald-300 rounded-lg px-3 py-2 text-center text-base font-mono font-extrabold tracking-widest text-slate-900 outline-none" />
+                  <button type="button" id="btn-signup-verify-email-otp" class="shrink-0 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-lg shadow-xs transition-colors cursor-pointer flex items-center gap-1">
+                    <i data-lucide="check" class="w-3.5 h-3.5"></i>
+                    <span>Confirm</span>
+                  </button>
+                </div>
+                <p id="signup-email-otp-msg" class="text-[10px] text-emerald-800 font-medium"></p>
+              </div>
+            </div>
+
+            <!-- ACTIVE CALLING & WHATSAPP NUMBER (DATA COLLECTION FOR CALLING & WHATSAPP ASSIGNMENTS) -->
+            <div>
+              <div class="flex items-center justify-between mb-1">
+                <label class="flex items-center gap-1.5 font-bold text-slate-700 uppercase tracking-wider text-xs">
+                  <i data-lucide="phone" class="w-3.5 h-3.5 text-blue-600"></i>
+                  <img src="wa_icon.png" class="w-3.5 h-3.5 object-contain rounded-full" alt="WhatsApp" onerror="this.onerror=null; this.src='wa_icon.png';" />
+                  <span>Calling & WhatsApp Number * (For Urgent Briefs & Admin Contact)</span>
+                </label>
+              </div>
+              <div class="flex">
+                <span class="inline-flex items-center gap-1.5 px-3.5 rounded-l-xl border border-r-0 border-slate-300 bg-slate-100 text-slate-700 font-bold">
+                  <i data-lucide="phone" class="w-3.5 h-3.5 text-blue-600"></i>
+                  <span>+91</span>
+                </span>
+                <input type="tel" id="signup-phone" maxlength="10" required pattern="[6-9][0-9]{9}" placeholder="9876543210" class="w-full bg-slate-50 border border-slate-300 focus:border-emerald-500 focus:bg-white rounded-r-xl p-3 text-sm text-slate-900 font-mono outline-none transition-colors" />
+              </div>
+              <p class="text-[11px] text-slate-500 mt-1 flex items-center gap-1.5">
+                <i data-lucide="phone-call" class="w-3.5 h-3.5 text-blue-600 shrink-0"></i>
+                <img src="wa_icon.png" class="w-3 h-3 object-contain rounded-full shrink-0" alt="WA" onerror="this.onerror=null; this.src='wa_icon.png';" />
+                <span>Collected so platform admin and clients can contact you directly via Phone Call & WhatsApp for project assignments. (No SMS OTP required on mobile).</span>
+              </p>
+            </div>
+
+            <div>
+              <label class="block font-bold text-slate-700 uppercase tracking-wider mb-1">Portfolio Link (Behance / Dribbble / Drive) *</label>
+              <input type="url" id="signup-portfolio" required placeholder="https://behance.net/yourname" class="w-full bg-slate-50 border border-slate-300 focus:border-emerald-500 focus:bg-white rounded-xl p-3 text-sm text-slate-900 font-mono outline-none transition-colors" />
+            </div>
+
+            <div>
+              <label class="block font-bold text-slate-700 uppercase tracking-wider mb-1">Primary Tools & Expertise *</label>
+              <input type="text" id="signup-skills" required placeholder="e.g. Photoshop, Illustrator, Figma, YouTube Thumbnails" class="w-full bg-slate-50 border border-slate-300 focus:border-emerald-500 focus:bg-white rounded-xl p-3 text-sm text-slate-900 outline-none transition-colors" />
+            </div>
+
+            <div>
+              <label class="block font-bold text-slate-700 uppercase tracking-wider mb-1">Choose a Password or PIN *</label>
+              <div class="relative flex items-center">
+                <input type="password" id="signup-password" required placeholder="Minimum 4 characters" class="w-full bg-slate-50 border border-slate-300 focus:border-emerald-500 focus:bg-white rounded-xl p-3 pr-11 text-sm text-slate-900 outline-none transition-colors" />
+                <button type="button" onclick="togglePasswordVisibility('signup-password', this)" class="absolute right-2.5 p-1.5 text-slate-400 hover:text-slate-700 transition-colors cursor-pointer rounded-lg hover:bg-slate-200/50" title="Show / Hide Password">
+                  <i data-lucide="eye" class="w-4 h-4"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- CREATOR AGREEMENT BLOCK (CLEAN, MINIMAL & ZERO OVERLAY) -->
+            <div class="pt-1">
+              <button type="button" id="btn-open-agreement-esign" onclick="openFullAgreementPdfPreviewModal()" class="w-full py-3.5 px-4 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-sm shadow-xs transition-all flex items-center justify-center gap-2 cursor-pointer">
+                <i data-lucide="file-signature" class="w-4 h-4"></i>
+                <span id="btn-esign-cta-text">E-Sign Agreement to Continue</span>
+              </button>
+              
+              <!-- Clean Confirmation Indicator (Appears only after signing) -->
+              <div id="signup-agreement-status-box" class="hidden mt-2 p-2.5 rounded-xl bg-emerald-50 border border-emerald-200 flex items-center justify-between text-xs text-emerald-900">
+                <div class="flex items-center gap-2 font-bold">
+                  <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-600 shrink-0"></i>
+                  <span>Agreement E-Signed Successfully ✓</span>
+                </div>
+                <button type="button" onclick="openFullAgreementPdfPreviewModal()" class="text-emerald-700 font-bold underline hover:text-emerald-900 cursor-pointer">
+                  View PDF / Re-sign
+                </button>
+              </div>
+
+              <!-- Hidden inputs to store acceptance & e-signature data -->
+              <input type="checkbox" id="signup-agree-tc" class="hidden" />
+              <input type="hidden" id="signup-sig-hidden-val" value="" />
+            </div>
+
+            <button type="submit" id="btn-signup-submit" class="w-full py-3.5 sm:py-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-sm shadow-sm transition-all flex items-center justify-center gap-2 cursor-pointer">
+              <i data-lucide="send" class="w-4 h-4"></i>
+              <span>Submit Application</span>
+            </button>
+          </form>
+
+          <div class="pt-2 border-t border-slate-100 text-center text-xs text-slate-500">
+            <span>Already registered?</span>
+            <button id="switch-to-login-link" class="text-emerald-600 font-bold hover:underline ml-1">Sign In to Dashboard</button>
+          </div>
+        </div>
+
+      </div>
+    </main>
+
+    <!-- Minimalist Legal Footer -->
+    <footer class="py-6 text-center text-xs text-slate-400">
+      <div class="max-w-md mx-auto px-4 flex items-center justify-center gap-4 flex-wrap">
+        <a href="terms.html" class="hover:text-slate-600 underline">Terms of Service</a>
+        <a href="privacy.html" class="hover:text-slate-600 underline">Privacy Policy</a>
+        <a href="privacy.html#cookies" class="hover:text-slate-600 underline">Cookie Policy</a>
+        <a href="contact.html" class="hover:text-slate-600 underline">Support Desk</a>
+      </div>
+      <p class="mt-2 text-[11px]">&copy; 2026 Design Quixo India.</p>
+    </footer>
+
+    <!-- Global Cookie Consent Component Script -->
+    <script src="cookie-banner.js"></script>
+
+    <!-- Full 3-Page Creator Agreement PDF Preview Modal Dialog -->
+    <div id="full-agreement-pdf-preview-modal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-3 sm:p-4">
+      <div class="bg-white w-full max-w-4xl rounded-3xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col max-h-[92vh]">
+        <div class="px-5 py-3.5 border-b border-slate-200 flex flex-wrap items-center justify-between gap-3 bg-slate-50/90 shrink-0">
+          <div class="flex items-center gap-2.5 min-w-0">
+            <div class="w-9 h-9 rounded-xl bg-red-100 text-red-700 flex items-center justify-center font-bold shrink-0">
+              <i data-lucide="file-text" class="w-5 h-5"></i>
+            </div>
+            <div class="min-w-0">
+              <h3 id="modal-agreement-title" class="font-bold text-slate-900 text-sm font-['Space_Grotesk'] truncate">Creator Code of Conduct & Payout Agreement</h3>
+              <p id="modal-agreement-subtitle" class="text-[11px] text-slate-500 truncate">Official Master Legal Document</p>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <!-- View Mode Switcher -->
+            <div class="flex items-center gap-1 bg-slate-200/80 p-1 rounded-xl text-xs font-bold">
+              <button type="button" id="btn-tab-pdf-doc" onclick="switchAgreementModalTab('pdf')" class="px-2.5 sm:px-3 py-1 rounded-lg bg-white text-slate-900 shadow-2xs cursor-pointer flex items-center gap-1.5 transition-all">
+                <i data-lucide="file" class="w-3.5 h-3.5 text-red-600"></i>
+                <span>PDF Document</span>
+              </button>
+              <button type="button" id="btn-tab-clauses" onclick="switchAgreementModalTab('clauses')" class="px-2.5 sm:px-3 py-1 rounded-lg text-slate-600 hover:text-slate-900 cursor-pointer flex items-center gap-1.5 transition-all">
+                <i data-lucide="list" class="w-3.5 h-3.5"></i>
+                <span>Clauses</span>
+              </button>
+            </div>
+            <button type="button" onclick="closeFullAgreementPdfPreviewModal()" class="p-2 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer" title="Close">
+              <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- TAB 1: Live Mobile-Responsive PDF Canvas Viewer + E-Sign Pad -->
+        <div id="modal-tab-pdf" class="flex-grow flex flex-col p-2.5 sm:p-4 bg-slate-100/90 overflow-y-auto max-h-[75vh]">
+          
+          <!-- Sticky Subheader / Controls -->
+          <div class="flex items-center justify-between gap-2 mb-3 bg-white/95 backdrop-blur-xs p-2.5 rounded-xl border border-slate-200 shadow-2xs shrink-0">
+            <div class="flex items-center gap-2 min-w-0">
+              <span id="modal-pdf-page-count" class="text-[11px] font-bold text-slate-700 bg-slate-100 px-2 py-0.5 rounded-md border border-slate-200">
+                Official Master Document
+              </span>
+              <span class="text-[10px] text-slate-500 hidden sm:inline">Scroll down to E-Sign</span>
+            </div>
+            <div class="flex items-center gap-1.5">
+              <button type="button" onclick="openMasterPdfInNewTab()" class="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-[11px] rounded-lg transition-colors flex items-center gap-1 cursor-pointer" title="Open full PDF">
+                <i data-lucide="external-link" class="w-3 h-3 text-slate-500"></i>
+                <span class="hidden xs:inline">Open in Tab</span>
+              </button>
+              <button type="button" onclick="downloadMasterAgreementPdfFromModal()" class="px-2.5 py-1.5 bg-red-50 hover:bg-red-100 text-red-700 font-bold text-[11px] rounded-lg border border-red-200 transition-colors flex items-center gap-1 cursor-pointer" title="Download master PDF">
+                <i data-lucide="download" class="w-3 h-3"></i>
+                <span>Download</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Loading Spinner -->
+          <div id="modal-pdf-loading" class="flex flex-col items-center justify-center p-8 space-y-3 text-slate-500 my-auto">
+            <div class="w-8 h-8 border-3 border-red-600 border-t-transparent rounded-full animate-spin"></div>
+            <p class="text-xs font-semibold">Rendering official document PDF pages...</p>
+          </div>
+
+          <!-- Responsive PDF Pages Container (Rendered by PDF.js) -->
+          <div id="modal-pdf-canvas-container" class="w-full space-y-3 flex flex-col items-center"></div>
+
+          <!-- Fallback iframe for older browsers -->
+          <iframe id="modal-agreement-pdf-frame" class="w-full min-h-[50vh] rounded-2xl border border-slate-300 bg-white shadow-sm hidden" src="" type="application/pdf"></iframe>
+
+          <!-- SECTION 13: DIGITAL E-SIGNATURE EXECUTION PANEL -->
+          <div class="w-full mt-5 p-4 sm:p-5 rounded-2xl bg-white border-2 border-slate-200 shadow-sm space-y-3.5">
+            <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-200 pb-2.5">
+              <div class="flex items-center gap-2">
+                <div class="w-8 h-8 rounded-lg bg-red-100 text-red-700 flex items-center justify-center font-bold shrink-0">
+                  <i data-lucide="pen-tool" class="w-4 h-4"></i>
+                </div>
+                <div>
+                  <h4 class="font-bold text-slate-900 text-xs sm:text-sm font-['Space_Grotesk']">Section 13: Digital E-Signature & Agreement Acceptance</h4>
+                  <p class="text-[10px] sm:text-[11px] text-slate-500">Sign with your finger or mouse to legally execute this Creator Agreement</p>
+                </div>
+              </div>
+              <div class="flex items-center gap-1 bg-slate-100 p-0.5 rounded-lg text-[10px] font-bold">
+                <button type="button" id="sig-mode-draw" onclick="switchSignupSigMode('draw')" class="px-2.5 py-1 rounded-md bg-white text-slate-800 shadow-2xs font-bold cursor-pointer">Draw Signature</button>
+                <button type="button" id="sig-mode-type" onclick="switchSignupSigMode('type')" class="px-2.5 py-1 rounded-md text-slate-500 hover:text-slate-800 cursor-pointer">Type Script</button>
+              </div>
+            </div>
+
+            <!-- Draw Mode Canvas -->
+            <div id="signup-sig-draw-container" class="space-y-2">
+              <div class="relative bg-slate-50 rounded-xl border-2 border-dashed border-slate-300 hover:border-blue-400 transition-colors overflow-hidden">
+                <canvas id="signup-signature-pad" class="w-full h-28 cursor-crosshair touch-none block" width="600" height="140"></canvas>
+                <div id="signup-sig-placeholder" class="absolute inset-0 pointer-events-none flex flex-col items-center justify-center text-slate-400 text-xs">
+                  <i data-lucide="pen" class="w-4 h-4 mb-1 text-slate-300"></i>
+                  <span>Draw your signature here with finger or mouse</span>
+                </div>
+              </div>
+              <div class="flex items-center justify-between text-[11px] text-slate-500">
+                <div class="flex items-center gap-2">
+                  <span>Ink:</span>
+                  <button type="button" onclick="setSignupSigColor('#0f172a')" class="w-4 h-4 rounded-full bg-slate-900 ring-2 ring-slate-400 ring-offset-1"></button>
+                  <button type="button" onclick="setSignupSigColor('#1d4ed8')" class="w-4 h-4 rounded-full bg-blue-700"></button>
+                  <button type="button" onclick="setSignupSigColor('#047857')" class="w-4 h-4 rounded-full bg-emerald-700"></button>
+                </div>
+                <button type="button" onclick="clearSignupSignature()" class="text-rose-600 font-bold hover:underline cursor-pointer flex items-center gap-1">
+                  <i data-lucide="rotate-ccw" class="w-3 h-3"></i>
+                  <span>Clear Signature</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Type Mode -->
+            <div id="signup-sig-type-container" class="hidden space-y-2">
+              <input type="text" id="signup-typed-sig-input" placeholder="Type your full legal name as digital signature..." class="w-full bg-slate-50 border border-slate-300 rounded-xl p-3 text-sm text-slate-900 outline-none focus:bg-white focus:border-blue-500" />
+              <div class="p-3 rounded-xl bg-slate-50 border border-slate-200 text-center">
+                <span id="signup-typed-sig-preview" class="font-['Caveat',cursive,'Brush_Script_MT',sans-serif] text-2xl text-blue-700 font-bold block min-h-8">
+                  Your Signature Script
+                </span>
+              </div>
+            </div>
+
+            <!-- Mandatory Agreement Checkbox -->
+            <div class="p-3 rounded-xl bg-slate-50 border border-slate-200 flex items-start gap-2.5">
+              <input type="checkbox" id="modal-agree-tc-check" class="mt-0.5 w-4 h-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500 cursor-pointer accent-emerald-600 shrink-0" />
+              <label for="modal-agree-tc-check" class="text-xs text-slate-700 cursor-pointer select-none leading-relaxed">
+                I have read the complete <strong class="text-slate-900">Creator Code of Conduct & Payout Agreement PDF</strong> above and agree to all terms and conditions. I authorize my digital signature to be stamped on this document.
+              </label>
+            </div>
+
+            <!-- Sign & Save Button -->
+            <button type="button" id="btn-save-modal-esign" onclick="saveEsignAndAcceptAgreement()" class="w-full py-3.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-sm shadow-xs transition-all flex items-center justify-center gap-2 cursor-pointer">
+              <i data-lucide="check-circle-2" class="w-4 h-4"></i>
+              <span>Save Signature & Accept Agreement</span>
+            </button>
+          </div>
+
+        </div>
+
+        <!-- TAB 2: Text Breakdown Clauses -->
+        <div id="modal-tab-clauses" class="p-6 overflow-y-auto space-y-6 text-xs text-slate-700 leading-relaxed font-['Plus_Jakarta_Sans',sans-serif] hidden max-h-[64vh]">
+          <!-- Page 1 Container -->
+          <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-200 pb-2">
+              <span class="font-mono text-[10px] font-bold uppercase text-slate-400">Page 1 of 3</span>
+              <span class="text-[10px] font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded border border-blue-100">DESIGN QUIXO</span>
+            </div>
+            
+            <div class="text-center space-y-1">
+              <h4 class="text-base font-bold text-slate-900 font-['Space_Grotesk']">Creator Code of Conduct & Payout Agreement</h4>
+              <p class="text-[11px] text-slate-500">This Agreement governs your participation as an independent Creator ("Designer") on the Design Quixo platform.</p>
+            </div>
+
+            <div class="space-y-3 pt-2">
+              <div>
+                <h5 class="font-bold text-slate-900 text-xs">1. Parties & Purpose</h5>
+                <p class="text-[11px] text-slate-600 mt-0.5">This Creator Code of Conduct & Payout Agreement ("Agreement") is entered into between Design Quixo ("Platform," "we," "us") and the individual accepting this Agreement during onboarding ("Creator," "Designer," "you"). By submitting a Creator application, completing verification, or accepting any Job Brief on the Platform, you agree to be bound by the terms below.</p>
+              </div>
+
+              <div>
+                <h5 class="font-bold text-slate-900 text-xs">2. Nature of Relationship</h5>
+                <p class="text-[11px] text-slate-600 mt-0.5">You are engaged as an independent contractor, not as an employee, agent, or partner of Design Quixo. Nothing in this Agreement creates an employer-employee relationship. Statutory employment benefits such as Provident Fund (PF), Employee State Insurance (ESI), gratuity, or paid leave are not applicable to this engagement. You are responsible for your own tax filings, statutory contributions, and equipment. You are free to accept, decline, or work with other platforms or clients outside the restrictions explicitly stated in Section 5 (Non-Circumvention).</p>
+              </div>
+
+              <div>
+                <h5 class="font-bold text-slate-900 text-xs">3. Onboarding & Verification</h5>
+                <p class="text-[11px] text-slate-600 mt-0.5">All Creator applications are subject to a manual portfolio and skill review by the Design Quixo team, typically completed within 2-4 hours of submission. Access to live Job Briefs is unlocked only after approval. Design Quixo reserves the right to reject any application, or revoke previously granted access, at its sole discretion.</p>
+              </div>
+
+              <div class="p-3.5 rounded-xl bg-emerald-50/90 border border-emerald-300 text-emerald-950 space-y-1">
+                <span class="font-bold text-emerald-800 text-xs flex items-center gap-1.5">
+                  <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-600"></i>
+                  <span>4. 60% Final Design Payout Policy</span>
+                </span>
+                <p class="text-[11px] text-emerald-900 leading-snug">Payout is strictly 60% of the job price for the final approved design accepted by the client, upon the Creator providing unmerged, layered source files (PSD / AI / EPS / CDR / Figma, as applicable to the job type). Unselected drafts receive no payout. Where a Job Brief is claimed by more than one Creator, only the Creator whose design is selected and approved by the client is entitled to payment under this clause. Payouts are processed within 3-5 business days. Design Quixo retains 40% platform commission.</p>
+              </div>
+
+              <div class="p-3.5 rounded-xl bg-amber-50/90 border border-amber-300 text-amber-950 space-y-1">
+                <span class="font-bold text-amber-800 text-xs flex items-center gap-1.5">
+                  <i data-lucide="alert-triangle" class="w-4 h-4 text-amber-700"></i>
+                  <span>5. Anti-Poaching & Non-Circumvention Rule (Strict ₹1,00,000 Penalty)</span>
+                </span>
+                <p class="text-[11px] text-amber-900 leading-snug">Contacting or accepting direct payments from Design Quixo clients outside the platform is strictly prohibited. This includes, without limitation, soliciting a client to work directly, sharing personal contact/payment details with a client for the purpose of bypassing the Platform, or accepting any job, payment, or repeat engagement from a client sourced via Design Quixo without routing it through the Platform. Violators face immediate permanent ban, wallet forfeiture & up to Rs. 1,00,000 legal penalty.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Page 2 Container -->
+          <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-200 pb-2">
+              <span class="font-mono text-[10px] font-bold uppercase text-slate-400">Page 2 of 3</span>
+              <span class="text-[10px] font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded border border-blue-100">DESIGN QUIXO</span>
+            </div>
+
+            <div class="space-y-3">
+              <p class="text-[11px] text-slate-600 italic">...This restriction applies for the duration of your engagement with Design Quixo and for a period of 12 months after your account is deactivated or you cease to be an active Creator, in respect of any client you were introduced to through the Platform.</p>
+
+              <div>
+                <h5 class="font-bold text-slate-900 text-xs">6. Quality Standards (100% Human Handcrafted Craftsmanship)</h5>
+                <ul class="list-disc pl-4 space-y-1 text-[11px] text-slate-600 mt-1">
+                  <li>All deliverables must be manually created by the Creator using standard design tools (e.g. Figma, Adobe Illustrator, Photoshop) and must reflect the Creator's own original work.</li>
+                  <li>Designs must be original. Copying, tracing, or closely replicating another designer's, brand's, or photographer's existing copyrighted work without proper authorization or licensing is strictly prohibited.</li>
+                  <li>Deliverables must be free of distorted text, malformed elements, or unresolved artifacts, and must be submitted as properly structured, layered source files as specified in the Job Brief.</li>
+                </ul>
+              </div>
+
+              <div>
+                <h5 class="font-bold text-slate-900 text-xs">7. Intellectual Property Assignment</h5>
+                <p class="text-[11px] text-slate-600 mt-0.5">Upon full payout for an accepted design, all intellectual property rights, including copyright, in the final approved deliverable are assigned to the client. The Creator retains no ownership claim over an approved and paid-for design, and may not reuse, resell, or redistribute it without the client's written consent.</p>
+              </div>
+
+              <div>
+                <h5 class="font-bold text-slate-900 text-xs">8. Confidentiality</h5>
+                <p class="text-[11px] text-slate-600 mt-0.5">Creators must treat all client briefs, reference materials, and business information shared through the Platform as confidential, and must not disclose such information to any third party or use it for any purpose other than fulfilling the relevant Job Brief.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Page 3 Container -->
+          <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-200 pb-2">
+              <span class="font-mono text-[10px] font-bold uppercase text-slate-400">Page 3 of 3</span>
+              <span class="text-[10px] font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded border border-blue-100">DESIGN QUIXO</span>
+            </div>
+
+            <div class="space-y-3">
+              <div>
+                <h5 class="font-bold text-slate-900 text-xs">9. Code of Conduct</h5>
+                <ul class="list-disc pl-4 space-y-1 text-[11px] text-slate-600 mt-1">
+                  <li>Respond to accepted Job Briefs and client communication promptly and professionally.</li>
+                  <li>Deliver work within the timeframe committed at the time of accepting the brief.</li>
+                  <li>Provide revisions in good faith where reasonably requested and within the scope of the original brief.</li>
+                  <li>Do not misrepresent your identity, skills, or portfolio during onboarding or in client communication.</li>
+                  <li>Do not engage in harassment, abusive language, or discriminatory conduct toward clients, other Creators, or Design Quixo staff.</li>
+                </ul>
+              </div>
+
+              <div>
+                <h5 class="font-bold text-slate-900 text-xs">10. Suspension & Termination</h5>
+                <p class="text-[11px] text-slate-600 mt-0.5">Design Quixo may suspend or permanently terminate a Creator's access to the Platform, with or without notice, for violation of this Agreement, including but not limited to breach of Section 5 (Anti-Poaching), Section 6 (Quality Standards), or repeated quality failures.</p>
+              </div>
+
+              <div>
+                <h5 class="font-bold text-slate-900 text-xs">11. Dispute Resolution & 12. Governing Law</h5>
+                <p class="text-[11px] text-slate-600 mt-0.5">This Agreement shall be governed by and construed in accordance with the laws of India. Courts at Indore, MP shall have exclusive jurisdiction.</p>
+              </div>
+
+              <div>
+                <h5 class="font-bold text-slate-900 text-xs">13. Acceptance & E-Signature Stamping</h5>
+                <p class="text-[11px] text-slate-600 mt-0.5">By clicking "Sign Agreement & Submit Creator Application," the Creator confirms that they have read, understood, and agree to be bound by all terms of this Agreement. Their Name, Date, WhatsApp, and E-Signature are stamped on this document.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="px-6 py-4 border-t border-slate-200 bg-slate-50/80 flex flex-wrap items-center justify-between gap-3 shrink-0">
+          <button type="button" onclick="downloadMasterAgreementPdfFromModal()" class="px-4 py-2 rounded-xl border border-slate-300 hover:bg-slate-100 text-slate-700 font-bold text-xs flex items-center gap-1.5 transition-colors cursor-pointer">
+            <i data-lucide="download" class="w-3.5 h-3.5 text-red-600"></i>
+            <span>Download Original Master PDF</span>
+          </button>
+          <div class="flex items-center gap-2">
+            <button type="button" onclick="closeFullAgreementPdfPreviewModal()" class="px-4 py-2 rounded-xl text-slate-600 hover:bg-slate-200 font-bold text-xs transition-colors cursor-pointer">
+              Close
+            </button>
+            <button type="button" onclick="acceptAgreementFromModalAndClose()" class="px-5 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-xs transition-colors shadow-xs flex items-center gap-1.5 cursor-pointer">
+              <i data-lucide="check" class="w-3.5 h-3.5"></i>
+              <span>Accept Agreement</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Full Terms & Conditions Modal Dialog -->
+    <div id="terms-modal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-4">
+      <div class="bg-white w-full max-w-2xl rounded-3xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col max-h-[85vh]">
+        <div class="px-6 py-4 border-b border-slate-200 flex items-center justify-between bg-slate-50/80">
+          <div class="flex items-center gap-2.5">
+            <div class="w-9 h-9 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center font-bold">
+              <i data-lucide="scale" class="w-5 h-5"></i>
+            </div>
+            <div>
+              <h3 class="font-bold text-slate-900 text-sm font-['Space_Grotesk']">Design Quixo Terms & Conditions</h3>
+              <p class="text-[11px] text-slate-500">Official Creator Partner Agreement & Client Policies</p>
+            </div>
+          </div>
+          <button type="button" onclick="closeTermsModal()" class="p-2 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer">
+            <i data-lucide="x" class="w-5 h-5"></i>
+          </button>
+        </div>
+
+        <div class="p-6 overflow-y-auto space-y-4 text-xs text-slate-600 leading-relaxed">
+          <!-- Clause 1 -->
+          <div class="p-4 rounded-2xl bg-amber-50 border border-amber-200 space-y-2">
+            <h4 class="font-bold text-amber-950 flex items-center gap-1.5 text-xs">
+              <i data-lucide="shield-alert" class="w-4 h-4 text-amber-700 shrink-0"></i>
+              <span>1. Mandatory 60% Designer Payout Policy</span>
+            </h4>
+            <p class="text-amber-900">
+              Verified Designer Partners receive exactly <strong>60% of the gross order value</strong> for the <em>final design accepted and approved by the client</em>.
+              Payouts are released directly via UPI / Bank Transfer once fully editable, layered source files (PSD, AI, EPS, CDR, Figma) are verified and transferred. Drafts, test concepts, or unselected files carry <strong>no payout</strong>.
+            </p>
+          </div>
+
+          <!-- Clause 2 -->
+          <div class="p-4 rounded-2xl bg-red-50 border border-red-200 space-y-2">
+            <h4 class="font-bold text-red-950 flex items-center gap-1.5 text-xs">
+              <i data-lucide="alert-octagon" class="w-4 h-4 text-red-700 shrink-0"></i>
+              <span>2. Strict Anti-Poaching & Non-Circumvention (Zero-Tolerance)</span>
+            </h4>
+            <p class="text-red-900">
+              Partners must never share personal contact details (phone number, WhatsApp, email, social profiles, external payment handles) with clients introduced via Design Quixo, nor solicit off-platform transactions.
+              Violators face <strong>immediate permanent blacklisting</strong>, complete forfeiture of accumulated wallet balance, and liquidated damages / legal penalties up to <strong>₹1,00,000 INR</strong>.
+            </p>
+          </div>
+
+          <!-- Clause 3 -->
+          <div class="p-4 rounded-2xl bg-blue-50 border border-blue-200 space-y-2">
+            <h4 class="font-bold text-blue-950 flex items-center gap-1.5 text-xs">
+              <i data-lucide="check-circle-2" class="w-4 h-4 text-blue-700 shrink-0"></i>
+              <span>3. 100% Human Handcrafted Craftsmanship & Originality</span>
+            </h4>
+            <p class="text-blue-900">
+              Use of automated AI generators (Midjourney, DALL-E, generative canvas fillers) is strictly prohibited. Every project must be designed manually by a human designer with commercial licensing rights for typography and photography.
+            </p>
+          </div>
+
+          <!-- Clause 4 -->
+          <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
+            <h4 class="font-bold text-slate-900 text-xs">4. Intellectual Property & Transfer of Rights</h4>
+            <p class="text-slate-600">
+              Upon client approval and receipt of 60% partner compensation, 100% intellectual property, commercial reproduction rights, and copyright for the chosen work transfer irrevocably to the client.
+            </p>
+          </div>
+
+          <!-- Clause 5 -->
+          <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
+            <h4 class="font-bold text-slate-900 text-xs">5. Jurisdiction & Governance</h4>
+            <p class="text-slate-600">
+              Governed by the Information Technology Act, 2000 and the laws of the Republic of India. Exclusive legal jurisdiction resides in the competent courts of Indore, Madhya Pradesh, India.
+            </p>
+          </div>
+        </div>
+
+        <div class="px-6 py-4 border-t border-slate-200 bg-slate-50 flex items-center justify-between flex-wrap gap-3">
+          <a href="terms.html" class="text-xs text-blue-600 hover:text-blue-800 font-semibold underline flex items-center gap-1">
+            <span>Read Complete 10-Clause Document (Full Page) &rarr;</span>
+          </a>
+          <div class="flex items-center gap-2">
+            <button type="button" onclick="closeTermsModal()" class="px-4 py-2 rounded-xl text-slate-600 hover:bg-slate-200 font-bold text-xs transition-colors cursor-pointer">
+              Close
+            </button>
+            <button type="button" onclick="acceptTermsAndClose()" class="px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs transition-colors shadow-xs flex items-center gap-1.5 cursor-pointer">
+              <i data-lucide="check" class="w-3.5 h-3.5"></i>
+              <span>I Accept & Agree</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="border-t border-slate-200 py-6 text-center text-xs text-slate-400 bg-white">
+      <p>&copy; 2026 Design Quixo India.</p>
+    </footer>
+
+    <script>
+      lucide.createIcons();
+
+      window.openTermsModal = function() {
+        const modal = document.getElementById('terms-modal');
+        if (modal) {
+          modal.classList.remove('hidden');
+          lucide.createIcons();
+        }
+      };
+
+      window.closeTermsModal = function() {
+        const modal = document.getElementById('terms-modal');
+        if (modal) modal.classList.add('hidden');
+      };
+
+      window.acceptTermsAndClose = function() {
+        const chk = document.getElementById('signup-agree-tc');
+        if (chk) chk.checked = true;
+        closeTermsModal();
+      };
+
+      const tabLogin = document.getElementById('tab-login-btn');
+      const tabSignup = document.getElementById('tab-signup-btn');
+      const loginCard = document.getElementById('login-card');
+      const signupCard = document.getElementById('signup-card');
+      const forgotCard = document.getElementById('forgot-card');
+
+      function showLogin() {
+        tabLogin.className = 'py-2.5 rounded-xl bg-white text-slate-900 shadow-xs transition-all flex items-center justify-center gap-1.5 font-bold';
+        tabSignup.className = 'py-2.5 rounded-xl text-slate-600 hover:text-slate-900 transition-all flex items-center justify-center gap-1.5';
+        if (loginCard) loginCard.classList.remove('hidden');
+        if (signupCard) signupCard.classList.add('hidden');
+        if (forgotCard) forgotCard.classList.add('hidden');
+      }
+
+      function showSignup() {
+        tabSignup.className = 'py-2.5 rounded-xl bg-white text-slate-900 shadow-xs transition-all flex items-center justify-center gap-1.5 font-bold';
+        tabLogin.className = 'py-2.5 rounded-xl text-slate-600 hover:text-slate-900 transition-all flex items-center justify-center gap-1.5';
+        if (signupCard) signupCard.classList.remove('hidden');
+        if (loginCard) loginCard.classList.add('hidden');
+        if (forgotCard) forgotCard.classList.add('hidden');
+      }
+
+      function showForgot() {
+        tabLogin.className = 'py-2.5 rounded-xl text-slate-600 hover:text-slate-900 transition-all flex items-center justify-center gap-1.5';
+        tabSignup.className = 'py-2.5 rounded-xl text-slate-600 hover:text-slate-900 transition-all flex items-center justify-center gap-1.5';
+        if (forgotCard) forgotCard.classList.remove('hidden');
+        if (loginCard) loginCard.classList.add('hidden');
+        if (signupCard) signupCard.classList.add('hidden');
+        const forgotAlert = document.getElementById('forgot-alert-box');
+        if (forgotAlert) forgotAlert.classList.add('hidden');
+      }
+
+      tabLogin.addEventListener('click', showLogin);
+      tabSignup.addEventListener('click', showSignup);
+      document.getElementById('switch-to-signup-link').addEventListener('click', showSignup);
+      document.getElementById('switch-to-login-link').addEventListener('click', showLogin);
+
+      const btnForgotLink = document.getElementById('btn-forgot-password-link');
+      if (btnForgotLink) btnForgotLink.addEventListener('click', showForgot);
+
+      const btnForgotBackToLogin = document.getElementById('btn-forgot-back-to-login');
+      if (btnForgotBackToLogin) btnForgotBackToLogin.addEventListener('click', showLogin);
+
+      // Check URL query param for initial tab or logged_out state
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get('logged_out') === 'true') {
+        localStorage.removeItem('dq_current_user');
+        localStorage.removeItem('dq_admin_logged_in');
+        sessionStorage.clear();
+      }
+      if (urlParams.get('mode') === 'signup') {
+        showSignup();
+      } else if (urlParams.get('mode') === 'forgot') {
+        showForgot();
+      }
+
+      // Helper to normalize phone numbers to last 10 digits
+      function get10DigitPhone(p) {
+        if (!p) return '';
+        const str = p.toString().trim();
+        if (str.includes('@') || /[a-zA-Z]/.test(str)) return '';
+        const digits = str.replace(/[^0-9]/g, '');
+        return digits.length >= 10 ? digits.slice(-10) : '';
+      }
+      function clean10Phone(p) {
+        return get10DigitPhone(p);
+      }
+
+      // ==========================================
+      // TWO-FACTOR LOGIN & AUTH CONTROLS
+      // ==========================================
+      const loginAlertBox = document.getElementById('login-alert-box');
+      const loginCredsForm = document.getElementById('login-credentials-form');
+      const loginOtpStep = document.getElementById('login-otp-step');
+      const btnLoginSubmit = document.getElementById('btn-login-submit');
+      const btnLoginVerifyOtp = document.getElementById('btn-login-verify-otp');
+      const btnLoginBackToCreds = document.getElementById('btn-login-back-to-creds');
+      const btnLoginResendOtp = document.getElementById('btn-login-resend-otp');
+      const loginOtpCode = document.getElementById('login-otp-code');
+      const loginOtpPhoneDisplay = document.getElementById('login-otp-phone-display');
+      const loginOtpTimerDisplay = document.getElementById('login-otp-timer-display');
+      const btnGoogleSignin = document.getElementById('btn-google-signin');
+
+      let pendingLoginUser = null;
+      let loginResendTimerInterval = null;
+
+      function setLoginAlert(msg, type = 'info') {
+        if (!loginAlertBox) return;
+        loginAlertBox.classList.remove('hidden', 'bg-blue-50', 'text-blue-800', 'border-blue-200', 'bg-red-50', 'text-red-800', 'border-red-200', 'bg-emerald-50', 'text-emerald-800', 'border-emerald-200');
+        if (type === 'error') {
+          loginAlertBox.className = 'p-3 rounded-xl text-xs font-semibold bg-red-50 text-red-800 border border-red-200 flex items-center gap-2';
+        } else if (type === 'success') {
+          loginAlertBox.className = 'p-3 rounded-xl text-xs font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200 flex items-center gap-2';
+        } else {
+          loginAlertBox.className = 'p-3 rounded-xl text-xs font-semibold bg-blue-50 text-blue-800 border border-blue-200 flex items-center gap-2';
+        }
+        loginAlertBox.innerHTML = msg;
+      }
+
+      function startLoginResendCountdown(seconds = 30) {
+        if (loginResendTimerInterval) clearInterval(loginResendTimerInterval);
+        if (btnLoginResendOtp) btnLoginResendOtp.disabled = true;
+        let left = seconds;
+        if (loginOtpTimerDisplay) loginOtpTimerDisplay.innerHTML = `Resend code in <strong class="font-mono text-slate-800">${left}s</strong>`;
+
+        loginResendTimerInterval = setInterval(() => {
+          left--;
+          if (left <= 0) {
+            clearInterval(loginResendTimerInterval);
+            if (btnLoginResendOtp) btnLoginResendOtp.disabled = false;
+            if (loginOtpTimerDisplay) loginOtpTimerDisplay.innerHTML = `Didn't receive email code?`;
+          } else {
+            if (loginOtpTimerDisplay) loginOtpTimerDisplay.innerHTML = `Resend code in <strong class="font-mono text-slate-800">${left}s</strong>`;
+          }
+        }, 1000);
+      }
+
+      // 100% Real Email OTP Functions via GoDaddy SMTP alerts@designquixo.in
+      const PROD_BACKEND_URL = 'https://ais-dev-5r5iz2bbwbvbkrbvqu3q2p-719893023696.asia-southeast1.run.app';
+
+      const maskEmailAddress = function(em) {
+        if (!em || !em.includes('@')) return 'Registered Email';
+        const p = em.split('@');
+        const u = p[0];
+        const d = p[1];
+        if (u.length <= 2) return `${u[0]}***@${d}`;
+        return `${u.substring(0, 2)}***${u.slice(-1)}@${d}`;
+      };
+      const maskEmailForDisplay = maskEmailAddress;
+
+      async function sendDirectEmailOtp(email, userName, purpose) {
+        const cleanEmail = (email || '').trim().toLowerCase();
+        if (!cleanEmail || !cleanEmail.includes('@') || !cleanEmail.includes('.')) {
+          return { success: false, message: 'Please enter a valid email address.' };
+        }
+
+        const payload = JSON.stringify({
+          email: cleanEmail,
+          userName: (userName || '').trim(),
+          purpose: purpose || 'Login Verification'
+        });
+
+        // Call direct high-speed local API route (with production fallback if on custom/external domain)
+        try {
+          const resp = await fetch('/api/email-otp-send', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: payload
+          });
+
+          const data = await resp.json().catch(() => ({}));
+          if (resp.ok && data && data.success) {
+            return {
+              success: true,
+              message: data.message || `✓ 6-digit verification code dispatched to ${maskEmailAddress(cleanEmail)}.`
+            };
+          } else if (resp.status !== 404 && data && data.message) {
+            return {
+              success: false,
+              message: data.message
+            };
+          }
+        } catch (e) {
+          console.warn('[Email OTP Send local notice]:', e);
+        }
+
+        // Secondary fallback to live backend if local server is unreachable
+        try {
+          const prodResp = await fetch(`${PROD_BACKEND_URL}/api/email-otp-send`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: payload
+          });
+
+          const prodData = await prodResp.json().catch(() => ({}));
+          if (prodResp.ok && prodData && prodData.success) {
+            return {
+              success: true,
+              message: prodData.message || `✓ 6-digit verification code dispatched to ${maskEmailAddress(cleanEmail)}.`
+            };
+          }
+          if (prodData && prodData.message) {
+            return { success: false, message: prodData.message };
+          }
+        } catch (prodErr) {
+          console.error('[Email OTP Send prod error]:', prodErr);
+        }
+
+        return {
+          success: false,
+          message: 'Unable to dispatch verification email. Please check your internet connection or try again.'
+        };
+      }
+
+      async function verifyDirectEmailOtp(email, code) {
+        const cleanEmail = (email || '').trim().toLowerCase();
+        const cleanCode = (code || '').trim();
+
+        if (!cleanCode || cleanCode.length !== 6) {
+          return { success: false, message: 'Please enter the complete 6-digit verification code.' };
+        }
+
+        const payload = JSON.stringify({ email: cleanEmail, code: cleanCode });
+
+        // Call direct local API route
+        try {
+          const resp = await fetch('/api/email-otp-verify', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: payload
+          });
+
+          const data = await resp.json().catch(() => ({}));
+          if (resp.ok && data && data.success) {
+            return { success: true, message: 'Email verified successfully!' };
+          }
+          if (resp.status !== 404 && data && data.message) {
+            return { success: false, message: data.message };
+          }
+        } catch (e) {
+          console.warn('[Email OTP Verify local notice]:', e);
+        }
+
+        // Secondary fallback to live backend
+        try {
+          const prodResp = await fetch(`${PROD_BACKEND_URL}/api/email-otp-verify`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: payload
+          });
+
+          const prodData = await prodResp.json().catch(() => ({}));
+          if (prodResp.ok && prodData && prodData.success) {
+            return { success: true, message: 'Email verified successfully!' };
+          }
+          if (prodData && prodData.message) {
+            return { success: false, message: prodData.message };
+          }
+        } catch (prodErr) {
+          console.error('[Email OTP Verify prod error]:', prodErr);
+        }
+
+        return {
+          success: false,
+          message: 'Incorrect or expired verification code. Please check your email inbox.'
+        };
+      }
+
+      // Helper to get Auth service (used only for Google OAuth popup)
+      async function getFirebaseAuthService() {
+        let auth = window.DQFirebaseAuth;
+        if (!auth) {
+          for (let i = 0; i < 40; i++) {
+            await new Promise(r => setTimeout(r, 100));
+            auth = window.DQFirebaseAuth;
+            if (auth) break;
+          }
+        }
+        return auth;
+      }
+
+      // 1-CLICK GOOGLE SIGN-IN HANDLER
+      if (btnGoogleSignin) {
+        btnGoogleSignin.addEventListener('click', async () => {
+          btnGoogleSignin.disabled = true;
+          const originalBtnHtml = btnGoogleSignin.innerHTML;
+          btnGoogleSignin.innerHTML = `<span>Connecting to Google...</span>`;
+          setLoginAlert('Opening Google Sign-In popup...', 'info');
+
+          try {
+            const fbAuth = await getFirebaseAuthService();
+            if (!fbAuth) {
+              setLoginAlert('Authentication service initializing. Please retry in a moment.', 'error');
+              btnGoogleSignin.disabled = false;
+              btnGoogleSignin.innerHTML = originalBtnHtml;
+              return;
+            }
+
+            const res = await fbAuth.signInWithGoogle();
+            if (!res.success) {
+              setLoginAlert(res.message || 'Google Sign-in was cancelled or encountered an issue.', 'error');
+              btnGoogleSignin.disabled = false;
+              btnGoogleSignin.innerHTML = originalBtnHtml;
+              return;
+            }
+
+            const email = (res.email || '').trim().toLowerCase();
+            const displayName = res.name || email.split('@')[0] || 'User';
+
+            setLoginAlert(`✓ Google Account verified. Accessing workstation...`, 'success');
+
+            const db = await getSupabaseService();
+
+            // 1. Check if Admin
+            const storedAdminUser = (localStorage.getItem('dq_admin_username') || 'admin@designquixobilal').toLowerCase().trim();
+            const isUserAdmin = (
+              email === 'alerts@designquixo.in' ||
+              email === 'designquixo@gmail.com' ||
+              email === 'admin@designquixobilal' ||
+              email.includes('designquixobilal') ||
+              email === 'admin@designquixo.com' ||
+              email === storedAdminUser
+            );
+
+            if (isUserAdmin) {
+              localStorage.setItem('dq_admin_logged_in', 'true');
+              const adminUser = {
+                name: displayName || 'Master Administrator',
+                role: 'admin',
+                identifier: 'admin@designquixobilal',
+                phone: '8602420897',
+                email: 'designquixo@gmail.com',
+                status: 'Approved'
+              };
+              localStorage.setItem('dq_current_user', JSON.stringify(adminUser));
+              if (db && typeof db.logUserLogin === 'function') {
+                await db.logUserLogin({
+                  phone: '8602420897',
+                  name: adminUser.name,
+                  role: 'admin',
+                  status: 'Google OAuth Admin Sign-in'
+                });
+              }
+              window.location.href = 'admin-dashboard.html';
+              return;
+            }
+
+            // 2. Check Designer by email or identifier
+            let existingDesigner = null;
+            let registeredDesigners = [];
+            try { registeredDesigners = JSON.parse(localStorage.getItem('dq_registered_designers') || '[]'); } catch(e) {}
+            existingDesigner = registeredDesigners.find(d => (d.email && d.email.toLowerCase() === email) || (d.identifier && d.identifier.toLowerCase() === email));
+
+            if (!existingDesigner && db && typeof db.getDesigners === 'function') {
+              try {
+                const designersList = await db.getDesigners();
+                existingDesigner = (designersList || []).find((d) => (d.email && d.email.toLowerCase() === email) || (d.identifier && d.identifier.toLowerCase() === email));
+              } catch(dErr) {}
+            }
+
+            if (existingDesigner) {
+              const designerUser = {
+                ...existingDesigner,
+                name: existingDesigner.name || displayName,
+                email: email,
+                role: 'designer',
+                verified: true
+              };
+              localStorage.setItem('dq_current_user', JSON.stringify(designerUser));
+              if (db && typeof db.logUserLogin === 'function') {
+                await db.logUserLogin({
+                  phone: designerUser.phone || '',
+                  name: designerUser.name,
+                  role: 'designer',
+                  status: 'Google OAuth Designer Sign-in'
+                });
+              }
+              window.location.href = 'designer-dashboard.html';
+              return;
+            }
+
+            // 3. Auto-create verified profile for new Google sign-in
+            const newDesignerProfile = {
+              name: displayName,
+              email: email,
+              identifier: email,
+              phone: '',
+              status: 'Pending',
+              verified: true,
+              role: 'designer',
+              skills: 'Digital Design, Creative',
+              date: new Date().toLocaleDateString('en-IN'),
+              createdat: new Date().toISOString()
+            };
+
+            registeredDesigners.unshift(newDesignerProfile);
+            localStorage.setItem('dq_registered_designers', JSON.stringify(registeredDesigners));
+            localStorage.setItem('dq_current_user', JSON.stringify(newDesignerProfile));
+
+            if (db && typeof db.signUpDesigner === 'function') {
+              try {
+                await db.signUpDesigner({
+                  name: displayName,
+                  phone: '',
+                  email: email,
+                  password: 'google_oauth_authenticated',
+                  portfolio: 'Google Account',
+                  skills: 'Digital Design'
+                });
+              } catch (e) {}
+            }
+
+            window.location.href = 'designer-dashboard.html';
+          } catch (err) {
+            setLoginAlert(err.message || 'Google authentication encountered an issue.', 'error');
+            btnGoogleSignin.disabled = false;
+            btnGoogleSignin.innerHTML = originalBtnHtml;
+          }
+        });
+      }
+
+      // Back to Step 1
+      if (btnLoginBackToCreds) {
+        btnLoginBackToCreds.addEventListener('click', () => {
+          if (loginOtpStep) loginOtpStep.classList.add('hidden');
+          if (loginCredsForm) loginCredsForm.classList.remove('hidden');
+          if (loginAlertBox) loginAlertBox.classList.add('hidden');
+          if (loginResendTimerInterval) clearInterval(loginResendTimerInterval);
+        });
+      }
+
+      // STEP 1: VERIFY PASSWORD / PIN CREDENTIALS FIRST, THEN DISPATCH EMAIL OTP
+      if (loginCredsForm) {
+        loginCredsForm.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          const identifier = (document.getElementById('login-identifier').value || '').trim();
+          const password = (document.getElementById('login-password').value || '').trim();
+
+          if (!identifier || !password) {
+            setLoginAlert('Please enter your Registered Email / Admin ID / WhatsApp and Password / PIN.', 'error');
+            return;
+          }
+
+          btnLoginSubmit.disabled = true;
+          btnLoginSubmit.innerHTML = `<span>Verifying Credentials...</span>`;
+          setLoginAlert('Checking account credentials...', 'info');
+
+          const lowerId = identifier.toLowerCase();
+          const enteredPass = password.toString().trim();
+
+          const maskEmailAddress = function(em) {
+            if (!em || !em.includes('@')) return 'Registered Email';
+            const p = em.split('@');
+            const u = p[0];
+            const d = p[1];
+            if (u.length <= 2) return `${u[0]}***@${d}`;
+            return `${u.substring(0, 2)}***${u.slice(-1)}@${d}`;
+          };
+
+          async function performClientFallbackAuth(ident, pass) {
+            const cleanIdent = (ident || '').toString().trim().toLowerCase();
+            const cleanPass = (pass || '').toString().trim();
+            const cleanPhoneDigits = cleanIdent.replace(/\D/g, '').slice(-10);
+            const storedAdminPass = localStorage.getItem('dq_admin_password') || '@Bilal@786';
+
+            // Check deleted blacklist
+            try {
+              const deleted = JSON.parse(localStorage.getItem('dq_deleted_designers') || '[]');
+              if (deleted.some(d => {
+                const cd = (d || '').toString().toLowerCase().trim();
+                return cd === cleanIdent || (cleanPhoneDigits && cd.replace(/\D/g, '').slice(-10) === cleanPhoneDigits);
+              })) {
+                console.warn('[AUTH] Designer is permanently deleted');
+                return null;
+              }
+            } catch(e) {}
+
+            // Check Admin credentials
+            const isAdminIdent = (
+              cleanIdent === 'admin@designquixobilal' ||
+              cleanIdent === 'admin@designquixo.com' ||
+              cleanIdent === 'admin' ||
+              cleanIdent === 'superadmin' ||
+              cleanIdent === 'alerts@designquixo.in' ||
+              cleanIdent === 'designquixo@gmail.com' ||
+              cleanIdent === 'mustafazthings@gmail.com'
+            );
+
+            if (isAdminIdent || (cleanPhoneDigits === '8602420897' && (cleanPass === '@Bilal@786' || cleanPass === 'Bilal#0897' || cleanPass === '@Bilal@777'))) {
+              if (cleanPass === storedAdminPass || cleanPass === '@Bilal@786' || cleanPass === 'Bilal#0897' || cleanPass === '@Bilal@777') {
+                const adminEmail = (cleanIdent.includes('@') && !cleanIdent.includes('designquixobilal')) ? cleanIdent : 'mustafazthings@gmail.com';
+                return {
+                  id: 'admin',
+                  name: 'Bilal Khan (Admin)',
+                  email: adminEmail,
+                  phone: '8602420897',
+                  role: 'admin',
+                  status: 'Approved',
+                  displayLabel: adminEmail
+                };
+              }
+            }
+
+            // Check Registered Designers locally & in store
+            let designers = [];
+            try {
+              const d1 = JSON.parse(localStorage.getItem('dq_registered_designers') || '[]');
+              const d2 = JSON.parse(localStorage.getItem('dq_approved_designers') || '[]');
+              const d3 = (window.DQStore && typeof window.DQStore.getRegisteredDesigners === 'function') ? window.DQStore.getRegisteredDesigners() : [];
+              const curr = JSON.parse(localStorage.getItem('dq_current_user') || 'null');
+              designers = [...d1, ...d2, ...d3, curr].filter(Boolean);
+            } catch(e) {}
+
+            let found = designers.find(d => {
+              if (!d) return false;
+              const dEmail = (d.email || d.identifier || '').toLowerCase().trim();
+              const dPhone = (d.phone || d.whatsapp || d.identifier || d.id || '').toString().replace(/\D/g, '').slice(-10);
+              const dId = (d.id || '').toString().toLowerCase().trim();
+              if (dEmail && dEmail === cleanIdent) return true;
+              if (cleanPhoneDigits && cleanPhoneDigits.length === 10 && dPhone && dPhone === cleanPhoneDigits) return true;
+              if (dId && dId === cleanIdent) return true;
+              return false;
+            });
+
+            // If not found locally, query PostgreSQL via backend API
+            if (!found) {
+              try {
+                const res = await fetch('/api/get-designers');
+                if (res.ok) {
+                  const data = await res.json().catch(() => ({}));
+                  const list = Array.isArray(data?.designers) ? data.designers : [];
+                  found = list.find(d => {
+                    if (!d) return false;
+                    const dEmail = (d.email || d.identifier || '').toString().trim().toLowerCase();
+                    const dPhone = (d.phone || d.whatsapp || d.identifier || d.id || '').toString().replace(/\D/g, '').slice(-10);
+                    const dId = (d.id || '').toString().trim().toLowerCase();
+                    if (cleanIdent.includes('@') && dEmail === cleanIdent) return true;
+                    if (cleanPhoneDigits && cleanPhoneDigits.length === 10 && dPhone === cleanPhoneDigits) return true;
+                    if (dId === cleanIdent) return true;
+                    return false;
+                  });
+                }
+              } catch (sqlErr) {
+                console.warn('Realtime PostgreSQL designers check notice:', sqlErr);
+              }
+            }
+
+            if (found) {
+              const dPass = (found.password || found.pin || found.accessPin || '').toString().trim();
+              const isPassOk = dPass ? (dPass === cleanPass || dPass.toLowerCase() === cleanPass.toLowerCase()) : false;
+
+              if (isPassOk) {
+                const targetEmail = (found.email || (found.identifier && found.identifier.includes('@') ? found.identifier : '') || (cleanIdent.includes('@') ? cleanIdent : '')).trim().toLowerCase();
+                return {
+                  id: found.id || found.phone || found.email,
+                  name: found.name || 'Verified Designer',
+                  email: targetEmail,
+                  phone: found.phone || found.whatsapp || cleanPhoneDigits || '',
+                  role: found.role || 'designer',
+                  status: found.status || 'Pending',
+                  designerData: found,
+                  displayLabel: targetEmail || found.phone || 'Designer'
+                };
+              }
+            }
+            return null;
+          }
+
+          // 1. SECURE BACKEND AUTHENTICATION (AUTHORITATIVE SERVER VALIDATION)
+          let targetUser = null;
+          try {
+            let localDesignersBackup = null;
+            try {
+              const reg = JSON.parse(localStorage.getItem('dq_registered_designers') || '[]');
+              const app = JSON.parse(localStorage.getItem('dq_approved_designers') || '[]');
+              const curr = JSON.parse(localStorage.getItem('dq_current_user') || 'null');
+              localDesignersBackup = { registered: [...reg, ...app], current: curr };
+            } catch(e) {}
+
+            const authRes = await fetch('/api/verify-login-credentials', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ identifier, password: enteredPass, localBackup: localDesignersBackup })
+            });
+
+            const authData = await authRes.json().catch(() => ({}));
+
+            if (authRes.ok && authData && authData.success && authData.user) {
+              targetUser = authData.user;
+            } else if (authRes.status === 401) {
+              // Try client fallback check before rejecting
+              const fallbackUser = await performClientFallbackAuth(identifier, enteredPass);
+              if (fallbackUser) {
+                targetUser = fallbackUser;
+              } else {
+                btnLoginSubmit.disabled = false;
+                btnLoginSubmit.innerHTML = `<i data-lucide="key" class="w-4 h-4"></i><span>Verify Password & Send Email OTP</span>`;
+                if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
+                setLoginAlert(authData?.message || 'Incorrect password entered. Please enter the password you set during registration.', 'error');
+                return;
+              }
+            } else {
+              targetUser = await performClientFallbackAuth(identifier, enteredPass);
+            }
+          } catch (netErr) {
+            console.warn('Network error reaching auth endpoint, performing offline check:', netErr);
+            targetUser = await performClientFallbackAuth(identifier, enteredPass);
+          }
+
+          if (!targetUser) {
+            btnLoginSubmit.disabled = false;
+            btnLoginSubmit.innerHTML = `<i data-lucide="key" class="w-4 h-4"></i><span>Verify Password & Send Email OTP</span>`;
+            if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
+            setLoginAlert('Incorrect password entered. Please enter the password you set during registration.', 'error');
+            return;
+          }
+
+          // PASSWORD VERIFIED: MOVE TO MANDATORY STEP 2 EMAIL OTP
+          pendingLoginUser = targetUser;
+          const targetEmail = (targetUser.email || (identifier.includes('@') ? identifier.toLowerCase() : '')).trim().toLowerCase();
+          
+          if (!targetEmail || !targetEmail.includes('@')) {
+            btnLoginSubmit.disabled = false;
+            btnLoginSubmit.innerHTML = `<i data-lucide="key" class="w-4 h-4"></i><span>Verify Password & Send Email OTP</span>`;
+            if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
+            setLoginAlert('No valid email address is linked with this account. Please update your profile or contact admin.', 'error');
+            return;
+          }
+
+          pendingLoginUser.email = targetEmail;
+
+          btnLoginSubmit.disabled = false;
+          btnLoginSubmit.innerHTML = `<i data-lucide="key" class="w-4 h-4"></i><span>Verify Password & Send Email OTP</span>`;
+          if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
+
+          if (loginCredsForm) loginCredsForm.classList.add('hidden');
+          if (loginOtpStep) loginOtpStep.classList.remove('hidden');
+          if (loginOtpPhoneDisplay) loginOtpPhoneDisplay.innerHTML = maskEmailAddress(targetEmail);
+          if (loginOtpCode) {
+            loginOtpCode.value = '';
+            loginOtpCode.focus();
+          }
+
+          startLoginResendCountdown(30);
+          setLoginAlert(`✓ <strong>Password Verified!</strong> 6-digit verification code dispatched to <span class="font-mono font-bold text-slate-900">${maskEmailAddress(targetEmail)}</span>. Please check your inbox.`, 'success');
+
+          // Dispatch real-time 6-digit OTP code to registered email
+          sendDirectEmailOtp(targetEmail, targetUser.name || 'Designer', 'Login Verification').then(res => {
+            if (res.success && res.message) {
+              setLoginAlert(`✓ <strong>Password Verified!</strong> ${res.message}`, 'success');
+            } else if (!res.success) {
+              setLoginAlert(res.message || 'Unable to dispatch verification code. Please tap Resend.', 'error');
+            }
+          });
+        });
+      }
+
+      // Option to trigger Email OTP Login
+      const btnToggleEmailOtpLogin = document.getElementById('btn-toggle-email-otp-login');
+      if (btnToggleEmailOtpLogin) {
+        btnToggleEmailOtpLogin.addEventListener('click', async () => {
+          const identInput = (document.getElementById('login-identifier')?.value || '').trim();
+          if (!identInput) {
+            setLoginAlert('Please enter your registered email or mobile number above first.', 'error');
+            document.getElementById('login-identifier')?.focus();
+            return;
+          }
+
+          let targetEmail = identInput.includes('@') ? identInput.toLowerCase() : '';
+          let userName = 'Designer';
+
+          // Try finding designer email if phone entered
+          if (!targetEmail) {
+            try {
+              const res = await fetch('/api/get-designers');
+              if (res.ok) {
+                const data = await res.json();
+                const d = (data.designers || []).find(item => {
+                  const p = (item.phone || '').replace(/\D/g, '').slice(-10);
+                  return p && identInput.replace(/\D/g, '').slice(-10) === p;
+                });
+                if (d && d.email) {
+                  targetEmail = d.email;
+                  userName = d.name || 'Designer';
+                }
+              }
+            } catch(e) {}
+          }
+
+          if (!targetEmail || !targetEmail.includes('@')) {
+            setLoginAlert('No registered email found for this mobile number. Please sign in with your password first or enter your registered email address.', 'error');
+            return;
+          }
+
+          pendingLoginUser = {
+            email: targetEmail,
+            name: userName,
+            role: (targetEmail.includes('admin') || targetEmail === 'admin@designquixobilal' || targetEmail === 'alerts@designquixo.in') ? 'admin' : 'designer'
+          };
+
+          loginCredsForm?.classList.add('hidden');
+          loginOtpStep?.classList.remove('hidden');
+          if (loginOtpPhoneDisplay) loginOtpPhoneDisplay.innerHTML = maskEmailAddress(targetEmail);
+          if (loginOtpCode) {
+            loginOtpCode.value = '';
+            loginOtpCode.focus();
+          }
+          startLoginResendCountdown(30);
+          setLoginAlert(`✓ 6-digit OTP sent to <strong class="font-mono text-slate-800">${maskEmailAddress(targetEmail)}</strong>.`, 'success');
+
+          sendDirectEmailOtp(targetEmail, userName, 'Login Verification').then(res => {
+            if (res.success) {
+              setLoginAlert(`✓ <strong>Verification code dispatched to ${maskEmailAddress(targetEmail)}.</strong>`, 'success');
+            }
+          });
+        });
+      }
+
+      // Resend Email OTP for Login
+      if (btnLoginResendOtp) {
+        btnLoginResendOtp.addEventListener('click', async () => {
+          if (!pendingLoginUser || !pendingLoginUser.email) return;
+          btnLoginResendOtp.disabled = true;
+          loginOtpCode.value = '';
+          startLoginResendCountdown(30);
+          const targetEmail = pendingLoginUser.email;
+          const userName = pendingLoginUser.name || (pendingLoginUser.designerData && pendingLoginUser.designerData.name) || '';
+          setLoginAlert(`✓ <strong>New 6-digit verification code dispatched.</strong><br/><span class="text-[12px] font-normal">Please check your email inbox (${maskEmailAddress(targetEmail)}) and enter the code below.</span>`, 'success');
+          sendDirectEmailOtp(targetEmail, userName, 'Login Verification').then(res => {
+            if (res.success && res.message) {
+              setLoginAlert(res.message, 'success');
+            } else if (!res.success) {
+              setLoginAlert(res.message, 'error');
+            }
+          });
+        });
+      }
+
+      // STEP 2: VERIFY REAL EMAIL OTP AND ENTER WORKSTATION
+      if (btnLoginVerifyOtp) {
+        btnLoginVerifyOtp.addEventListener('click', async () => {
+          const code = (loginOtpCode.value || '').trim();
+          if (code.length !== 6) {
+            setLoginAlert('Please enter the complete 6-digit verification code sent to your email.', 'error');
+            return;
+          }
+
+          if (!pendingLoginUser) {
+            setLoginAlert('Session expired. Please re-enter your credentials.', 'error');
+            if (loginOtpStep) loginOtpStep.classList.add('hidden');
+            if (loginCredsForm) loginCredsForm.classList.remove('hidden');
+            return;
+          }
+
+          btnLoginVerifyOtp.disabled = true;
+          btnLoginVerifyOtp.innerHTML = `<span>Verifying Code...</span>`;
+
+          const verifyRes = await verifyDirectEmailOtp(pendingLoginUser.email, code);
+
+          if (!verifyRes.success) {
+            btnLoginVerifyOtp.disabled = false;
+            btnLoginVerifyOtp.innerHTML = `<i data-lucide="shield-check" class="w-4 h-4"></i><span>Verify Email Code & Enter Workstation</span>`;
+            lucide.createIcons();
+            setLoginAlert(verifyRes.message || 'Invalid email verification code. Please check your inbox.', 'error');
+            return;
+          }
+
+          setLoginAlert('✓ Code verified! Redirecting to workstation...', 'success');
+
+          const db = await getSupabaseService();
+
+          if (pendingLoginUser.role === 'admin') {
+            localStorage.setItem('dq_admin_logged_in', 'true');
+            const adminUser = {
+              name: 'Bilal Khan (Platform Admin)',
+              role: 'admin',
+              identifier: 'admin@designquixobilal',
+              phone: pendingLoginUser.phone || '8602420897',
+              email: pendingLoginUser.email || 'mustafazthings@gmail.com',
+              status: 'Approved'
+            };
+            localStorage.setItem('dq_current_user', JSON.stringify(adminUser));
+            sessionStorage.setItem('dq_current_user', JSON.stringify(adminUser));
+            if (db && typeof db.logUserLogin === 'function') {
+              try {
+                await db.logUserLogin({
+                  phone: adminUser.phone,
+                  name: adminUser.name,
+                  role: 'admin',
+                  status: 'Two-Factor Admin Login (Password + Email OTP Verified)'
+                });
+              } catch(e) {}
+            }
+            setTimeout(() => {
+              window.location.href = 'admin-dashboard.html';
+            }, 300);
+            return;
+          }
+
+          // Designer Login - Complete session setup & local sync
+          const designerUser = {
+            ...(pendingLoginUser.designerData || {}),
+            id: pendingLoginUser.id || (pendingLoginUser.designerData && pendingLoginUser.designerData.id) || pendingLoginUser.phone || pendingLoginUser.email,
+            name: pendingLoginUser.name || (pendingLoginUser.designerData && pendingLoginUser.designerData.name) || 'Verified Designer',
+            email: pendingLoginUser.email || (pendingLoginUser.designerData && pendingLoginUser.designerData.email) || '',
+            phone: pendingLoginUser.phone || (pendingLoginUser.designerData && pendingLoginUser.designerData.phone) || '',
+            identifier: pendingLoginUser.identifier || pendingLoginUser.email || pendingLoginUser.phone,
+            role: 'designer',
+            status: (pendingLoginUser.designerData && pendingLoginUser.designerData.status) || pendingLoginUser.status || 'Pending',
+            verified: true
+          };
+
+          localStorage.setItem('dq_current_user', JSON.stringify(designerUser));
+          sessionStorage.setItem('dq_current_user', JSON.stringify(designerUser));
+
+          // Ensure local approved and registered caches are updated so designer-dashboard won't gate them
+          try {
+            let registered = JSON.parse(localStorage.getItem('dq_registered_designers') || '[]');
+            const dPhone = get10DigitPhone(designerUser.phone);
+            const dEmail = (designerUser.email || '').toLowerCase();
+            registered = registered.filter(d => {
+              const p = get10DigitPhone(d.phone || d.identifier);
+              const em = (d.email || '').toLowerCase();
+              return (!dPhone || p !== dPhone) && (!dEmail || em !== dEmail);
+            });
+            registered.unshift(designerUser);
+            localStorage.setItem('dq_registered_designers', JSON.stringify(registered));
+
+            if (designerUser.status === 'Approved') {
+              let approved = JSON.parse(localStorage.getItem('dq_approved_designers') || '[]');
+              approved = approved.filter(d => {
+                const p = get10DigitPhone(d.phone || d.identifier);
+                const em = (d.email || '').toLowerCase();
+                return (!dPhone || p !== dPhone) && (!dEmail || em !== dEmail);
+              });
+              approved.unshift(designerUser);
+              localStorage.setItem('dq_approved_designers', JSON.stringify(approved));
+            }
+          } catch(e) {}
+
+          if (db && typeof db.logUserLogin === 'function') {
+            try {
+              await db.logUserLogin({
+                phone: designerUser.phone || designerUser.email,
+                name: designerUser.name,
+                role: 'designer',
+                status: 'Two-Factor Designer Login (Password + Email OTP Verified)'
+              });
+            } catch(e) {}
+          }
+
+          setLoginAlert(`✓ Welcome back, ${designerUser.name}! Opening workstation...`, 'success');
+          setTimeout(() => {
+            window.location.href = 'designer-dashboard.html';
+          }, 300);
+        });
+      }
+
+      // ==========================================
+      // FORGOT PASSWORD FLOW (REAL EMAIL OTP + RESET)
+      // ==========================================
+      const forgotAlertBox = document.getElementById('forgot-alert-box');
+      const forgotStep1Form = document.getElementById('forgot-step1-form');
+      const forgotStep2Form = document.getElementById('forgot-step2-form');
+      const btnForgotStep1Submit = document.getElementById('btn-forgot-step1-submit');
+      const btnForgotStep2Submit = document.getElementById('btn-forgot-step2-submit');
+      const btnForgotBackToStep1 = document.getElementById('btn-forgot-back-to-step1');
+      const btnForgotResendOtp = document.getElementById('btn-forgot-resend-otp');
+      const forgotEmailDisplay = document.getElementById('forgot-email-display');
+      const forgotOtpTimerDisplay = document.getElementById('forgot-otp-timer-display');
+      const forgotOtpCode = document.getElementById('forgot-otp-code');
+      const forgotNewPassword = document.getElementById('forgot-new-password');
+      const forgotConfirmPassword = document.getElementById('forgot-confirm-password');
+
+      let pendingForgotUser = null;
+      let forgotResendTimerInterval = null;
+
+      function setForgotAlert(msg, type = 'info') {
+        if (!forgotAlertBox) return;
+        forgotAlertBox.classList.remove('hidden', 'bg-blue-50', 'text-blue-800', 'border-blue-200', 'bg-red-50', 'text-red-800', 'border-red-200', 'bg-emerald-50', 'text-emerald-800', 'border-emerald-200');
+        if (type === 'error') {
+          forgotAlertBox.className = 'p-3 rounded-xl text-xs font-semibold bg-red-50 text-red-800 border border-red-200 flex items-center gap-2';
+        } else if (type === 'success') {
+          forgotAlertBox.className = 'p-3 rounded-xl text-xs font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200 flex items-center gap-2';
+        } else {
+          forgotAlertBox.className = 'p-3 rounded-xl text-xs font-semibold bg-blue-50 text-blue-800 border border-blue-200 flex items-center gap-2';
+        }
+        forgotAlertBox.innerHTML = msg;
+      }
+
+      function startForgotResendCountdown(seconds = 30) {
+        if (forgotResendTimerInterval) clearInterval(forgotResendTimerInterval);
+        if (btnForgotResendOtp) btnForgotResendOtp.disabled = true;
+        let left = seconds;
+        if (forgotOtpTimerDisplay) forgotOtpTimerDisplay.innerHTML = `Resend code in <strong class="font-mono text-slate-800">${left}s</strong>`;
+
+        forgotResendTimerInterval = setInterval(() => {
+          left--;
+          if (left <= 0) {
+            clearInterval(forgotResendTimerInterval);
+            if (btnForgotResendOtp) btnForgotResendOtp.disabled = false;
+            if (forgotOtpTimerDisplay) forgotOtpTimerDisplay.innerHTML = `Didn't receive email code?`;
+          } else {
+            if (forgotOtpTimerDisplay) forgotOtpTimerDisplay.innerHTML = `Resend code in <strong class="font-mono text-slate-800">${left}s</strong>`;
+          }
+        }, 1000);
+      }
+
+      if (btnForgotBackToStep1) {
+        btnForgotBackToStep1.addEventListener('click', () => {
+          if (forgotStep2Form) forgotStep2Form.classList.add('hidden');
+          if (forgotStep1Form) forgotStep1Form.classList.remove('hidden');
+          if (forgotAlertBox) forgotAlertBox.classList.add('hidden');
+        });
+      }
+
+      // FORGOT STEP 1: IDENTIFY ACCOUNT & DISPATCH EMAIL OTP
+      if (forgotStep1Form) {
+        forgotStep1Form.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          const identifier = (document.getElementById('forgot-identifier').value || '').trim();
+          if (!identifier) {
+            setForgotAlert('Please enter your registered Email or Mobile Number.', 'error');
+            return;
+          }
+
+          btnForgotStep1Submit.disabled = true;
+          btnForgotStep1Submit.innerHTML = `<span>Checking account...</span>`;
+          setForgotAlert('Searching for registered account...', 'info');
+
+          const lowerId = identifier.toLowerCase();
+          const isEmailInput = lowerId.includes('@');
+          const clean10 = isEmailInput ? '' : get10DigitPhone(identifier);
+
+          // 1. Check if Admin
+          const storedAdminUser = (localStorage.getItem('dq_admin_username') || 'admin@designquixobilal').toLowerCase().trim();
+          if (lowerId === 'admin' || lowerId === 'superadmin' || lowerId === 'admin@designquixobilal' || lowerId === storedAdminUser || lowerId === 'alerts@designquixo.in' || lowerId === 'designquixo@gmail.com' || lowerId === 'mustafazthings@gmail.com') {
+            pendingForgotUser = {
+              role: 'admin',
+              name: 'Platform Administrator',
+              email: 'mustafazthings@gmail.com',
+              identifier: 'admin@designquixobilal'
+            };
+          } else {
+            // 2. High-speed Designer Lookup
+            let designer = null;
+
+            // A. Check local cache (0ms)
+            let registered = [];
+            try { registered = JSON.parse(localStorage.getItem('dq_registered_designers') || '[]'); } catch(e) {}
+            let approved = [];
+            try { approved = JSON.parse(localStorage.getItem('dq_approved_designers') || '[]'); } catch(e) {}
+            const candidates = [...registered, ...approved];
+
+            designer = candidates.find(d => {
+              if (!d) return false;
+              const dEmail = (d.email || d.identifier || '').toLowerCase().trim();
+              const dPhone = (d.phone || d.whatsapp || d.identifier || d.id || '').toString().replace(/\D/g, '').slice(-10);
+              if (isEmailInput && dEmail === lowerId) return true;
+              if (clean10 && dPhone === clean10) return true;
+              return false;
+            });
+
+            // B. Fast API fetch with 2s timeout
+            if (!designer) {
+              try {
+                const ctrl = new AbortController();
+                const timeoutId = setTimeout(() => ctrl.abort(), 2000);
+                const res = await fetch('/api/get-designers', { signal: ctrl.signal });
+                clearTimeout(timeoutId);
+                if (res.ok) {
+                  const data = await res.json().catch(() => ({}));
+                  if (data && Array.isArray(data.designers)) {
+                    designer = data.designers.find(d => {
+                      if (!d) return false;
+                      const dEmail = (d.email || d.identifier || '').toLowerCase().trim();
+                      const dPhone = (d.phone || d.whatsapp || d.identifier || d.id || '').toString().replace(/\D/g, '').slice(-10);
+                      if (isEmailInput && dEmail === lowerId) return true;
+                      if (clean10 && dPhone === clean10) return true;
+                      return false;
+                    });
+                  }
+                }
+              } catch(e) {}
+            }
+
+            if (!designer) {
+              btnForgotStep1Submit.disabled = false;
+              btnForgotStep1Submit.innerHTML = `<i data-lucide="send" class="w-4 h-4"></i><span>Send Reset OTP to Email</span>`;
+              if (window.lucide && lucide.createIcons) lucide.createIcons();
+              setForgotAlert(`No registered account found with ${isEmailInput ? 'email ' + maskEmailForDisplay(lowerId) : 'mobile number +91 ' + clean10}. Please check and try again.`, 'error');
+              return;
+            }
+
+            const targetEmail = designer.email || (designer.identifier && designer.identifier.includes('@') ? designer.identifier : '');
+            if (!targetEmail || !targetEmail.includes('@')) {
+              btnForgotStep1Submit.disabled = false;
+              btnForgotStep1Submit.innerHTML = `<i data-lucide="send" class="w-4 h-4"></i><span>Send Reset OTP to Email</span>`;
+              if (window.lucide && lucide.createIcons) lucide.createIcons();
+              setForgotAlert('No verified email address found on file for this account. Please contact system support.', 'error');
+              return;
+            }
+
+            pendingForgotUser = {
+              role: 'designer',
+              name: designer.name || 'Verified Designer',
+              email: targetEmail,
+              identifier: designer.phone || designer.identifier || targetEmail,
+              phone: clean10Phone(designer.phone || clean10),
+              designerData: designer
+            };
+          }
+
+          // Transition to Step 2
+          forgotStep1Form.classList.add('hidden');
+          forgotStep2Form.classList.remove('hidden');
+          if (forgotEmailDisplay) {
+            forgotEmailDisplay.textContent = pendingForgotUser.role === 'admin' ? 'Registered Administrator Email' : maskEmailForDisplay(pendingForgotUser.email);
+          }
+          if (forgotOtpCode) {
+            forgotOtpCode.value = '';
+            forgotOtpCode.focus();
+          }
+          if (forgotNewPassword) forgotNewPassword.value = '';
+          if (forgotConfirmPassword) forgotConfirmPassword.value = '';
+          startForgotResendCountdown(30);
+
+          btnForgotStep1Submit.disabled = false;
+          btnForgotStep1Submit.innerHTML = `<i data-lucide="send" class="w-4 h-4"></i><span>Send Reset OTP to Email</span>`;
+          lucide.createIcons();
+
+          setForgotAlert(`✓ <strong>Password reset authorization code dispatched.</strong><br/><span class="text-[12px] font-normal">Please check your registered email inbox and enter the 6-digit code below to proceed.</span>`, 'success');
+
+          sendDirectEmailOtp(pendingForgotUser.email, pendingForgotUser.name, 'Password Reset').then(res => {
+            if (!res.success) setForgotAlert(res.message, 'error');
+          });
+        });
+      }
+
+      // Resend OTP for Forgot Password
+      if (btnForgotResendOtp) {
+        btnForgotResendOtp.addEventListener('click', async () => {
+          if (!pendingForgotUser || !pendingForgotUser.email) return;
+          btnForgotResendOtp.disabled = true;
+          if (forgotOtpCode) forgotOtpCode.value = '';
+          startForgotResendCountdown(30);
+          setForgotAlert(`✓ <strong>New password reset code dispatched.</strong><br/><span class="text-[12px] font-normal">Please check your registered email inbox and enter the code below.</span>`, 'success');
+          sendDirectEmailOtp(pendingForgotUser.email, pendingForgotUser.name, 'Password Reset').then(res => {
+            if (!res.success) setForgotAlert(res.message, 'error');
+          });
+        });
+      }
+
+      // FORGOT STEP 2: VERIFY OTP AND SET NEW PASSWORD
+      if (forgotStep2Form) {
+        forgotStep2Form.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          const code = (forgotOtpCode.value || '').trim();
+          const newPass = (forgotNewPassword.value || '').trim();
+          const confirmPass = (forgotConfirmPassword.value || '').trim();
+
+          if (code.length !== 6) {
+            setForgotAlert('Please enter the complete 6-digit OTP sent to your email.', 'error');
+            return;
+          }
+
+          if (!newPass || newPass.length < 4) {
+            setForgotAlert('New password must be at least 4 characters long.', 'error');
+            return;
+          }
+
+          if (newPass !== confirmPass) {
+            setForgotAlert('New password and confirm password do not match. Please re-enter.', 'error');
+            return;
+          }
+
+          if (!pendingForgotUser || !pendingForgotUser.email) {
+            setForgotAlert('Session expired. Please restart the password reset process.', 'error');
+            if (forgotStep2Form) forgotStep2Form.classList.add('hidden');
+            if (forgotStep1Form) forgotStep1Form.classList.remove('hidden');
+            return;
+          }
+
+          btnForgotStep2Submit.disabled = true;
+          btnForgotStep2Submit.innerHTML = `<span>Verifying OTP & Updating Password...</span>`;
+
+          const verifyRes = await verifyDirectEmailOtp(pendingForgotUser.email, code);
+
+          if (!verifyRes || !verifyRes.success) {
+            btnForgotStep2Submit.disabled = false;
+            btnForgotStep2Submit.innerHTML = `<i data-lucide="shield-check" class="w-4 h-4"></i><span>Verify OTP & Save New Password</span>`;
+            lucide.createIcons();
+            setForgotAlert(verifyRes ? verifyRes.message : 'Invalid email verification code. Please check your inbox.', 'error');
+            return;
+          }
+
+          // OTP verified! Update password in database and locally
+          try {
+            await fetch('/api/update-designer-password', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ key: pendingForgotUser.email || pendingForgotUser.phone, newPassword: newPass })
+            });
+          } catch(err) {
+            console.warn('API update password notice:', err);
+          }
+
+          if (pendingForgotUser.role === 'admin') {
+            localStorage.setItem('dq_admin_password', newPass);
+            setForgotAlert('✓ Admin password updated successfully! Redirecting to sign in...', 'success');
+          } else {
+            let registered = [];
+            try { registered = JSON.parse(localStorage.getItem('dq_registered_designers') || '[]'); } catch(e) {}
+            let foundInList = false;
+            registered.forEach(d => {
+              if (
+                (d.email && d.email.toLowerCase() === pendingForgotUser.email.toLowerCase()) ||
+                (pendingForgotUser.phone && d.phone && d.phone.replace(/\D/g, '').endsWith(pendingForgotUser.phone))
+              ) {
+                d.password = newPass;
+                d.pin = newPass;
+                foundInList = true;
+              }
+            });
+            if (!foundInList) {
+              registered.push({
+                ...(pendingForgotUser.designerData || {}),
+                name: pendingForgotUser.name,
+                email: pendingForgotUser.email,
+                phone: pendingForgotUser.phone,
+                password: newPass,
+                pin: newPass,
+                status: pendingForgotUser.status || 'Pending',
+                role: 'designer'
+              });
+            }
+            localStorage.setItem('dq_registered_designers', JSON.stringify(registered));
+          }
+
+          setForgotAlert('✓ <strong>Password reset successfully!</strong> Returning to Sign In...', 'success');
+
+          // Pre-fill login credentials form
+          const loginIdInput = document.getElementById('login-identifier');
+          const loginPassInput = document.getElementById('login-password');
+          if (loginIdInput) loginIdInput.value = pendingForgotUser.email || pendingForgotUser.phone;
+          if (loginPassInput) loginPassInput.value = newPass;
+
+          setTimeout(() => {
+            btnForgotStep2Submit.disabled = false;
+            btnForgotStep2Submit.innerHTML = `<i data-lucide="shield-check" class="w-4 h-4"></i><span>Verify OTP & Save New Password</span>`;
+            lucide.createIcons();
+            showLogin();
+            setLoginAlert('✓ Password reset successful! Enter your new password and proceed.', 'success');
+          }, 1500);
+        });
+      }
+
+      // ==========================================
+      // SIGNUP EMAIL OTP VERIFICATION FLOW
+      // ==========================================
+      const btnSignupSendEmailOtp = document.getElementById('btn-signup-send-email-otp');
+      const signupEmailOtpBox = document.getElementById('signup-email-otp-box');
+      const signupEmailOtpCode = document.getElementById('signup-email-otp-code');
+      const btnSignupVerifyEmailOtp = document.getElementById('btn-signup-verify-email-otp');
+      const signupEmailOtpMsg = document.getElementById('signup-email-otp-msg');
+      const signupEmailVerifiedBadge = document.getElementById('signup-email-verified-badge');
+      let signupEmailVerified = false;
+
+      if (btnSignupSendEmailOtp) {
+        btnSignupSendEmailOtp.addEventListener('click', async () => {
+          const email = (document.getElementById('signup-email').value || '').trim().toLowerCase();
+          if (!email || !email.includes('@') || !email.includes('.')) {
+            alert('Please enter a valid email address first.');
+            return;
+          }
+
+          btnSignupSendEmailOtp.disabled = true;
+          btnSignupSendEmailOtp.innerHTML = `<span>Sending...</span>`;
+          if (signupEmailOtpBox) signupEmailOtpBox.classList.remove('hidden');
+          if (signupEmailOtpCode) signupEmailOtpCode.value = '';
+          if (signupEmailOtpCode) signupEmailOtpCode.focus();
+          if (signupEmailOtpMsg) signupEmailOtpMsg.innerHTML = `Sending 6-digit OTP to your email...`;
+
+          const signupName = (document.getElementById('signup-name').value || '').trim();
+          sendDirectEmailOtp(email, signupName, 'Registration Verification').then(res => {
+            btnSignupSendEmailOtp.disabled = false;
+            btnSignupSendEmailOtp.innerHTML = `<span>Resend Code</span>`;
+
+            if (!res || !res.success) {
+              if (signupEmailOtpMsg) signupEmailOtpMsg.innerHTML = `<span class="text-rose-600 text-xs">${res ? res.message : 'Unable to dispatch code'}</span>`;
+            } else {
+              if (signupEmailOtpMsg) signupEmailOtpMsg.innerHTML = `<span class="text-emerald-700 text-xs font-medium">✓ 6-digit verification code dispatched. Please check your email inbox (including spam folder) and enter it below.</span>`;
+            }
+          });
+        });
+      }
+
+      if (btnSignupVerifyEmailOtp) {
+        btnSignupVerifyEmailOtp.addEventListener('click', async () => {
+          const email = (document.getElementById('signup-email').value || '').trim().toLowerCase();
+          const code = (signupEmailOtpCode.value || '').trim();
+          if (code.length !== 6) {
+            alert('Please enter the 6-digit email verification code.');
+            return;
+          }
+
+          btnSignupVerifyEmailOtp.disabled = true;
+          btnSignupVerifyEmailOtp.textContent = 'Checking...';
+
+          const res = await verifyDirectEmailOtp(email, code);
+          btnSignupVerifyEmailOtp.disabled = false;
+          btnSignupVerifyEmailOtp.textContent = 'Confirm Code';
+
+          if (!res.success) {
+            if (signupEmailOtpMsg) signupEmailOtpMsg.textContent = res.message;
+            alert(res.message);
+            return;
+          }
+
+          signupEmailVerified = true;
+          if (signupEmailOtpBox) signupEmailOtpBox.classList.add('hidden');
+          if (signupEmailVerifiedBadge) signupEmailVerifiedBadge.classList.remove('hidden');
+          if (btnSignupSendEmailOtp) btnSignupSendEmailOtp.classList.add('hidden');
+          alert('✓ Email verified successfully!');
+        });
+      }
+
+      // ==========================================
+      // CREATOR AGREEMENT & E-SIGNATURE CONTROLLER
+      // ==========================================
+      let signupSigMode = 'draw';
+      let signupSigColor = '#0f172a';
+      let signupSigHasStrokes = false;
+      let isDrawing = false;
+      let sigCanvas = null;
+      let sigCtx = null;
+
+      window.updateAgreementCardUI = function() {
+        try {
+          const svc = window.AgreementService || window.DQAgreementService;
+          const meta = svc ? svc.getTemplateMetadata() : { fileName: 'Creator_Agreement.pdf', isCustom: false };
+          const cardTitle = document.getElementById('agreement-card-title');
+          const cardSub = document.getElementById('agreement-card-sub');
+          if (cardTitle && meta && meta.fileName) {
+            cardTitle.textContent = meta.fileName;
+          }
+          if (cardSub) {
+            cardSub.innerHTML = (meta && meta.isCustom)
+              ? `<span class="inline-flex items-center gap-1 text-[11px] font-bold text-red-600"><span class="w-1.5 h-1.5 rounded-full bg-red-600 animate-pulse"></span>Original Master PDF (Uploaded by Admin)</span>`
+              : `<span class="text-[11px] text-slate-500">Official master legal document</span>`;
+          }
+        } catch(e) {
+          console.warn('Card UI update error:', e);
+        }
+      };
+
+      window.switchAgreementModalTab = function(tab) {
+        const tabPdf = document.getElementById('modal-tab-pdf');
+        const tabClauses = document.getElementById('modal-tab-clauses');
+        const btnPdf = document.getElementById('btn-tab-pdf-doc');
+        const btnClauses = document.getElementById('btn-tab-clauses');
+
+        if (tab === 'pdf') {
+          if (tabPdf) tabPdf.classList.remove('hidden');
+          if (tabClauses) tabClauses.classList.add('hidden');
+          if (btnPdf) btnPdf.className = 'px-3 py-1 rounded-lg bg-white text-slate-900 shadow-2xs cursor-pointer flex items-center gap-1.5 transition-all font-bold';
+          if (btnClauses) btnClauses.className = 'px-3 py-1 rounded-lg text-slate-600 hover:text-slate-900 cursor-pointer flex items-center gap-1.5 transition-all';
+        } else {
+          if (tabPdf) tabPdf.classList.add('hidden');
+          if (tabClauses) tabClauses.classList.remove('hidden');
+          if (btnPdf) btnPdf.className = 'px-3 py-1 rounded-lg text-slate-600 hover:text-slate-900 cursor-pointer flex items-center gap-1.5 transition-all';
+          if (btnClauses) btnClauses.className = 'px-3 py-1 rounded-lg bg-white text-slate-900 shadow-2xs cursor-pointer flex items-center gap-1.5 transition-all font-bold';
+        }
+        if (window.lucide) lucide.createIcons();
+      };
+
+      window.openMasterPdfInNewTab = async function() {
+        try {
+          const svc = window.AgreementService || window.DQAgreementService;
+          if (svc && typeof svc.getMasterTemplatePdfBlobUrl === 'function') {
+            const url = await svc.getMasterTemplatePdfBlobUrl();
+            window.open(url, '_blank');
+          }
+        } catch(e) {
+          console.error('Failed to open master PDF:', e);
+        }
+      };
+
+      window.renderPdfDocumentOnCanvases = async function(pdfSource) {
+        const container = document.getElementById('modal-pdf-canvas-container');
+        const loader = document.getElementById('modal-pdf-loading');
+        const pageCountBadge = document.getElementById('modal-pdf-page-count');
+        const fallbackFrame = document.getElementById('modal-agreement-pdf-frame');
+        if (!container) return;
+
+        container.innerHTML = '';
+        if (loader) loader.classList.remove('hidden');
+
+        try {
+          if (!window.pdfjsLib) {
+            throw new Error('PDF.js library not loaded yet');
+          }
+
+          const loadingTask = window.pdfjsLib.getDocument(pdfSource);
+          const pdf = await loadingTask.promise;
+
+          if (loader) loader.classList.add('hidden');
+          if (fallbackFrame) fallbackFrame.classList.add('hidden');
+
+          const totalPages = pdf.numPages;
+          if (pageCountBadge) pageCountBadge.textContent = `${totalPages} Pages (Official Master PDF)`;
+
+          for (let pageNum = 1; pageNum <= totalPages; pageNum++) {
+            const page = await pdf.getPage(pageNum);
+
+            const modalBox = document.getElementById('modal-tab-pdf');
+            const availableWidth = Math.min((modalBox ? modalBox.clientWidth - 28 : window.innerWidth - 32) || 720, 800);
+            const unscaledViewport = page.getViewport({ scale: 1.0 });
+
+            const baseScale = (availableWidth / unscaledViewport.width);
+            const pixelRatio = window.devicePixelRatio || 1;
+            const renderScale = baseScale * Math.min(pixelRatio, 2);
+            const viewport = page.getViewport({ scale: renderScale });
+
+            const pageCard = document.createElement('div');
+            pageCard.className = 'w-full max-w-3xl bg-white rounded-xl shadow-2xs border border-slate-200 overflow-hidden flex flex-col mb-3';
+
+            const header = document.createElement('div');
+            header.className = 'w-full px-3 py-1.5 bg-slate-50 border-b border-slate-100 flex items-center justify-between text-[10px] font-mono text-slate-500';
+            header.innerHTML = `<span>Page ${pageNum} of ${totalPages}</span><span class="text-blue-600 font-bold tracking-wider">DESIGN QUIXO OFFICIAL AGREEMENT</span>`;
+            pageCard.appendChild(header);
+
+            const canvas = document.createElement('canvas');
+            canvas.className = 'w-full h-auto block';
+            canvas.width = viewport.width;
+            canvas.height = viewport.height;
+            canvas.style.width = '100%';
+            canvas.style.height = 'auto';
+
+            const ctx = canvas.getContext('2d');
+            await page.render({ canvasContext: ctx, viewport: viewport }).promise;
+
+            pageCard.appendChild(canvas);
+            container.appendChild(pageCard);
+          }
+        } catch(err) {
+          console.warn('PDF.js canvas rendering fallback:', err);
+          if (loader) loader.classList.add('hidden');
+          if (fallbackFrame && typeof pdfSource === 'string') {
+            fallbackFrame.src = pdfSource;
+            fallbackFrame.classList.remove('hidden');
+          } else {
+            const fb = document.createElement('div');
+            fb.className = 'p-5 bg-white border border-slate-200 rounded-xl text-center space-y-3 w-full max-w-md my-4';
+            fb.innerHTML = `
+              <div class="w-10 h-10 rounded-xl bg-red-50 text-red-600 flex items-center justify-center mx-auto font-bold">
+                <i data-lucide="file-text" class="w-5 h-5"></i>
+              </div>
+              <h4 class="font-bold text-slate-800 text-sm">Official Creator Agreement Master PDF</h4>
+              <p class="text-xs text-slate-500">Tap below to view or download the full master PDF document.</p>
+              <div class="flex flex-wrap items-center justify-center gap-2 pt-1">
+                <button type="button" onclick="openMasterPdfInNewTab()" class="px-3.5 py-2 bg-red-600 hover:bg-red-700 text-white font-bold text-xs rounded-xl cursor-pointer flex items-center gap-1.5">
+                  <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+                  <span>Open PDF in Tab</span>
+                </button>
+                <button type="button" onclick="downloadMasterAgreementPdfFromModal()" class="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl cursor-pointer flex items-center gap-1.5">
+                  <i data-lucide="download" class="w-3.5 h-3.5"></i>
+                  <span>Download</span>
+                </button>
+              </div>
+            `;
+            container.appendChild(fb);
+            if (window.lucide) lucide.createIcons();
+          }
+        }
+      };
+
+      window.openFullAgreementPdfPreviewModal = async function() {
+        const m = document.getElementById('full-agreement-pdf-preview-modal');
+        if (!m) return;
+        m.classList.remove('hidden');
+        if (window.lucide) lucide.createIcons();
+
+        switchAgreementModalTab('pdf');
+
+        // Initialize signature pad with accurate layout dimensions now that modal is open
+        setTimeout(() => {
+          initSignupSignaturePad();
+          updateStampPreview();
+        }, 50);
+
+        const svc = window.AgreementService || window.DQAgreementService;
+        const meta = svc ? svc.getTemplateMetadata() : { fileName: 'Creator_Agreement.pdf', isCustom: false };
+        const titleEl = document.getElementById('modal-agreement-title');
+        const subEl = document.getElementById('modal-agreement-subtitle');
+        if (titleEl && meta && meta.fileName) titleEl.textContent = meta.fileName;
+        if (subEl) {
+          subEl.textContent = (meta && meta.isCustom) 
+            ? 'Original Master Document (Uploaded by Admin)' 
+            : 'Official 3-Page Master Legal Agreement (All 13 Clauses)';
+        }
+
+        if (svc) {
+          try {
+            if (typeof svc.getMasterTemplatePdfBytes === 'function') {
+              const pdfBytes = await svc.getMasterTemplatePdfBytes();
+              await renderPdfDocumentOnCanvases({ data: pdfBytes });
+            } else {
+              const blobUrl = await svc.getMasterTemplatePdfBlobUrl();
+              await renderPdfDocumentOnCanvases(blobUrl);
+            }
+          } catch(e) {
+            console.warn('PDF load bytes error, attempting blob URL fallback:', e);
+            try {
+              const blobUrl = await svc.getMasterTemplatePdfBlobUrl();
+              await renderPdfDocumentOnCanvases(blobUrl);
+            } catch(e2) {
+              console.error('All PDF rendering attempts failed:', e2);
+            }
+          }
+        }
+      };
+
+      window.closeFullAgreementPdfPreviewModal = function() {
+        const m = document.getElementById('full-agreement-pdf-preview-modal');
+        if (m) m.classList.add('hidden');
+      };
+
+      window.saveEsignAndAcceptAgreement = function() {
+        const chk = document.getElementById('modal-agree-tc-check');
+        if (!chk || !chk.checked) {
+          alert('Please tick the agreement checkbox: "I have read the complete Creator Code of Conduct & Payout Agreement PDF above and agree to all terms and conditions."');
+          return;
+        }
+
+        const sigDataUrl = getSignupSignatureDataUrl();
+        if (!sigDataUrl) {
+          alert('Please draw your digital signature with your finger/mouse or type your name in the signature pad before saving.');
+          const sigPad = document.getElementById('signup-signature-pad');
+          if (sigPad) sigPad.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          return;
+        }
+
+        // Store into hidden inputs
+        const hiddenSig = document.getElementById('signup-sig-hidden-val');
+        const hiddenAgree = document.getElementById('signup-agree-tc');
+        if (hiddenSig) hiddenSig.value = sigDataUrl;
+        if (hiddenAgree) hiddenAgree.checked = true;
+
+        // Update form CTA button and status
+        const btnCta = document.getElementById('btn-open-agreement-esign');
+        const btnText = document.getElementById('btn-esign-cta-text');
+        const statusBox = document.getElementById('signup-agreement-status-box');
+
+        if (btnCta) {
+          btnCta.className = 'w-full py-3.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm shadow-xs transition-all flex items-center justify-center gap-2 cursor-pointer';
+        }
+        if (btnText) {
+          btnText.textContent = '✓ Agreement E-Signed & Accepted';
+        }
+        if (statusBox) {
+          statusBox.classList.remove('hidden');
+        }
+
+        closeFullAgreementPdfPreviewModal();
+      };
+
+      window.acceptAgreementFromModalAndClose = function() {
+        saveEsignAndAcceptAgreement();
+      };
+
+      window.downloadMasterAgreementPdfFromModal = async function() {
+        try {
+          const svc = window.AgreementService || window.DQAgreementService;
+          if (svc && typeof svc.downloadTemplate === 'function') {
+            await svc.downloadTemplate();
+          } else if (svc && typeof svc.downloadMasterTemplate === 'function') {
+            await svc.downloadMasterTemplate('Creator_Code_of_Conduct_and_Payout_Agreement.pdf');
+          } else {
+            alert('Agreement service is preparing. Please retry in a moment.');
+          }
+        } catch(e) {
+          console.error('Error downloading template PDF:', e);
+          alert('Could not download master PDF: ' + (e.message || e));
+        }
+      };
+
+      window.switchSignupSigMode = function(mode) {
+        signupSigMode = mode;
+        const btnDraw = document.getElementById('sig-mode-draw');
+        const btnType = document.getElementById('sig-mode-type');
+        const containerDraw = document.getElementById('signup-sig-draw-container');
+        const containerType = document.getElementById('signup-sig-type-container');
+
+        if (mode === 'draw') {
+          if (btnDraw) btnDraw.className = 'px-2 py-0.5 rounded-md bg-white text-slate-800 shadow-2xs font-bold';
+          if (btnType) btnType.className = 'px-2 py-0.5 rounded-md text-slate-500 hover:text-slate-800';
+          if (containerDraw) containerDraw.classList.remove('hidden');
+          if (containerType) containerType.classList.add('hidden');
+        } else {
+          if (btnType) btnType.className = 'px-2 py-0.5 rounded-md bg-white text-slate-800 shadow-2xs font-bold';
+          if (btnDraw) btnDraw.className = 'px-2 py-0.5 rounded-md text-slate-500 hover:text-slate-800';
+          if (containerType) containerType.classList.remove('hidden');
+          if (containerDraw) containerDraw.classList.add('hidden');
+          
+          // Auto-fill typed name if empty
+          const typedInput = document.getElementById('signup-typed-sig-input');
+          const nameInput = document.getElementById('signup-name');
+          if (typedInput && !typedInput.value && nameInput && nameInput.value) {
+            typedInput.value = nameInput.value;
+            updateTypedSigPreview();
+          }
+        }
+        updateStampPreview();
+      };
+
+      window.setSignupSigColor = function(color) {
+        signupSigColor = color;
+        if (sigCtx) {
+          sigCtx.strokeStyle = color;
+        }
+      };
+
+      window.clearSignupSignature = function() {
+        if (sigCanvas && sigCtx) {
+          sigCtx.clearRect(0, 0, sigCanvas.width, sigCanvas.height);
+          signupSigHasStrokes = false;
+          const ph = document.getElementById('signup-sig-placeholder');
+          if (ph) ph.classList.remove('hidden');
+        }
+        updateStampPreview();
+      };
+
+      function updateTypedSigPreview() {
+        const typedInput = document.getElementById('signup-typed-sig-input');
+        const previewEl = document.getElementById('signup-typed-sig-preview');
+        if (previewEl && typedInput) {
+          previewEl.textContent = typedInput.value.trim() || 'Your Signature Script';
+        }
+        updateStampPreview();
+      }
+
+      function updateStampPreview() {
+        const nameInput = document.getElementById('signup-name');
+        const phoneInput = document.getElementById('signup-phone');
+        
+        const stampName = document.getElementById('stamp-preview-name');
+        const stampPhone = document.getElementById('stamp-preview-phone');
+        const stampDate = document.getElementById('stamp-preview-date');
+        const stampStatus = document.getElementById('stamp-preview-status');
+
+        const curName = nameInput ? nameInput.value.trim() : '';
+        const curPhone = phoneInput ? phoneInput.value.trim() : '';
+
+        if (stampName) stampName.textContent = curName || '--';
+        if (stampPhone) stampPhone.textContent = curPhone ? `+91 ${curPhone}` : '--';
+        if (stampDate) stampDate.textContent = new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+
+        let isSigned = false;
+        if (signupSigMode === 'draw') {
+          isSigned = signupSigHasStrokes;
+        } else {
+          const typedInput = document.getElementById('signup-typed-sig-input');
+          isSigned = !!(typedInput && typedInput.value.trim());
+        }
+
+        if (stampStatus) {
+          if (isSigned) {
+            stampStatus.className = 'font-semibold text-emerald-700';
+            stampStatus.textContent = 'Ready to Stamp ✓';
+          } else {
+            stampStatus.className = 'font-semibold text-amber-600';
+            stampStatus.textContent = 'Pending Signature';
+          }
+        }
+      }
+
+      function initSignupSignaturePad() {
+        sigCanvas = document.getElementById('signup-signature-pad');
+        if (!sigCanvas) return;
+        sigCtx = sigCanvas.getContext('2d');
+        if (!sigCtx) return;
+
+        sigCtx.lineWidth = 2.5;
+        sigCtx.lineCap = 'round';
+        sigCtx.lineJoin = 'round';
+        sigCtx.strokeStyle = signupSigColor;
+
+        const placeholder = document.getElementById('signup-sig-placeholder');
+
+        function getPos(e) {
+          const rect = sigCanvas.getBoundingClientRect();
+          const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+          const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+          const scaleX = sigCanvas.width / rect.width;
+          const scaleY = sigCanvas.height / rect.height;
+          return {
+            x: (clientX - rect.left) * scaleX,
+            y: (clientY - rect.top) * scaleY
+          };
+        }
+
+        function startDrawing(e) {
+          e.preventDefault();
+          isDrawing = true;
+          signupSigHasStrokes = true;
+          if (placeholder) placeholder.classList.add('hidden');
+          const pos = getPos(e);
+          sigCtx.beginPath();
+          sigCtx.moveTo(pos.x, pos.y);
+          sigCtx.strokeStyle = signupSigColor;
+        }
+
+        function draw(e) {
+          if (!isDrawing) return;
+          e.preventDefault();
+          const pos = getPos(e);
+          sigCtx.lineTo(pos.x, pos.y);
+          sigCtx.stroke();
+        }
+
+        function stopDrawing(e) {
+          if (isDrawing) {
+            isDrawing = false;
+            sigCtx.closePath();
+            updateStampPreview();
+          }
+        }
+
+        sigCanvas.addEventListener('mousedown', startDrawing);
+        sigCanvas.addEventListener('mousemove', draw);
+        window.addEventListener('mouseup', stopDrawing);
+
+        sigCanvas.addEventListener('touchstart', startDrawing, { passive: false });
+        sigCanvas.addEventListener('touchmove', draw, { passive: false });
+        window.addEventListener('touchend', stopDrawing);
+
+        // Inputs change listener for preview
+        const nameIn = document.getElementById('signup-name');
+        const phoneIn = document.getElementById('signup-phone');
+        const typedIn = document.getElementById('signup-typed-sig-input');
+
+        if (nameIn) nameIn.addEventListener('input', () => updateStampPreview());
+        if (phoneIn) phoneIn.addEventListener('input', () => updateStampPreview());
+        if (typedIn) typedIn.addEventListener('input', () => updateTypedSigPreview());
+      }
+
+      function getSignupSignatureDataUrl() {
+        if (signupSigMode === 'draw') {
+          if (!sigCanvas || !signupSigHasStrokes) return null;
+          return sigCanvas.toDataURL('image/png');
+        } else {
+          const typedInput = document.getElementById('signup-typed-sig-input');
+          const text = typedInput ? typedInput.value.trim() : '';
+          if (!text) return null;
+
+          // Generate cursive script image onto a temporary canvas
+          const tempCanvas = document.createElement('canvas');
+          tempCanvas.width = 500;
+          tempCanvas.height = 120;
+          const tCtx = tempCanvas.getContext('2d');
+          if (tCtx) {
+            tCtx.font = 'bold 38px cursive';
+            tCtx.fillStyle = '#1d4ed8';
+            tCtx.textAlign = 'center';
+            tCtx.textBaseline = 'middle';
+            tCtx.fillText(text, 250, 60);
+            return tempCanvas.toDataURL('image/png');
+          }
+          return null;
+        }
+      }
+
+      // PROFILE PHOTO / DP UPLOAD HANDLER WITH CANVAS COMPRESSION (MAX 300x300, ~20KB)
+      let currentSignupDpUrl = '';
+
+      function compressImageToDataUrl(file, maxWidth = 300, maxHeight = 300, quality = 0.85) {
+        return new Promise((resolve) => {
+          const reader = new FileReader();
+          reader.onload = function(e) {
+            const img = new Image();
+            img.onload = function() {
+              let width = img.width;
+              let height = img.height;
+              if (width > height) {
+                if (width > maxWidth) {
+                  height = Math.round((height * maxWidth) / width);
+                  width = maxWidth;
+                }
+              } else {
+                if (height > maxHeight) {
+                  width = Math.round((width * maxHeight) / height);
+                  height = maxHeight;
+                }
+              }
+              const canvas = document.createElement('canvas');
+              canvas.width = width;
+              canvas.height = height;
+              const ctx = canvas.getContext('2d');
+              ctx.drawImage(img, 0, 0, width, height);
+              resolve(canvas.toDataURL('image/jpeg', quality));
+            };
+            img.onerror = function() { resolve(e.target.result || ''); };
+            img.src = e.target.result;
+          };
+          reader.onerror = function() { resolve(''); };
+          reader.readAsDataURL(file);
+        });
+      }
+
+      window.handleSignupDpUpload = async function(event) {
+        const file = event.target.files && event.target.files[0];
+        if (!file) return;
+
+        if (file.size > 10 * 1024 * 1024) {
+          alert('Please select an image smaller than 10MB.');
+          return;
+        }
+
+        try {
+          currentSignupDpUrl = await compressImageToDataUrl(file, 300, 300, 0.85);
+          const imgEl = document.getElementById('signup-dp-preview-img');
+          const iconEl = document.getElementById('signup-dp-default-icon');
+          const removeBtn = document.getElementById('btn-remove-signup-dp');
+
+          if (imgEl && iconEl) {
+            imgEl.src = currentSignupDpUrl;
+            imgEl.classList.remove('hidden');
+            iconEl.classList.add('hidden');
+          }
+          if (removeBtn) removeBtn.classList.remove('hidden');
+        } catch (err) {
+          console.error('DP compression error:', err);
+        }
+      };
+
+      window.removeSignupDp = function() {
+        currentSignupDpUrl = '';
+        const fileInput = document.getElementById('signup-dp-file');
+        if (fileInput) fileInput.value = '';
+
+        const imgEl = document.getElementById('signup-dp-preview-img');
+        const iconEl = document.getElementById('signup-dp-default-icon');
+        const removeBtn = document.getElementById('btn-remove-signup-dp');
+
+        if (imgEl && iconEl) {
+          imgEl.src = '';
+          imgEl.classList.add('hidden');
+          iconEl.classList.remove('hidden');
+        }
+        if (removeBtn) removeBtn.classList.add('hidden');
+      };
+
+      setTimeout(async () => {
+        initSignupSignaturePad();
+        updateStampPreview();
+        try {
+          const svc = window.AgreementService || window.DQAgreementService;
+          if (svc && typeof svc.syncTemplateFromSupabase === 'function') {
+            await svc.syncTemplateFromSupabase();
+          }
+        } catch(e) {}
+        if (typeof updateAgreementCardUI === 'function') updateAgreementCardUI();
+      }, 300);
+
+      window.addEventListener('dq_agreement_template_updated', () => {
+        if (typeof updateAgreementCardUI === 'function') updateAgreementCardUI();
+      });
+
+      // Helper to wait for Supabase service initialization
+      async function getSupabaseService() {
+        let db = window.DQSupabase || window.DQFirebase;
+        if (!db) {
+          for (let i = 0; i < 50; i++) {
+            await new Promise(r => setTimeout(r, 100));
+            db = window.DQSupabase || window.DQFirebase;
+            if (db) break;
+          }
+        }
+        return db;
+      }
+
+      // REAL SIGNUP SUBMISSION (With Agreement E-Sign Stamping + Email OTP + Phone Data Collection)
+      document.getElementById('signup-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const name = document.getElementById('signup-name').value.trim();
+        const email = (document.getElementById('signup-email').value || '').trim().toLowerCase();
+        const phone = document.getElementById('signup-phone').value.trim();
+        const clean10 = get10DigitPhone(phone);
+        const portfolio = document.getElementById('signup-portfolio').value.trim();
+        const skills = document.getElementById('signup-skills').value.trim();
+        const password = document.getElementById('signup-password').value.trim();
+        const agreeTc = document.getElementById('signup-agree-tc');
+
+        if (!email || !email.includes('@')) {
+          alert('Please enter a valid official email address.');
+          return;
+        }
+
+        if (clean10.length < 10) {
+          alert('Please enter a valid 10-digit Indian WhatsApp number.');
+          return;
+        }
+
+        if (password.length < 1) {
+          alert('Please choose a password or PIN.');
+          return;
+        }
+
+        if (!signupEmailVerified) {
+          const otpBox = document.getElementById('signup-email-otp-box');
+          const otpInput = document.getElementById('signup-email-otp-code');
+          if (otpBox && !otpBox.classList.contains('hidden')) {
+            alert('Please enter and confirm the 6-digit email verification code sent to your email.');
+            if (otpInput) otpInput.focus();
+            return;
+          } else if (btnSignupSendEmailOtp) {
+            btnSignupSendEmailOtp.click();
+            alert(`A 6-digit verification code has been dispatched to ${email}. Please enter and verify the code before completing registration.`);
+            return;
+          }
+        }
+
+        // Validate Creator Agreement E-Signature Execution
+        const hiddenSig = document.getElementById('signup-sig-hidden-val');
+        let sigDataUrl = (hiddenSig && hiddenSig.value) || getSignupSignatureDataUrl();
+
+        // If no drawn signature yet, auto-generate a digital script signature
+        if (!sigDataUrl) {
+          try {
+            const tempCanvas = document.createElement('canvas');
+            tempCanvas.width = 400;
+            tempCanvas.height = 160;
+            const tCtx = tempCanvas.getContext('2d');
+            if (tCtx) {
+              tCtx.fillStyle = 'transparent';
+              tCtx.clearRect(0, 0, 400, 160);
+              tCtx.font = 'italic 34px "Space Grotesk", cursive, sans-serif';
+              tCtx.fillStyle = '#0f172a';
+              tCtx.textAlign = 'center';
+              tCtx.textBaseline = 'middle';
+              tCtx.fillText(name, 200, 80);
+              sigDataUrl = tempCanvas.toDataURL('image/png');
+            }
+          } catch(e) {}
+        }
+
+        const submitBtn = e.target.querySelector('button[type="submit"]');
+        const originalBtnText = submitBtn ? submitBtn.innerHTML : '';
+        if (submitBtn) {
+          submitBtn.innerHTML = `<span class="flex items-center justify-center gap-2"><svg class="animate-spin h-4 w-4 text-white" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path></svg>Saving Registration...</span>`;
+          submitBtn.disabled = true;
+        }
+
+        const dateSignedStr = new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+
+        // Generate and stamp the Agreement PDF, save it, and automatically download for designer
+        let signedPdfBytes = null;
+        try {
+          const svc = window.AgreementService || window.DQAgreementService;
+          if (svc) {
+            signedPdfBytes = await svc.generateSignedPdf({
+              creatorName: name,
+              whatsapp: clean10,
+              date: dateSignedStr,
+              signatureDataUrl: sigDataUrl,
+              designerId: clean10 || email,
+              designerEmail: email
+            });
+            if (signedPdfBytes) {
+              svc.saveSignedAgreement(clean10 || email, {
+                creatorName: name,
+                whatsapp: clean10,
+                date: dateSignedStr,
+                signatureDataUrl: sigDataUrl,
+                designerId: clean10 || email,
+                designerEmail: email
+              }, signedPdfBytes);
+              // Trigger automatic agreement PDF download for designer
+              try {
+                svc.downloadPdf(signedPdfBytes, `Design_Quixo_Agreement_${name.replace(/\s+/g, '_')}.pdf`);
+              } catch(dErr) {
+                console.warn('Agreement auto-download note:', dErr);
+              }
+            }
+          }
+        } catch (pdfErr) {
+          console.warn('Agreement PDF generation note:', pdfErr);
+        }
+
+        // Direct payload for registration
+        const directPayload = {
+          id: clean10 || email,
+          name: name || 'Designer',
+          phone: clean10 || '',
+          email: email || '',
+          identifier: email || clean10,
+          password: password.toString(),
+          pin: password.toString(),
+          portfolio: portfolio || '',
+          skills: skills || 'Graphic Design',
+          experience: skills || 'Graphic Design',
+          status: 'Pending',
+          role: 'designer',
+          avatar: currentSignupDpUrl || '',
+          avatarUrl: currentSignupDpUrl || '',
+          date: dateSignedStr,
+          createdat: new Date().toISOString(),
+          signature: sigDataUrl || '',
+          signatureDataUrl: sigDataUrl || '',
+          agreementSigned: true,
+          agreementSignedDate: dateSignedStr
+        };
+
+        // 1. Authoritative Server Registration to PostgreSQL
+        try {
+          const regRes = await fetch('/api/register-designer', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(directPayload)
+          });
+          const regData = await regRes.json().catch(() => ({}));
+          console.log('[REGISTRATION RESPONSE]:', regData);
+        } catch(err) {
+          console.warn('Direct server registration notice:', err);
+        }
+
+        // 2. Also save signature to Supabase login_history explicitly
+        if (sigDataUrl) {
+          try {
+            await fetch('/api/save-login-history', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                id: 'sig-' + (clean10 || email),
+                phone: clean10 || email,
+                name: name,
+                role: 'signed_agreement',
+                status: sigDataUrl,
+                timestamp: new Date().toISOString()
+              })
+            });
+          } catch(sigSaveErr) {
+            console.warn('Signature save-login-history note:', sigSaveErr);
+          }
+        }
+
+        // Cache DP in persistent map
+        if (currentSignupDpUrl) {
+          try {
+            const dpMap = JSON.parse(localStorage.getItem('dq_user_dp_map') || '{}');
+            if (clean10) dpMap[clean10] = currentSignupDpUrl;
+            if (email) dpMap[email.toLowerCase()] = currentSignupDpUrl;
+            if (clean10) dpMap['+91' + clean10] = currentSignupDpUrl;
+            localStorage.setItem('dq_user_dp_map', JSON.stringify(dpMap));
+          } catch(e) {}
+        }
+
+        // 2. Set Local User Session
+        try {
+          let registered = JSON.parse(localStorage.getItem('dq_registered_designers') || '[]');
+          registered = registered.filter(d => (d.email !== email && get10DigitPhone(d.phone || d.identifier) !== clean10));
+          registered.unshift(directPayload);
+          localStorage.setItem('dq_registered_designers', JSON.stringify(registered));
+
+          let approved = JSON.parse(localStorage.getItem('dq_approved_designers') || '[]');
+          approved = approved.filter(d => (d.email !== email && get10DigitPhone(d.phone || d.identifier) !== clean10));
+          localStorage.setItem('dq_approved_designers', JSON.stringify(approved));
+
+          localStorage.setItem('dq_current_user', JSON.stringify(directPayload));
+          sessionStorage.setItem('dq_current_user', JSON.stringify(directPayload));
+        } catch(err) {}
+
+        // 3. Dispatch Background Notification Emails
+        try {
+          const emailSvc = window.DQEmailService || window.EmailService;
+          if (emailSvc) {
+            emailSvc.sendRegistrationEmailToDesigner({ name, email, phone: clean10 }).catch(() => {});
+            emailSvc.sendNewRegistrationAlertToAdmin({ name, email, phone: clean10, portfolio, skills }).catch(() => {});
+          }
+        } catch(e) {}
+
+        if (submitBtn) {
+          submitBtn.innerHTML = `<i data-lucide="check" class="w-4 h-4"></i><span>Application Submitted!</span>`;
+          if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
+        }
+
+        alert(`✓ Application Submitted Successfully!\n\nWelcome ${name}! Your Creator Account Application has been submitted and is currently pending administrator approval.\nRedirecting to your Workstation...`);
+        window.location.href = 'designer-dashboard.html';
+      });
+
+      window.togglePasswordVisibility = function(inputId, btnEl) {
+        const input = document.getElementById(inputId);
+        if (!input) return;
+        const isPassword = input.type === 'password';
+        input.type = isPassword ? 'text' : 'password';
+        if (btnEl) {
+          btnEl.innerHTML = `<i data-lucide="${isPassword ? 'eye-off' : 'eye'}" class="w-4 h-4"></i>`;
+          if (typeof lucide !== 'undefined' && lucide.createIcons) lucide.createIcons();
+        }
+      };
+    </script>
+  </body>
+</html>

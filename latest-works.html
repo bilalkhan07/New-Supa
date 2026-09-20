@@ -1,0 +1,321 @@
+<!doctype html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Portfolio & Latest Works - Design Quixo | 100% Human Crafted</title>
+    <meta name="description" content="Explore real human-made graphic designs produced by verified Indian creators on Design Quixo. YouTube thumbnails, social media posts, logos, and flyers." />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+    <link rel="canonical" href="https://designquixo.in/latest-works.html" />
+    <meta property="og:title" content="Portfolio & Latest Works - Design Quixo" />
+    <meta property="og:description" content="Explore real human-made graphic designs produced by verified Indian creators on Design Quixo." />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://designquixo.in/latest-works.html" />
+    <meta property="og:image" content="https://designquixo.in/favicon.png" />
+    <link rel="icon" type="image/png" href="favicon.png" />
+    <link rel="shortcut icon" type="image/png" href="favicon.png" />
+    <link rel="apple-touch-icon" href="favicon.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="security.js"></script>
+    <!-- Design Quixo Source & UI Security -->
+    <script>
+      (function(){
+        const blockEvent = function(e){ e.preventDefault(); e.stopPropagation(); return false; };
+        window.addEventListener('contextmenu', blockEvent, true);
+        document.addEventListener('contextmenu', blockEvent, true);
+        window.oncontextmenu = function(){ return false; };
+        document.oncontextmenu = function(){ return false; };
+        const blockKeys = function(e){
+          if (e.key === 'F12' || e.keyCode === 123) { e.preventDefault(); e.stopPropagation(); return false; }
+          const ctrl = e.ctrlKey || e.metaKey;
+          if (ctrl && (e.shiftKey || e.altKey)) {
+            const k = (e.key || '').toUpperCase();
+            if (k === 'I' || k === 'J' || k === 'C' || k === 'K' || k === 'S' || k === 'E') {
+              e.preventDefault(); e.stopPropagation(); return false;
+            }
+          }
+          if (ctrl) {
+            const k = (e.key || '').toUpperCase();
+            if (k === 'U' || k === 'S' || k === 'P') { e.preventDefault(); e.stopPropagation(); return false; }
+          }
+        };
+        window.addEventListener('keydown', blockKeys, true);
+        document.addEventListener('keydown', blockKeys, true);
+        document.addEventListener('selectstart', function(e){
+          const t = e.target && e.target.tagName ? e.target.tagName.toUpperCase() : '';
+          if (t !== 'INPUT' && t !== 'TEXTAREA') { e.preventDefault(); return false; }
+        }, true);
+        document.addEventListener('copy', function(e){
+          const t = e.target && e.target.tagName ? e.target.tagName.toUpperCase() : '';
+          if (t !== 'INPUT' && t !== 'TEXTAREA') { e.preventDefault(); return false; }
+        }, true);
+      })();
+    </script>
+    <link rel="stylesheet" href="src/index.css" />
+    <script type="module" src="/src/supabase-service.ts"></script>
+    <script src="store.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+  </head>
+  <body class="bg-white text-slate-800 antialiased min-h-screen flex flex-col font-['Plus_Jakarta_Sans',sans-serif]">
+    
+    <!-- Navigation Header -->
+    <header class="sticky top-0 z-50 backdrop-blur-md bg-white/95 border-b border-slate-200 transition-all shadow-xs">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between gap-4">
+        <div class="flex items-center justify-start shrink-0">
+          <a href="index.html" class="flex items-center gap-2.5 sm:gap-3 group shrink-0">
+            <img src="favicon.png" alt="Design Quixo Logo" class="w-8 h-8 sm:w-10 sm:h-10 object-contain rounded-xl group-hover:scale-105 transition-transform shrink-0" onerror="this.onerror=null; this.src='favicon.png';" />
+            <span class="font-extrabold text-lg sm:text-xl tracking-tight font-['Space_Grotesk'] text-slate-900">DESIGN <span class="text-blue-600">QUIXO</span></span>
+          </a>
+        </div>
+
+        <!-- Desktop Navigation - Centered -->
+        <nav class="hidden lg:flex items-center justify-center gap-7 xl:gap-8 text-xs xl:text-sm font-semibold text-slate-600 mx-auto">
+          <a href="index.html" class="hover:text-blue-600 transition-colors">Home</a>
+          <a href="services.html" class="hover:text-blue-600 transition-colors">Services</a>
+          <a href="latest-works.html" class="text-blue-600 font-bold">Portfolio</a>
+          <a href="about.html" class="hover:text-blue-600 transition-colors">About Us</a>
+          <a href="cities.html" class="hover:text-blue-600 transition-colors flex items-center gap-1">
+            <i data-lucide="map-pin" class="w-3.5 h-3.5 text-blue-600"></i>
+            Cities
+          </a>
+          <a href="contact.html" class="hover:text-blue-600 transition-colors">Contact</a>
+        </nav>
+
+        <!-- Right Action CTAs -->
+        <div class="flex items-center justify-end gap-2.5 sm:gap-3 shrink-0">
+          <a href="login.html?mode=signup" class="hidden sm:inline-flex items-center gap-1.5 text-xs font-semibold text-slate-700 hover:text-blue-600 px-3.5 py-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 shadow-xs transition-colors shrink-0">
+            <i data-lucide="user-plus" class="w-3.5 h-3.5 text-blue-600"></i>
+            <span>Join as Designer</span>
+          </a>
+          <a href="login.html?mode=login" class="inline-flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 text-white font-bold px-3.5 py-2 sm:px-4 sm:py-2 rounded-xl text-xs sm:text-sm shadow-sm transition-all shrink-0">
+            <i data-lucide="log-in" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i>
+            <span>Login</span>
+          </a>
+          <button id="mobile-menu-btn" class="lg:hidden p-2 text-slate-600 hover:text-slate-900 rounded-xl border border-slate-200 hover:bg-slate-50 transition-colors" aria-label="Toggle Navigation">
+            <i data-lucide="menu" class="w-5 h-5"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Mobile Dropdown -->
+      <div id="mobile-menu" class="hidden lg:hidden border-b border-slate-200 bg-white px-4 pt-2 pb-5 space-y-2.5 shadow-md">
+        <a href="index.html" class="block py-2 text-slate-700 hover:text-blue-600 font-medium text-sm">Home</a>
+        <a href="services.html" class="block py-2 text-slate-700 hover:text-blue-600 font-medium text-sm">Services</a>
+        <a href="latest-works.html" class="block py-2 text-blue-600 font-bold text-sm">Portfolio Showcase</a>
+        <a href="about.html" class="block py-2 text-slate-700 hover:text-blue-600 font-medium text-sm">About Us</a>
+        <a href="cities.html" class="block py-2 text-slate-700 hover:text-blue-600 font-medium text-sm">Cities Directory</a>
+        <a href="contact.html" class="block py-2 text-slate-700 hover:text-blue-600 font-medium text-sm">Contact Support</a>
+        <div class="pt-3 border-t border-slate-200 flex flex-col gap-2">
+          <a href="login.html?mode=signup" class="flex items-center justify-center gap-2 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-slate-700 font-bold text-xs">
+            <i data-lucide="user-plus" class="w-3.5 h-3.5 text-blue-600"></i>
+            <span>Join as Designer</span>
+          </a>
+          <a href="login.html?mode=login" class="flex items-center justify-center gap-2 py-2.5 rounded-xl bg-blue-600 text-white font-bold text-xs shadow-sm">
+            <i data-lucide="log-in" class="w-3.5 h-3.5"></i>
+            <span>Login</span>
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-grow">
+      
+      <!-- Header -->
+      <section class="py-16 sm:py-20 bg-slate-50 border-b border-slate-200 text-center relative">
+        <div class="max-w-4xl mx-auto px-4 relative z-10">
+          <div class="inline-flex items-center gap-2 px-3.5 sm:px-4 py-1.5 rounded-full bg-blue-50 border border-blue-200 text-blue-800 text-xs font-bold mb-6 shadow-xs">
+            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
+            <span>Zero-AI Human Craftsmanship</span>
+          </div>
+          <h1 class="text-3xl sm:text-5xl font-extrabold text-slate-900 font-['Space_Grotesk'] tracking-tight mb-4">
+            Recent Client Deliveries
+          </h1>
+          <p class="text-slate-600 text-sm sm:text-base max-w-2xl mx-auto leading-relaxed">
+            Real designs created by our network of verified Indian creators. Turnaround times logged on our live dispatch workstation.
+          </p>
+        </div>
+      </section>
+
+      <!-- Filter Tabs -->
+      <section class="py-6 sm:py-8 max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+        <div class="relative w-full">
+          <div class="flex items-center sm:justify-center justify-start gap-2 overflow-x-auto pb-2 pt-1 px-1 no-scrollbar scroll-smooth w-full -mx-1 sm:mx-0" id="portfolio-filters" style="-webkit-overflow-scrolling: touch;">
+            <button class="filter-btn active px-4 py-2.5 rounded-xl text-xs font-bold bg-blue-600 text-white shadow-xs whitespace-nowrap shrink-0 transition-all cursor-pointer border border-blue-600" data-filter="all">All Deliveries</button>
+            <button class="filter-btn px-4 py-2.5 rounded-xl text-xs font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200 whitespace-nowrap shrink-0 transition-all cursor-pointer border border-slate-200/60" data-filter="thumbnail">YouTube Thumbnails</button>
+            <button class="filter-btn px-4 py-2.5 rounded-xl text-xs font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200 whitespace-nowrap shrink-0 transition-all cursor-pointer border border-slate-200/60" data-filter="social">Social Media</button>
+            <button class="filter-btn px-4 py-2.5 rounded-xl text-xs font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200 whitespace-nowrap shrink-0 transition-all cursor-pointer border border-slate-200/60" data-filter="branding">Logos & Identity</button>
+            <button class="filter-btn px-4 py-2.5 rounded-xl text-xs font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200 whitespace-nowrap shrink-0 transition-all cursor-pointer border border-slate-200/60" data-filter="print">Print & Packaging</button>
+          </div>
+        </div>
+
+        <!-- Portfolio Items Grid (2-column on mobile) -->
+        <div class="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6 lg:gap-8 mt-8" id="portfolio-grid">
+          <!-- Populated dynamically from window.DQStore.getPortfolio() -->
+        </div>
+
+        <!-- CTA Box -->
+        <div class="mt-16 p-8 sm:p-12 rounded-3xl bg-blue-600 text-white text-center space-y-4 shadow-lg shadow-blue-500/20">
+          <h2 class="text-2xl sm:text-4xl font-extrabold font-['Space_Grotesk']">Need a Similar Design Right Now?</h2>
+          <p class="text-blue-100 text-xs sm:text-sm max-w-xl mx-auto">Submit your design brief in 60 seconds. Our human creators will start on your files immediately.</p>
+          <div class="pt-2">
+            <a href="request.html" class="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-white text-blue-600 font-extrabold text-sm hover:bg-blue-50 shadow-md transition-all">
+              <i data-lucide="zap" class="w-4 h-4 fill-blue-600"></i>
+              <span>Find Designer Now</span>
+            </a>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Global Trustworthy Footer -->
+    <footer class="border-t border-slate-200 bg-slate-50 py-12 text-xs text-slate-600">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div class="space-y-3">
+          <div class="flex items-center gap-2">
+            <img src="favicon.png" alt="Design Quixo Logo" class="w-8 h-8 object-contain rounded-lg shrink-0" onerror="this.onerror=null; this.src='favicon.png';" />
+            <span class="font-extrabold text-lg font-['Space_Grotesk'] text-slate-900">DESIGN <span class="text-blue-600">QUIXO</span></span>
+          </div>
+          <p class="text-slate-500 leading-relaxed">India's fastest manual graphic design network. Real human creators delivering high-res vector files in 30-60 minutes directly on WhatsApp.</p>
+        </div>
+
+        <div>
+          <h4 class="font-bold text-slate-900 uppercase tracking-wider text-[11px] mb-3">Quick Navigation</h4>
+          <ul class="space-y-2">
+            <li><a href="index.html" class="hover:text-blue-600 transition-colors">Home Page</a></li>
+            <li><a href="services.html" class="hover:text-blue-600 transition-colors">All Design Services</a></li>
+            <li><a href="latest-works.html" class="text-blue-600 font-semibold transition-colors">Portfolio Gallery</a></li>
+            <li><a href="about.html" class="hover:text-blue-600 transition-colors">About Our Platform</a></li>
+            <li><a href="cities.html" class="hover:text-blue-600 transition-colors">Cities Directory (16+ Hubs)</a></li>
+            <li><a href="terms.html" class="hover:text-blue-600 transition-colors">Terms of Service</a></li>
+            <li><a href="privacy.html" class="hover:text-blue-600 transition-colors">Privacy & Cookie Policy</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="font-bold text-slate-900 uppercase tracking-wider text-[11px] mb-3">Creator & Careers</h4>
+          <ul class="space-y-2">
+            <li><a href="login.html?mode=signup" class="hover:text-blue-600 font-semibold text-blue-600 transition-colors">Apply as Verified Designer</a></li>
+            <li><a href="login.html" class="hover:text-blue-600 transition-colors">Designer Workstation Login</a></li>
+            <li><a href="request.html" class="hover:text-blue-600 transition-colors">Submit Instant Design Brief</a></li>
+            <li><a href="terms.html" class="hover:text-blue-600 transition-colors">Terms & Conditions</a></li>
+            <li><a href="contact.html" class="hover:text-blue-600 transition-colors">Help & Contact Desk</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="font-bold text-slate-900 uppercase tracking-wider text-[11px] mb-3">Direct Support Desk</h4>
+          <p class="text-slate-500 mb-2">Design Quixo Operations & Dispatch</p>
+          <div class="space-y-2">
+            <a href="https://wa.me/918602420897" target="_blank" class="inline-flex items-center gap-2 font-bold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 px-3.5 py-2 rounded-xl border border-emerald-200 transition-colors shadow-xs w-full">
+              <img src="wa_icon.png" alt="WhatsApp" class="w-4 h-4 object-contain rounded-full shrink-0" onerror="this.onerror=null; this.src='wa_icon.png';" />
+              <span>+91 86024 20897</span>
+            </a>
+            <a href="mailto:designquixo@gmail.com" class="inline-flex items-center gap-2 font-bold text-blue-700 bg-blue-50 hover:bg-blue-100 px-3.5 py-2 rounded-xl border border-blue-200 transition-colors shadow-xs w-full text-xs">
+              <i data-lucide="mail" class="w-4 h-4 text-blue-600 shrink-0"></i>
+              <span>designquixo@gmail.com</span>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8 pt-6 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left text-slate-400">
+        <p>&copy; 2026 Design Quixo India. All rights reserved.</p>
+        <div class="flex items-center gap-4 text-[11px] flex-wrap justify-center sm:justify-end">
+          <a href="terms.html" class="hover:text-slate-600 underline">Terms of Service</a>
+          <a href="privacy.html" class="hover:text-slate-600 underline">Privacy Policy</a>
+          <a href="privacy.html#cookies" class="hover:text-slate-600 underline">Cookie Policy</a>
+          <a href="contact.html" class="hover:text-slate-600 underline">Contact Desk</a>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Global Cookie Consent Component Script -->
+    <script src="cookie-banner.js"></script>
+
+    <script>
+      let currentFilter = 'all';
+
+      function renderPortfolio() {
+        const grid = document.getElementById('portfolio-grid');
+        if (!grid) return;
+
+        const items = window.DQStore ? window.DQStore.getPortfolio() : [];
+        const filtered = currentFilter === 'all' 
+          ? items 
+          : items.filter(it => it.category === currentFilter);
+
+        if (filtered.length === 0) {
+          grid.innerHTML = `
+            <div class="col-span-full p-12 text-center bg-slate-50 rounded-3xl border border-slate-200 text-slate-500 text-xs">
+              No portfolio projects found in this category.
+            </div>
+          `;
+          return;
+        }
+
+        grid.innerHTML = filtered.map(item => `
+          <div class="portfolio-card group rounded-2xl sm:rounded-3xl bg-white border border-slate-200 overflow-hidden shadow-xs hover:shadow-md hover:border-blue-300 transition-all flex flex-col justify-between" data-category="${item.category || 'other'}">
+            <div class="relative h-36 sm:h-56 bg-slate-100 overflow-hidden">
+              <img src="${item.image || 'https://images.unsplash.com/photo-1626785774573-4b799315345d?w=700&auto=format&fit=crop&q=80'}" alt="${item.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1626785774573-4b799315345d?w=700&auto=format&fit=crop&q=80';" />
+              <span class="absolute bottom-2 right-2 sm:bottom-3 sm:right-3 text-[9px] sm:text-xs font-mono font-extrabold text-emerald-800 bg-white/95 backdrop-blur-xs px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full shadow-xs tracking-wider">${item.deliveryTime || '⚡ 30-45m'}</span>
+            </div>
+            <div class="p-3.5 sm:p-6 space-y-2">
+              <h3 class="text-sm sm:text-base font-extrabold text-slate-950 font-['Space_Grotesk'] leading-snug tracking-tight">${item.title}</h3>
+              <p class="text-xs sm:text-xs font-semibold text-slate-700 line-clamp-2 leading-snug">${item.description || item.desc || 'Delivered layered source files with full copyright ownership.'}</p>
+              <div class="pt-2 flex items-center justify-between border-t border-slate-100 text-xs text-slate-500 font-semibold">
+                <span>Client: ${item.client || 'Verified Brand'}</span>
+                <span class="text-emerald-600 font-bold flex items-center gap-1"><i data-lucide="check-circle-2" class="w-3.5 h-3.5 inline"></i> Verified Work</span>
+              </div>
+            </div>
+          </div>
+        `).join('');
+      }
+
+      // Filter handling
+      const filterBtns = document.querySelectorAll('.filter-btn');
+      filterBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          filterBtns.forEach(b => {
+            b.className = 'filter-btn px-4 py-2.5 rounded-xl text-xs font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200 whitespace-nowrap shrink-0 transition-all cursor-pointer border border-slate-200/60';
+          });
+          btn.className = 'filter-btn active px-4 py-2.5 rounded-xl text-xs font-bold bg-blue-600 text-white shadow-xs whitespace-nowrap shrink-0 transition-all cursor-pointer border border-blue-600';
+          currentFilter = btn.getAttribute('data-filter') || 'all';
+          renderPortfolio();
+        });
+      });
+
+      const mobileBtn = document.getElementById('mobile-menu-btn');
+      const mobileMenu = document.getElementById('mobile-menu');
+      if (mobileBtn && mobileMenu) {
+        mobileBtn.addEventListener('click', () => {
+          mobileMenu.classList.toggle('hidden');
+        });
+      }
+
+      document.addEventListener('DOMContentLoaded', () => {
+        renderPortfolio();
+        lucide.createIcons();
+      });
+      renderPortfolio();
+      lucide.createIcons();
+
+      window.addEventListener('storage', (e) => {
+        if (e.key === 'dq_portfolio_items') {
+          renderPortfolio();
+          if (window.lucide) lucide.createIcons();
+        }
+      });
+
+      // Listen to real-time Firestore sync event
+      window.addEventListener('dq_portfolio_updated', () => {
+        renderPortfolio();
+        if (window.lucide) lucide.createIcons();
+      });
+    </script>
+  </body>
+</html>
