@@ -15,7 +15,12 @@ export default async function handler(req, res) {
   }
 
   try {
-    const body = typeof req.body === 'string' ? JSON.parse(req.body) : (req.body || {});
+    let body = {};
+    if (typeof req.body === 'string') {
+      try { body = JSON.parse(req.body); } catch(pe) { body = {}; }
+    } else if (req.body && typeof req.body === 'object') {
+      body = req.body;
+    }
     const { email, code } = body;
     const cleanEmail = (email || '').trim().toLowerCase();
     const cleanCode = (code || '').trim();
@@ -68,4 +73,3 @@ export default async function handler(req, res) {
     return res.status(500).json({ success: false, message: err.message || 'Internal error' });
   }
 }
-
