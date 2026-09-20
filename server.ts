@@ -496,7 +496,7 @@ async function startServer() {
       return res.end();
     }
     // --- JOB ACCEPTED NOTIFICATION ROUTE ---
-    if (req.url === '/api/notify-job-accepted' && req.method === 'POST') {
+    if (reqPath === '/api/notify-job-accepted' && req.method === 'POST') {
       let body = '';
       req.on('data', (chunk: Buffer) => { body += chunk.toString(); });
       req.on('end', async () => {
@@ -524,7 +524,7 @@ async function startServer() {
     }
 
     // --- AUTO-REGENERATE ALL CITY PAGES ROUTE ---
-    if (req.url === '/api/admin/regenerate-city-pages' && req.method === 'POST') {
+    if (reqPath === '/api/admin/regenerate-city-pages' && req.method === 'POST') {
       import('child_process').then(({ exec }) => {
         exec('node scripts/update-city-pages.cjs', (error, stdout, stderr) => {
           if (error) {
@@ -539,7 +539,7 @@ async function startServer() {
     }
 
     // --- UPDATE DESIGNER EMAIL ROUTE ---
-    if (req.url === '/api/update-designer-email' && req.method === 'POST') {
+    if (reqPath === '/api/update-designer-email' && req.method === 'POST') {
       let body = '';
       req.on('data', (chunk: Buffer) => { body += chunk.toString(); });
       req.on('end', async () => {
@@ -582,7 +582,7 @@ async function startServer() {
     }
 
     // --- UPDATE DESIGNER PASSWORD ROUTE ---
-    if (req.url === '/api/update-designer-password' && req.method === 'POST') {
+    if (reqPath === '/api/update-designer-password' && req.method === 'POST') {
       let body = '';
       req.on('data', (chunk: Buffer) => { body += chunk.toString(); });
       req.on('end', async () => {
@@ -872,7 +872,7 @@ async function startServer() {
     }
 
     // --- NEW JOB DISPATCH & DESIGNER EMAIL BROADCAST ROUTE ---
-    if (req.url === '/api/notify-new-job' && req.method === 'POST') {
+    if (reqPath === '/api/notify-new-job' && req.method === 'POST') {
           let body = '';
           req.on('data', (chunk: Buffer) => { body += chunk.toString(); });
           req.on('end', async () => {
@@ -998,7 +998,7 @@ async function startServer() {
         }
 
         // --- EMAIL OTP DISPATCH ROUTE ---
-        if (req.url === '/api/email-otp-send' && req.method === 'POST') {
+        if (reqPath === '/api/email-otp-send' && req.method === 'POST') {
           let body = '';
           req.on('data', (chunk: Buffer) => { body += chunk.toString(); });
           req.on('end', async () => {
@@ -1063,7 +1063,7 @@ async function startServer() {
         }
 
         // --- EMAIL OTP VERIFY ROUTE ---
-        if (req.url === '/api/email-otp-verify' && req.method === 'POST') {
+        if (reqPath === '/api/email-otp-verify' && req.method === 'POST') {
           let body = '';
           req.on('data', (chunk: Buffer) => { body += chunk.toString(); });
           req.on('end', async () => {
@@ -1139,7 +1139,7 @@ async function startServer() {
           return;
         }
 
-        if (req.url === '/api/send-email' && req.method === 'POST') {
+        if (reqPath === '/api/send-email' && req.method === 'POST') {
           let body = '';
           req.on('data', (chunk: Buffer) => { body += chunk.toString(); });
           req.on('end', async () => {
@@ -1191,7 +1191,7 @@ async function startServer() {
           return;
         }
 
-        if (req.url === '/api/sms-send' && req.method === 'POST') {
+        if (reqPath === '/api/sms-send' && req.method === 'POST') {
           let body = '';
           req.on('data', (chunk: Buffer) => { body += chunk.toString(); });
           req.on('end', async () => {
@@ -1244,7 +1244,7 @@ async function startServer() {
           return;
         }
 
-        if (req.url === '/api/sms-verify' && req.method === 'POST') {
+        if (reqPath === '/api/sms-verify' && req.method === 'POST') {
           let body = '';
           req.on('data', (chunk: Buffer) => { body += chunk.toString(); });
           req.on('end', () => {
@@ -1291,7 +1291,7 @@ async function startServer() {
         }
 
         // --- DESIGNER REGISTRATION API ROUTE ---
-        if (req.url === '/api/register-designer' && req.method === 'POST') {
+        if (reqPath === '/api/register-designer' && req.method === 'POST') {
           let body = '';
           req.on('data', (chunk: Buffer) => { body += chunk.toString(); });
           req.on('end', async () => {
@@ -1417,7 +1417,7 @@ async function startServer() {
         }
 
         // --- DESIGNER STATUS UPDATE API ROUTE (APPROVE / PENDING / REVOKE) ---
-        if (req.url === '/api/update-designer-status' && req.method === 'POST') {
+        if (reqPath === '/api/update-designer-status' && req.method === 'POST') {
           let body = '';
           req.on('data', (chunk: Buffer) => { body += chunk.toString(); });
           req.on('end', async () => {
@@ -1634,8 +1634,7 @@ async function startServer() {
             try {
               const { data: supaList, error: supErr } = await serverSupabase
                 .from('designers')
-                .select('*')
-                .order('createdat', { ascending: false });
+                .select('*');
 
               if (supErr) {
                 console.warn('[SERVER /api/get-designers Supabase warning]:', supErr.message);
@@ -1864,7 +1863,7 @@ async function startServer() {
         }
 
         // --- DELETE DESIGNER API ROUTE (PERMANENT CACHE-FREE DELETION FROM ALL TABLES) ---
-        if (req.url === '/api/delete-designer' && req.method === 'POST') {
+        if (reqPath === '/api/delete-designer' && req.method === 'POST') {
           let body = '';
           req.on('data', (chunk: Buffer) => { body += chunk.toString(); });
           req.on('end', async () => {
@@ -1925,7 +1924,7 @@ async function startServer() {
         }
 
         // --- DELETE JOB API ROUTE (PERMANENT CACHE-FREE DELETION) ---
-        if (req.url === '/api/delete-job' && req.method === 'POST') {
+        if (reqPath === '/api/delete-job' && req.method === 'POST') {
           let body = '';
           req.on('data', (chunk: Buffer) => { body += chunk.toString(); });
           req.on('end', async () => {
@@ -1976,7 +1975,7 @@ async function startServer() {
         }
 
         // --- GET JOBS API ROUTE (IN-MEMORY CACHED TO SAVES BANDWIDTH) ---
-        if (req.url === '/api/get-jobs' && req.method === 'GET') {
+        if (reqPath === '/api/get-jobs' && req.method === 'GET') {
           try {
             if (cachedJobsData && (Date.now() - cachedJobsTime < CACHE_TTL_MS)) {
               setNoCacheHeaders(res);
@@ -1988,8 +1987,7 @@ async function startServer() {
               const { data: supaJobs, error: sErr } = await serverSupabase
                 .from('jobs')
                 .select('*')
-                .neq('status', 'Deleted')
-                .order('createdat', { ascending: false });
+                .neq('status', 'Deleted');
 
               if (sErr) {
                 console.warn('[Supabase /api/get-jobs error]:', sErr.message);
@@ -2010,6 +2008,8 @@ async function startServer() {
               return !serverDeletedJobIds.has(jId) && !serverDeletedJobIds.has(jClean) && !serverDeletedJobIds.has(jBare);
             });
 
+            activeJobs.sort((a, b) => new Date(b.created_at || b.createdat || b.createdAt || 0).getTime() - new Date(a.created_at || a.createdat || a.createdAt || 0).getTime());
+
             cachedJobsData = activeJobs;
             cachedJobsTime = Date.now();
 
@@ -2026,7 +2026,7 @@ async function startServer() {
         }
 
         // --- SAVE JOB API ROUTE (AUTHORITATIVE CLOUD PERSISTENCE) ---
-        if (req.url === '/api/save-job' && req.method === 'POST') {
+        if (reqPath === '/api/save-job' && req.method === 'POST') {
           let body = '';
           req.on('data', (chunk: Buffer) => { body += chunk.toString(); });
           req.on('end', async () => {
@@ -2099,7 +2099,7 @@ async function startServer() {
         }
 
         // --- UPDATE JOB STATUS API ROUTE (DIRECT SUPABASE) ---
-        if (req.url === '/api/update-job-status' && req.method === 'POST') {
+        if (reqPath === '/api/update-job-status' && req.method === 'POST') {
           let body = '';
           req.on('data', (chunk: Buffer) => { body += chunk.toString(); });
           req.on('end', async () => {
@@ -2149,7 +2149,7 @@ async function startServer() {
         }
 
         // --- PUSH NOTIFICATION: GET VAPID PUBLIC KEY ---
-        if (req.url === '/api/push-vapid-public-key' && req.method === 'GET') {
+        if (reqPath === '/api/push-vapid-public-key' && req.method === 'GET') {
           setNoCacheHeaders(res);
           return res.end(JSON.stringify({
             success: true,
@@ -2158,7 +2158,7 @@ async function startServer() {
         }
 
         // --- PUSH NOTIFICATION: SUBSCRIBE DEVICE ---
-        if (req.url === '/api/push-subscribe' && req.method === 'POST') {
+        if (reqPath === '/api/push-subscribe' && req.method === 'POST') {
           let body = '';
           req.on('data', (chunk: Buffer) => { body += chunk.toString(); });
           req.on('end', () => {
@@ -2196,7 +2196,7 @@ async function startServer() {
         }
 
         // --- PUSH NOTIFICATION: UNSUBSCRIBE DEVICE ---
-        if (req.url === '/api/push-unsubscribe' && req.method === 'POST') {
+        if (reqPath === '/api/push-unsubscribe' && req.method === 'POST') {
           let body = '';
           req.on('data', (chunk: Buffer) => { body += chunk.toString(); });
           req.on('end', () => {
@@ -2217,7 +2217,7 @@ async function startServer() {
         }
 
         // --- PUSH NOTIFICATION: TRIGGER / TEST NOTIFICATION ---
-        if (req.url === '/api/trigger-push-notification' && req.method === 'POST') {
+        if (reqPath === '/api/trigger-push-notification' && req.method === 'POST') {
           let body = '';
           req.on('data', (chunk: Buffer) => { body += chunk.toString(); });
           req.on('end', async () => {
@@ -2253,7 +2253,7 @@ async function startServer() {
         }
 
         // --- CLEAR ALL JOBS API ROUTE ---
-        if (req.url === '/api/clear-all-jobs' && req.method === 'POST') {
+        if (reqPath === '/api/clear-all-jobs' && req.method === 'POST') {
           try {
             console.log('[SERVER /api/clear-all-jobs] Clearing all jobs from Supabase...');
             cachedJobsData = [];
@@ -2268,7 +2268,7 @@ async function startServer() {
         }
 
         // --- SAVE CITY ADDRESS API ROUTE ---
-        if (req.url === '/api/save-city-address' && req.method === 'POST') {
+        if (reqPath === '/api/save-city-address' && req.method === 'POST') {
           let body = '';
           req.on('data', (chunk: Buffer) => { body += chunk.toString(); });
           req.on('end', async () => {
@@ -2332,7 +2332,7 @@ async function startServer() {
         }
 
         // --- GET CITY ADDRESSES API ROUTE (IN-MEMORY CACHED) ---
-        if (req.url === '/api/get-city-addresses' && req.method === 'GET') {
+        if (reqPath === '/api/get-city-addresses' && req.method === 'GET') {
           try {
             if (cachedCityAddressesData && (Date.now() - cachedCityAddressesTime < CACHE_TTL_MS)) {
               setNoCacheHeaders(res);
@@ -2380,7 +2380,7 @@ async function startServer() {
 
         
         // --- REVIEWS API ROUTES (SUPABASE + DISK PERSISTENCE) ---
-        if (req.url === '/api/get-reviews' && req.method === 'GET') {
+        if (reqPath === '/api/get-reviews' && req.method === 'GET') {
           try {
             const { data, error } = await serverSupabase
               .from('services')
@@ -2417,7 +2417,7 @@ async function startServer() {
           }
         }
 
-        if (req.url === '/api/save-review' && req.method === 'POST') {
+        if (reqPath === '/api/save-review' && req.method === 'POST') {
           let body = '';
           req.on('data', (chunk: Buffer) => { body += chunk.toString(); });
           req.on('end', async () => {
@@ -2489,7 +2489,7 @@ async function startServer() {
           return;
         }
 
-        if (req.url === '/api/delete-review' && req.method === 'POST') {
+        if (reqPath === '/api/delete-review' && req.method === 'POST') {
           let body = '';
           req.on('data', (chunk: Buffer) => { body += chunk.toString(); });
           req.on('end', async () => {
