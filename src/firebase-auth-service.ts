@@ -367,7 +367,6 @@ export const DQFirebaseAuth = {
         return { success: false, message: 'Please enter a valid email address.' };
       }
 
-      const PROD_BACKEND_URL = 'https://ais-dev-5r5iz2bbwbvbkrbvqu3q2p-719893023696.asia-southeast1.run.app';
       const payload = JSON.stringify({
         email: cleanEmail,
         userName: (userName || '').trim(),
@@ -402,9 +401,9 @@ export const DQFirebaseAuth = {
         console.warn('[Local API Notice]:', e?.message);
       }
 
-      // 2. Call Production Live Backend (GoDaddy SMTP alerts@designquixo.in)
+      // 2. Call gateway query route ?route=email-otp-send
       try {
-        const prodResp = await fetch(`${PROD_BACKEND_URL}/api/email-otp-send`, {
+        const prodResp = await fetch('/api/index?route=email-otp-send', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: payload
@@ -420,7 +419,7 @@ export const DQFirebaseAuth = {
           }
         }
       } catch (e: any) {
-        console.error('[Prod Backend SMTP Error]:', e?.message);
+        console.error('[Gateway SMTP Error]:', e?.message);
       }
 
       return {
@@ -443,7 +442,6 @@ export const DQFirebaseAuth = {
         return { success: false, message: 'Please enter the complete 6-digit email OTP.' };
       }
 
-      const PROD_BACKEND_URL = 'https://ais-dev-5r5iz2bbwbvbkrbvqu3q2p-719893023696.asia-southeast1.run.app';
       const payload = JSON.stringify({ email: cleanEmail, code: cleanCode });
 
       // 1. Try local API route
@@ -465,9 +463,9 @@ export const DQFirebaseAuth = {
         }
       } catch (e) {}
 
-      // 2. Try Production Live Backend API
+      // 2. Try gateway query route ?route=email-otp-verify
       try {
-        const prodResp = await fetch(`${PROD_BACKEND_URL}/api/email-otp-verify`, {
+        const prodResp = await fetch('/api/index?route=email-otp-verify', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: payload
