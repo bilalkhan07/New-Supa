@@ -2632,9 +2632,17 @@
             if (!refImgUrl) {
               const descSearch = (job.description || job.details || job.brief || '').toString();
               if (descSearch.includes('Ref Image:')) {
-                const m = descSearch.match(/Ref Image:\s*([^\s|]+)/i);
-                if (m && m[1]) refImgUrl = m[1];
+                const mStart = descSearch.match(/Ref Image:\s*\[START\]([\s\S]*?)\[END\]/i);
+                if (mStart && mStart[1]) {
+                  refImgUrl = mStart[1].trim();
+                } else {
+                  const m = descSearch.match(/Ref Image:\s*([^\s|]+)/i) || descSearch.match(/Ref Image:\s*([^\r\n|]+)/i);
+                  if (m && m[1]) refImgUrl = m[1].trim();
+                }
               }
+            }
+            if (refImgUrl && typeof refImgUrl === 'string' && refImgUrl.toLowerCase().startsWith('data:image')) {
+              refImgUrl = refImgUrl.replace(/[\r\n\s]+/g, '');
             }
             window._dq_job_images = window._dq_job_images || {};
             if (refImgUrl && job.id) {
