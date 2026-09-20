@@ -1737,10 +1737,24 @@ async function startServer() {
                 const ph = (d.phone || d.identifier || '').toString().replace(/\D/g, '').slice(-10);
                 const id = (d.id || '').toString().trim().toLowerCase();
                 const sig = (ph && signaturesMap[ph]) || (em && signaturesMap[em]) || (id && signaturesMap[id]) || d.signatureDataUrl || d.signature || '';
+                
+                const skillsVal = (Array.isArray(d.skills) && d.skills.length > 0) 
+                  ? d.skills.join(', ') 
+                  : (d.skills || d.specialization || d.exp || (Array.isArray(d.software) && d.software.length > 0 ? d.software.join(', ') : d.software) || 'Graphic Design').toString().trim();
+                
+                const portfolioVal = (d.portfolio || d.portfolioUrl || d.portfoliolink || '').toString().trim();
+                const avatarVal = (d.avatar || d.photo || d.avatarUrl || '').toString().trim();
+
                 return {
                   ...d,
-                  skills: d.skills || d.software || 'Graphic Design',
-                  photo: d.photo || d.avatar || '',
+                  skills: skillsVal,
+                  specialization: d.specialization || skillsVal,
+                  exp: d.exp || skillsVal,
+                  software: Array.isArray(d.software) ? d.software : (skillsVal ? skillsVal.split(',').map((s: string) => s.trim()).filter(Boolean) : []),
+                  portfolio: portfolioVal,
+                  portfolioUrl: portfolioVal,
+                  avatar: avatarVal,
+                  photo: avatarVal,
                   status: d.status || (d.isapproved ? 'Approved' : 'Pending'),
                   signature: sig,
                   signatureDataUrl: sig
@@ -2006,6 +2020,59 @@ async function startServer() {
               const jBare = jId.replace(/^(DQ[-_]?)+/i, '');
               const jClean = `DQ-${jBare}`;
               return !serverDeletedJobIds.has(jId) && !serverDeletedJobIds.has(jClean) && !serverDeletedJobIds.has(jBare);
+            }).map(j => {
+              let refImg = j.referenceimage || j.referenceImage || j.image || '';
+              const descStr = j.description || j.brief || j.details || '';
+              if (!refImg && descStr.includes('Ref Image:')) {
+                const match = descStr.match(/Ref Image:\s*([^\s|]+)/i);
+                if (match) refImg = match[1];
+              }
+
+              let clientName = j.clientName || j.clientname || '';
+              let clientPhone = j.clientPhone || j.clientphone || j.phone || '';
+              if (!clientName && j.client) {
+                const parts = j.client.split('(');
+                clientName = parts[0].trim();
+                if (parts[1]) {
+                  clientPhone = parts[1].replace(/[^0-9+]/g, '');
+                }
+              }
+
+              const accepted = j.designer ? [j.designer] : (j.assigned_to ? [j.assigned_to] : (j.acceptedBy || j.acceptedby || []));
+              const category = j.category || j.service || j.title || 'Graphic Design';
+              const jobTitle = j.title || j.service || j.project || category;
+              const budgetVal = Number(j.budget || j.price || j.amount || 399);
+
+              return {
+                ...j,
+                id: j.id,
+                title: jobTitle,
+                service: category,
+                project: jobTitle,
+                clientName: clientName || 'Client',
+                clientPhone: clientPhone || '',
+                clientname: clientName || 'Client',
+                clientphone: clientPhone || '',
+                phone: clientPhone || '',
+                whatsapp: clientPhone || '',
+                budget: budgetVal,
+                price: budgetVal,
+                urgency: j.deadline || j.urgency || j.time || 'ASAP',
+                time: j.deadline || j.time || 'ASAP',
+                category: category,
+                status: j.status || 'Pending',
+                details: descStr,
+                brief: descStr,
+                referenceImage: refImg,
+                referenceimage: refImg,
+                image: refImg,
+                acceptedBy: Array.isArray(accepted) ? accepted : (accepted ? [accepted] : []),
+                acceptedby: Array.isArray(accepted) ? accepted : (accepted ? [accepted] : []),
+                assignedTo: j.assigned_to || j.assignedTo || '',
+                designerName: j.designer || j.designerName || '',
+                createdAt: j.created_at || j.createdat || j.createdAt || new Date().toISOString(),
+                createdat: j.created_at || j.createdat || j.createdAt || new Date().toISOString()
+              };
             });
 
             activeJobs.sort((a, b) => new Date(b.created_at || b.createdat || b.createdAt || 0).getTime() - new Date(a.created_at || a.createdat || a.createdAt || 0).getTime());
@@ -2044,22 +2111,31 @@ async function startServer() {
               // Invalidate cached jobs memory
               cachedJobsData = null;
 
+              const serviceVal = job.service || job.category || job.title || 'Graphic Design';
+              const projectVal = job.project || job.title || job.service || 'Design Request';
+              const priceVal = Number(job.price || job.budget || job.amount || 399);
+              const clientNameVal = job.clientName || job.clientname || job.name || 'Client';
+              const clientPhoneVal = job.phone || job.whatsapp || job.clientPhone || 'N/A';
+              const refImg = job.referenceImage || job.referenceimage || job.image || '';
+              const briefVal = job.brief || job.details || job.description || '';
+
+              // Exact Supabase jobs table columns: id, title, client, budget, deadline, category, status, description, assigned_to, designer, created_at
               const row = {
                 id: cleanId,
-                service: job.service || 'Graphic Design',
-                project: job.project || job.projectName || 'Design Request',
-                price: Number(job.price) || 399,
-                brief: job.brief || '',
-                phone: job.phone || job.whatsapp || '',
-                whatsapp: job.whatsapp || job.phone || '',
-                ratio: job.ratio || 'Square (1:1)',
-                referenceimage: job.referenceImage || job.referenceimage || job.image || '',
+                title: projectVal,
+                client: `${clientNameVal} (${clientPhoneVal})`,
+                budget: priceVal,
+                deadline: job.urgency || job.deadline || job.time || 'ASAP',
+                category: serviceVal,
                 status: job.status || 'Pending',
-                acceptedby: Array.isArray(job.acceptedBy) ? job.acceptedBy : (job.acceptedby ? (typeof job.acceptedby === 'string' ? JSON.parse(job.acceptedby) : job.acceptedby) : []),
-                completed: !!job.completed,
-                completedat: job.completedAt || job.completedat || null,
-                createdat: job.createdAt || job.createdat || new Date().toISOString(),
-                time: job.time || 'Just now'
+                description: [
+                  briefVal,
+                  refImg ? `Ref Image: ${refImg}` : '',
+                  job.ratio ? `Ratio: ${job.ratio}` : ''
+                ].filter(Boolean).join(' | '),
+                assigned_to: job.assignedTo || job.designerEmail || '',
+                designer: job.designerName || (Array.isArray(job.acceptedBy) ? job.acceptedBy.join(', ') : (job.acceptedBy || job.acceptedby || '')) || '',
+                created_at: job.createdAt || job.createdat || new Date().toISOString()
               };
 
               try {
@@ -2071,10 +2147,10 @@ async function startServer() {
               // Instant Push Broadcast to all registered Chrome browser devices (5x alert sound + vibration)
               broadcastPushNotification({
                 title: `🚨 NEW DESIGN ORDER #${cleanId}`,
-                body: `₹${row.price} • ${row.service} | "${row.project}". Tap to claim work & open workstation!`,
+                body: `₹${priceVal} • ${serviceVal} | "${projectVal}". Tap to claim work & open workstation!`,
                 jobId: cleanId,
-                price: row.price,
-                service: row.service,
+                price: priceVal,
+                service: serviceVal,
                 url: `/designer-dashboard.html?alertJob=${cleanId}&autoPlay=5`,
                 tag: `new-job-${cleanId}`,
                 icon: '/favicon.png',
@@ -2086,7 +2162,14 @@ async function startServer() {
               setNoCacheHeaders(res);
               return res.end(JSON.stringify({
                 success: true,
-                job: row,
+                job: {
+                  ...row,
+                  service: serviceVal,
+                  project: projectVal,
+                  price: priceVal,
+                  brief: briefVal,
+                  referenceImage: refImg
+                },
                 message: `Job #${cleanId} saved to cloud.`
               }));
             } catch (err: any) {
@@ -2104,28 +2187,23 @@ async function startServer() {
           req.on('data', (chunk: Buffer) => { body += chunk.toString(); });
           req.on('end', async () => {
             try {
-              const { jobId, status, acceptedBy, completed, completedAt, referenceImage } = JSON.parse(body || '{}');
+              const { jobId, status, acceptedBy, completed, completedAt, referenceImage, designerName } = JSON.parse(body || '{}');
               const rawId = (jobId || '').toString().trim();
               const bareId = rawId.replace(/^(DQ[-_]?)+/i, '');
               const cleanId = bareId ? `DQ-${bareId}` : rawId;
 
               cachedJobsData = null; // bust cache
 
-              const isCompleted = completed || (status && (status.toLowerCase().includes('completed') || status.toLowerCase().includes('delivered')));
-              const compAt = completedAt || (isCompleted ? new Date().toISOString() : null);
-
-              const updatePayload: any = {
-                status: status,
-                completed: !!isCompleted
-              };
-              if (compAt) {
-                updatePayload.completedat = compAt;
-              }
-              if (Array.isArray(acceptedBy)) {
-                updatePayload.acceptedby = acceptedBy;
-              }
-              if (referenceImage) {
-                updatePayload.referenceimage = referenceImage;
+              const updatePayload: any = {};
+              if (status) updatePayload.status = status;
+              if (Array.isArray(acceptedBy) && acceptedBy.length > 0) {
+                updatePayload.designer = designerName || acceptedBy.join(', ');
+                updatePayload.assigned_to = acceptedBy[0];
+              } else if (typeof acceptedBy === 'string' && acceptedBy) {
+                updatePayload.designer = designerName || acceptedBy;
+                updatePayload.assigned_to = acceptedBy;
+              } else if (designerName) {
+                updatePayload.designer = designerName;
               }
 
               try {
