@@ -320,8 +320,8 @@ export async function safeUpsertDesigner(designer: any): Promise<{ success: bool
 
   if (!phone10 && !cleanEmail) return { success: false, error: 'Invalid phone number or email address' };
 
-  // Note: Supabase designers table valid columns: [id, name, phone, identifier, password, portfolio, skills, status, date, createdat]
-  // Email is safely stored within identifier column.
+  // Note: Supabase designers table valid columns: [id, name, email, phone, status, specialization, skills, bio, exp, portfolio, rating, reviews, jobscompleted, hourlyrate, response_time, avatar, createdat, password, identifier]
+  const skillsVal = designer.skills || designer.specialization || 'Graphic Design';
   const lowercasePayload: any = {
     id: phone10 || cleanEmail,
     name: designer.name || 'Designer',
@@ -330,10 +330,10 @@ export async function safeUpsertDesigner(designer: any): Promise<{ success: bool
     identifier: cleanEmail || phone10,
     password: (designer.password !== undefined && designer.password !== null) ? designer.password.toString() : 'Designer@123',
     portfolio: designer.portfolio || '',
-    skills: designer.skills || 'Graphic Design',
-    experience: designer.skills || designer.experience || 'Graphic Design',
+    skills: Array.isArray(skillsVal) ? skillsVal : [skillsVal],
+    specialization: Array.isArray(skillsVal) ? skillsVal.join(', ') : skillsVal,
+    exp: Array.isArray(skillsVal) ? skillsVal.join(', ') : skillsVal,
     status: designer.status || 'Pending',
-    date: designer.date || new Date().toLocaleDateString('en-IN'),
     createdat: designer.createdAt || designer.registeredAt || new Date().toISOString()
   };
 
@@ -896,7 +896,7 @@ export const DQSupabase = {
     // Save locally
     try {
       let registered = JSON.parse(localStorage.getItem('dq_registered_designers') || '[]');
-      registered = registered.filter((d: any) => (d.email && d.email.toLowerCase() === cleanEmail) || (clean10Phone(d.phone || d.identifier) === phone10));
+      registered = registered.filter((d: any) => (!cleanEmail || (d.email || '').toLowerCase() !== cleanEmail) && (!phone10 || clean10Phone(d.phone || d.identifier) !== phone10));
       registered.push(data);
       localStorage.setItem('dq_registered_designers', JSON.stringify(registered));
 
