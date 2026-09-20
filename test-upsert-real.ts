@@ -5,30 +5,41 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 
 const supabase = createSupa(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-async function run() {
-  const designerRow: any = {
-    id: "9856745213",
-    name: "Shisher Dubey",
-    phone: "9856745213",
-    email: "udceoy09552@smaau.com",
-    identifier: "udceoy09552@smaau.com",
-    portfolio: "",
-    skills: ["Graphic Design"],
-    specialization: "Graphic Design",
-    exp: "Graphic Design",
-    bio: "",
-    status: "Pending",
-    avatar: "",
-    createdat: new Date().toISOString(),
-    password: "test-password-here"
-  };
+const list = [
+  { id: "9856745213", name: "Shisher Dubey", phone: "9856745213", email: "udceoy09552@smaau.com" },
+  { id: "8629927995", name: "Bilal khan", phone: "8629927995", email: "bilal8888832@gmail.com" },
+  { id: "7869396857", name: "Farzana Perveen", phone: "7869396857", email: "fperveen522@gmail.com" },
+  { id: "9856745217", name: "Indore Interiors", phone: "9856745217", email: "indoreinteriors@gmail.com" },
+  { id: "9876543210", name: "Indore Interiors", phone: "9876543210", email: "indoreinteriors@gmail.com" },
+  { id: "9876543215", name: "Indore Interiors", phone: "9876543215", email: "koxel42602@jobscai.com" }
+];
 
-  console.log('Upserting Shisher Dubey:', designerRow);
-  const { data, error } = await supabase.from('designers').upsert(designerRow, { onConflict: 'id' }).select();
-  if (error) {
-    console.error('Upsert Error:', error);
-  } else {
-    console.log('Upsert Success:', data);
+async function run() {
+  for (const item of list) {
+    const row = {
+      id: item.id,
+      name: item.name,
+      phone: item.phone,
+      email: item.email,
+      identifier: item.email || item.phone,
+      portfolio: "https://behance.net",
+      skills: ["Graphic Design"],
+      specialization: "Graphic Design",
+      exp: "Graphic Design",
+      bio: "Creator registration recovery",
+      status: "Pending",
+      avatar: "",
+      createdat: new Date().toISOString(),
+      password: "Designer@123"
+    };
+    
+    console.log(`Upserting ${item.name} (${item.id})...`);
+    const { error } = await supabase.from('designers').upsert(row, { onConflict: 'id' });
+    if (error) {
+      console.error(`Error for ${item.name}:`, error);
+    } else {
+      console.log(`Successfully upserted ${item.name}`);
+    }
   }
 }
 
