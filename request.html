@@ -1021,6 +1021,8 @@
 
         const nowIso = new Date().toISOString();
 
+        const cleanRefImg = uploadedReferenceImageBase64 ? uploadedReferenceImageBase64.toString().trim().replace(/[\r\n\s]+/g, '') : '';
+
         const newJobObj = {
           id: jobId,
           service: serviceName,
@@ -1034,8 +1036,9 @@
           phone: whatsapp,
           whatsapp: whatsapp,
           ratio: calculatedRatio,
-          referenceImage: uploadedReferenceImageBase64 || '',
-          image: uploadedReferenceImageBase64 || '',
+          referenceImage: cleanRefImg,
+          referenceimage: cleanRefImg,
+          image: cleanRefImg,
           time: 'Just now',
           status: 'Pending',
           acceptedBy: [],
