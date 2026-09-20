@@ -13,6 +13,10 @@ import triggerPushNotification from '../server/api-handlers/trigger-push-notific
 import pushSubscribe from '../server/api-handlers/push-subscribe.js';
 import pushVapidPublicKey from '../server/api-handlers/push-vapid-public-key.js';
 import getCityAddresses from '../server/api-handlers/get-city-addresses.js';
+import deleteDesigner from '../server/api-handlers/delete-designer.js';
+import deleteJob from '../server/api-handlers/delete-job.js';
+import getReviews from '../server/api-handlers/get-reviews.js';
+import getLoginHistory from '../server/api-handlers/get-login-history.js';
 
 const routes = {
   'email-otp-send': emailOtpSend,
@@ -29,7 +33,11 @@ const routes = {
   'trigger-push-notification': triggerPushNotification,
   'push-subscribe': pushSubscribe,
   'push-vapid-public-key': pushVapidPublicKey,
-  'get-city-addresses': getCityAddresses
+  'get-city-addresses': getCityAddresses,
+  'delete-designer': deleteDesigner,
+  'delete-job': deleteJob,
+  'get-reviews': getReviews,
+  'get-login-history': getLoginHistory
 };
 
 export default async function handler(req, res) {
