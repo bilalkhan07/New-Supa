@@ -1477,31 +1477,29 @@ async function startServer() {
                 console.warn('[SERVER update-designer-status Supabase notice]:', supErr?.message || supErr);
               }
 
-              // Resilient Fallback: If designer was not yet present in Supabase table, insert/upsert them directly
-              if (updatedCount === 0) {
-                try {
-                  const finalPhone = clean10 || extraPhone10 || '';
-                  const finalEmail = targetEmail || (cleanKey.includes('@') ? cleanKey : '');
-                  const finalId = rawId || finalPhone || finalEmail || cleanKey;
-                  const finalName = payload.name || 'Designer';
-                  
-                  await serverSupabase.from('designers').upsert({
-                    id: finalId,
-                    name: finalName,
-                    phone: finalPhone,
-                    email: finalEmail,
-                    identifier: finalEmail || finalPhone || finalId,
-                    portfolio: payload.portfolio || '',
-                    specialization: payload.software || payload.skills || 'Graphic Design',
-                    skills: [payload.software || payload.skills || 'Graphic Design'],
-                    exp: payload.experience || payload.skills || 'Graphic Design',
-                    status: newStatus,
-                    avatar: payload.avatar || payload.photo || '',
-                    createdat: new Date().toISOString()
-                  }, { onConflict: 'id' });
-                } catch (upsertErr: any) {
-                  console.warn('[SERVER update-designer-status upsert notice]:', upsertErr?.message || upsertErr);
-                }
+              // Always ensure designer record exists in designers table with newStatus
+              try {
+                const finalPhone = clean10 || extraPhone10 || '';
+                const finalEmail = targetEmail || (cleanKey.includes('@') ? cleanKey : '');
+                const finalId = rawId || finalPhone || finalEmail || cleanKey;
+                const finalName = payload.name || 'Designer';
+                
+                await serverSupabase.from('designers').upsert({
+                  id: finalId,
+                  name: finalName,
+                  phone: finalPhone,
+                  email: finalEmail,
+                  identifier: finalEmail || finalPhone || finalId,
+                  portfolio: payload.portfolio || '',
+                  specialization: payload.software || payload.skills || 'Graphic Design',
+                  skills: Array.isArray(payload.skills) ? payload.skills : [payload.software || payload.skills || 'Graphic Design'],
+                  exp: payload.experience || payload.skills || 'Graphic Design',
+                  status: newStatus,
+                  avatar: payload.avatar || payload.photo || '',
+                  createdat: new Date().toISOString()
+                }, { onConflict: 'id' });
+              } catch (upsertErr: any) {
+                console.warn('[SERVER update-designer-status upsert notice]:', upsertErr?.message || upsertErr);
               }
 
               // Invalidate designers cache immediately
@@ -1509,7 +1507,6 @@ async function startServer() {
               cachedDesignersTime = 0;
               cachedLoginHistoryData = null;
               cachedLoginHistoryTime = 0;
-              cachedDesignersTime = 0;
 
               // Log status change in login_history
               try {
@@ -2022,10 +2019,21 @@ async function startServer() {
               return !serverDeletedJobIds.has(jId) && !serverDeletedJobIds.has(jClean) && !serverDeletedJobIds.has(jBare);
             }).map(j => {
               let refImg = j.referenceimage || j.referenceImage || j.image || '';
-              const descStr = j.description || j.brief || j.details || '';
+              const descStr = (j.description || j.brief || j.details || '').toString();
               if (!refImg && descStr.includes('Ref Image:')) {
                 const match = descStr.match(/Ref Image:\s*([^\s|]+)/i);
-                if (match) refImg = match[1];
+                if (match && match[1]) refImg = match[1];
+              }
+
+              let cleanBrief = j.brief || j.details || descStr;
+              if (cleanBrief && typeof cleanBrief === 'string' && cleanBrief.includes('Ref Image:')) {
+                cleanBrief = cleanBrief.split(' | Ref Image:')[0].replace(/Ref Image:[^\s|]+/gi, '').trim();
+              }
+
+              let ratioStr = j.ratio || '';
+              if (!ratioStr && descStr.includes('Ratio:')) {
+                const rMatch = descStr.match(/Ratio:\s*([^|]+)/i);
+                if (rMatch && rMatch[1]) ratioStr = rMatch[1].trim();
               }
 
               let clientName = j.clientName || j.clientname || '';
@@ -2061,8 +2069,9 @@ async function startServer() {
                 time: j.deadline || j.time || 'ASAP',
                 category: category,
                 status: j.status || 'Pending',
-                details: descStr,
-                brief: descStr,
+                details: cleanBrief,
+                brief: cleanBrief,
+                ratio: ratioStr || 'Square (1:1)',
                 referenceImage: refImg,
                 referenceimage: refImg,
                 image: refImg,
