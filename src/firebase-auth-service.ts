@@ -389,12 +389,11 @@ export const DQFirebaseAuth = {
               message: '✓ 6-digit verification code dispatched from alerts@designquixo.in to your email inbox.'
             };
           }
-        } else if (resp.status !== 404) {
+        } else if (resp.status === 400) {
           const errData = await resp.json().catch(() => ({}));
-          const errMsg = errData.message || 'Server error while sending OTP';
           return {
             success: false,
-            message: `[Email Service Error]: ${errMsg}`
+            message: errData.message || 'Invalid email details'
           };
         }
       } catch (e: any) {
@@ -417,9 +416,70 @@ export const DQFirebaseAuth = {
               message: '✓ 6-digit verification code dispatched from alerts@designquixo.in to your email inbox.'
             };
           }
+        } else if (prodResp.status === 400) {
+          const errData = await prodResp.json().catch(() => ({}));
+          return { success: false, message: errData.message || 'Invalid request' };
         }
       } catch (e: any) {
         console.error('[Gateway SMTP Error]:', e?.message);
+      }
+
+      // 3. Client-side failproof fallback via Supabase REST + Resend API
+      try {
+        const code = Math.floor(100000 + Math.random() * 900000).toString();
+        const expiresAt = new Date(Date.now() + 15 * 60 * 1000).toISOString();
+        const SB_URL = 'https://gzbwvleuuxyidohujibj.supabase.co';
+        const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd6Ynd2bGV1dXh5aWRvaHVqaWJqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk5MDg3ODEsImV4cCI6MjEwNTQ4NDc4MX0.qIvmq3FnjJPkKOcxnvFYS158NxF0GHKvd0PSwP7hECk';
+
+        // Clean older OTPs
+        await fetch(`${SB_URL}/rest/v1/login_history?phone=eq.${encodeURIComponent(cleanEmail)}&role=eq.otp_verification`, {
+          method: 'DELETE',
+          headers: { 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` }
+        }).catch(() => {});
+
+        // Insert new OTP record
+        await fetch(`${SB_URL}/rest/v1/login_history`, {
+          method: 'POST',
+          headers: {
+            'apikey': SB_KEY,
+            'Authorization': `Bearer ${SB_KEY}`,
+            'Content-Type': 'application/json',
+            'Prefer': 'return=minimal'
+          },
+          body: JSON.stringify({
+            id: `otp-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
+            phone: cleanEmail,
+            name: userName || 'User',
+            role: 'otp_verification',
+            status: code,
+            timestamp: expiresAt
+          })
+        }).catch(() => {});
+
+        // Send email via Resend API
+        const RESEND_KEY = 're_5QQiMne7_8k2bcKBHqpKXoXg8BQxpfE7x';
+        const resendResp = await fetch('https://api.resend.com/emails', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${RESEND_KEY}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            from: 'Design Quixo Security <alerts@designquixo.in>',
+            to: [cleanEmail],
+            subject: `[${code}] Design Quixo — ${purpose || 'Verification'} Code`,
+            html: `<div style="padding:24px;font-family:sans-serif;max-width:520px;border:1px solid #cbd5e1;border-radius:16px;background:#fff;"><h2 style="color:#0f172a;margin:0 0 12px 0;">DESIGN <span style="color:#2563eb;">QUIXO</span></h2><p style="color:#334155;font-size:15px;">Hello ${userName || cleanEmail.split('@')[0]},</p><p style="color:#334155;font-size:14px;">Your verification code for <strong>${purpose || 'Verification'}</strong> is:</p><div style="font-size:36px;font-weight:900;letter-spacing:8px;padding:16px;background:#f8fafc;border:2px dashed #cbd5e1;text-align:center;border-radius:12px;margin:16px 0;color:#0f172a;">${code}</div><p style="font-size:12px;color:#64748b;">Valid for 15 minutes. Do not share this OTP with anyone.</p></div>`
+          })
+        });
+
+        if (resendResp.ok) {
+          return {
+            success: true,
+            message: '✓ 6-digit verification code dispatched from alerts@designquixo.in to your email inbox.'
+          };
+        }
+      } catch (clientErr) {
+        console.warn('[Direct client OTP fallback notice]:', clientErr);
       }
 
       return {
