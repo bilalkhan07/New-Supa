@@ -2625,7 +2625,14 @@
             const normId = (window.DQStore && window.DQStore.normalizeJobId) ? window.DQStore.normalizeJobId(job.id || job.jobId) : (job.id || '').toString().toUpperCase();
             const isPaidToDesigner = job.payoutStatus === 'Paid' || job.payoutStatus === 'Amount Paid to Designer' || payoutMap[normId] === 'Paid';
 
-            const refImgUrl = job.referenceImage || job.referenceimage || job.reference_image || job.refImage || job.image || job.sampleImage || job.reference || job.imageUrl || (Array.isArray(job.attachments) ? job.attachments[0] : null);
+            let refImgUrl = job.referenceImage || job.referenceimage || job.reference_image || job.refImage || job.image || job.sampleImage || job.reference || job.imageUrl || (Array.isArray(job.attachments) ? job.attachments[0] : null);
+            if (!refImgUrl) {
+              const descSearch = (job.description || job.details || job.brief || '').toString();
+              if (descSearch.includes('Ref Image:')) {
+                const m = descSearch.match(/Ref Image:\s*([^\s|]+)/i);
+                if (m && m[1]) refImgUrl = m[1];
+              }
+            }
             window._dq_job_images = window._dq_job_images || {};
             if (refImgUrl && job.id) {
               window._dq_job_images[job.id] = refImgUrl;
@@ -3038,15 +3045,30 @@
                   }
                 });
 
-                // Fail-safe merge: ensure local-only registrations are never lost, but NEVER override status returned by the server database
+                // Fail-safe merge: ensure local-only registrations are never lost, and preserve approved status
                 let localReg = [];
                 try { localReg = JSON.parse(localStorage.getItem('dq_registered_designers') || '[]'); } catch(e) {}
+                let localApproved = [];
+                try { localApproved = JSON.parse(localStorage.getItem('dq_approved_designers') || '[]'); } catch(e) {}
+
+                const approvedKeysSet = new Set();
+                if (Array.isArray(localApproved)) {
+                  localApproved.forEach(a => {
+                    if (a.email) approvedKeysSet.add(a.email.toLowerCase());
+                    if (a.phone) approvedKeysSet.add(get10DigitPhone(a.phone));
+                    if (a.identifier) approvedKeysSet.add(a.identifier.toLowerCase());
+                  });
+                }
 
                 // Merge any local registration that has not yet synced to remote at all
                 if (Array.isArray(localReg)) {
                   localReg.forEach(ld => {
                     const lp = get10DigitPhone(ld.phone || ld.identifier);
                     const le = (ld.email || (ld.identifier && ld.identifier.includes('@') ? ld.identifier : '')).toString().trim().toLowerCase();
+                    if (ld.status === 'Approved' || ld.isapproved) {
+                      if (le) approvedKeysSet.add(le);
+                      if (lp) approvedKeysSet.add(lp);
+                    }
                     if ((lp && !deletedList.includes(lp)) || (le && !deletedList.includes(le))) {
                       const exIdx = list.findIndex(r => 
                         (le && r.email && r.email.toLowerCase() === le) || 
@@ -3058,6 +3080,16 @@
                     }
                   });
                 }
+
+                // Ensure approved status is preserved for all approved designers
+                list.forEach(r => {
+                  const re = (r.email || '').toLowerCase();
+                  const rp = get10DigitPhone(r.phone || r.identifier);
+                  if (r.status !== 'Revoked' && ((re && approvedKeysSet.has(re)) || (rp && approvedKeysSet.has(rp)))) {
+                    r.status = 'Approved';
+                    r.isapproved = true;
+                  }
+                });
 
                 localStorage.setItem('dq_registered_designers', JSON.stringify(list));
                 
