@@ -87,7 +87,12 @@ export default async function handler(req, res) {
   }
 
   try {
-    const body = typeof req.body === 'string' ? JSON.parse(req.body) : (req.body || {});
+    let body = {};
+    if (typeof req.body === 'string') {
+      try { body = JSON.parse(req.body); } catch(pe) { body = {}; }
+    } else if (req.body && typeof req.body === 'object') {
+      body = req.body;
+    }
     const email = (body.email || '').trim().toLowerCase();
     const userName = (body.userName || body.name || '').trim();
     const purpose = body.purpose || 'Verification';
@@ -129,7 +134,12 @@ export default async function handler(req, res) {
       console.error('PostgreSQL insert OTP error:', insErr?.message);
     }
 
-    const formattedTime = new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', dateStyle: 'medium', timeStyle: 'short' });
+    let formattedTime = 'Asia/Kolkata IST';
+    try {
+      formattedTime = new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' });
+    } catch(te) {
+      formattedTime = new Date().toISOString();
+    }
     const displayName = userName || email.split('@')[0];
 
     const subject = `[${code}] Design Quixo — ${purpose} Code`;
