@@ -935,7 +935,7 @@
       }
 
       // 100% Real Email OTP Functions via GoDaddy SMTP alerts@designquixo.in
-      const PROD_BACKEND_URL = 'https://ais-dev-5r5iz2bbwbvbkrbvqu3q2p-719893023696.asia-southeast1.run.app';
+      const PROD_BACKEND_URL = (typeof window !== 'undefined' && window.location && window.location.origin) ? window.location.origin : '';
 
       const maskEmailAddress = function(em) {
         if (!em || !em.includes('@')) return 'Registered Email';
@@ -959,7 +959,7 @@
           purpose: purpose || 'Login Verification'
         });
 
-        // Call direct high-speed local API route (with production fallback if on custom/external domain)
+        // Call direct high-speed local API route
         try {
           const resp = await fetch('/api/email-otp-send', {
             method: 'POST',
@@ -983,9 +983,9 @@
           console.warn('[Email OTP Send local notice]:', e);
         }
 
-        // Secondary fallback to live backend if local server is unreachable
+        // Secondary fallback to Vercel/gateway query route ?route=email-otp-send
         try {
-          const prodResp = await fetch(`${PROD_BACKEND_URL}/api/email-otp-send`, {
+          const prodResp = await fetch('/api/index?route=email-otp-send', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: payload
@@ -1040,9 +1040,9 @@
           console.warn('[Email OTP Verify local notice]:', e);
         }
 
-        // Secondary fallback to live backend
+        // Secondary fallback to Vercel/gateway query route ?route=email-otp-verify
         try {
-          const prodResp = await fetch(`${PROD_BACKEND_URL}/api/email-otp-verify`, {
+          const prodResp = await fetch('/api/index?route=email-otp-verify', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: payload
